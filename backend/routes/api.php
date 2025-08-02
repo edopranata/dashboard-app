@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\PermissionController;
+use App\Http\Controllers\API\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,13 +45,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Role management routes
     Route::apiResource('roles', RoleController::class);
-    
+
     // Permission routes
     Route::get('permissions', [PermissionController::class, 'index']);
     Route::get('permissions/grouped', [PermissionController::class, 'grouped']);
 
-    // Dashboard routes (will be added next)
-    // Route::get('dashboard/stats', [DashboardController::class, 'stats']);
+    // Dashboard routes
+    Route::get('dashboard/stats', [DashboardController::class, 'stats']);
 });
 
 // Fallback route for API

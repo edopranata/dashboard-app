@@ -29,7 +29,7 @@
                 <div class="stat-label">Total Users</div>
                 <div class="stat-change stat-change--positive">
                   <q-icon name="trending_up" size="16px" />
-                  +12%
+                  +{{ growthMetrics.userGrowth.percentage }}%
                 </div>
               </div>
             </q-card-section>
@@ -45,9 +45,9 @@
               <div class="stat-details">
                 <div class="stat-value">{{ stats.totalRoles }}</div>
                 <div class="stat-label">Total Roles</div>
-                <div class="stat-change stat-change--neutral">
-                  <q-icon name="remove" size="16px" />
-                  0%
+                <div class="stat-change" :class="growthMetrics.roleUsage.percentage > 0 ? 'stat-change--positive' : 'stat-change--neutral'">
+                  <q-icon :name="growthMetrics.roleUsage.percentage > 0 ? 'trending_up' : 'remove'" size="16px" />
+                  {{ growthMetrics.roleUsage.percentage > 0 ? '+' : '' }}{{ growthMetrics.roleUsage.percentage }}%
                 </div>
               </div>
             </q-card-section>
@@ -65,7 +65,7 @@
                 <div class="stat-label">Active Today</div>
                 <div class="stat-change stat-change--positive">
                   <q-icon name="trending_up" size="16px" />
-                  +5%
+                  +{{ growthMetrics.activeUsers.percentage }}%
                 </div>
               </div>
             </q-card-section>
@@ -249,6 +249,13 @@ const stats = ref({
   permissions: 0
 })
 
+const growthMetrics = ref({
+  userGrowth: { percentage: 12 },
+  roleUsage: { percentage: 0 },
+  activeUsers: { percentage: 5 },
+  permissions: { percentage: 0 }
+})
+
 const recentActivities = ref([
   {
     id: 1,
@@ -297,13 +304,53 @@ const fetchDashboardStats = async () => {
   })
 
   try {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
     const response = await api.get('/dashboard/stats')
-    stats.value = response.data
+    
+    if (response.data.success) {
+      // Use the data from the API response
+      stats.value = {
+        totalUsers: response.data.data.totalUsers,
+        totalRoles: response.data.data.totalRoles,
+        activeUsers: response.data.data.activeUsers,
+        permissions: response.data.data.permissions
+      }
+      
+      // Update growth metrics from API if available
+      if (response.data.data.growthMetrics) {
+        growthMetrics.value = {
+          userGrowth: { percentage: response.data.data.growthMetrics.userGrowth.percentage },
+          roleUsage: { percentage: response.data.data.growthMetrics.roleUsage.percentage },
+          activeUsers: { percentage: response.data.data.growthMetrics.activeUsers.percentage },
+          permissions: { percentage: 0 } // Static for now
+        }
+      }
+      
+      // Update recent activities from API if available
+      if (response.data.data.recentActivity && response.data.data.recentActivity.length > 0) {
+        recentActivities.value = response.data.data.recentActivity
+      }
+      
+      $q.notify({
+        type: 'positive',
+        message: 'Dashboard stats loaded successfully!',
+        icon: 'check_circle',
+        position: 'top-right',
+        timeout: 2000
+      })
+    } else {
+      throw new Error(response.data.message || 'Failed to load dashboard stats')
+    }
   } catch (error) {
     console.error('Failed to fetch dashboard stats:', error)
+    
+    $q.notify({
+      type: 'negative',
+      message: 'Failed to load dashboard stats. Using fallback data.',
+      icon: 'error',
+      position: 'top-right',
+      timeout: 3000
+    })
+    
     // Fallback to mock data
     stats.value = {
       totalUsers: 156,
