@@ -58,6 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('users/{id}/reset-password', [UserController::class, 'resetPassword']);
 
     // Role management routes
+    Route::get('roles/all', [RoleController::class, 'all']); // Add this before apiResource
     Route::apiResource('roles', RoleController::class);
 
     // Permission routes

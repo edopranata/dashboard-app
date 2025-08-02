@@ -179,55 +179,32 @@
           </div>
 
           <q-form @submit="handleResetPassword" class="q-gutter-md">
-            <q-input
-              v-model="resetPasswordForm.password"
-              :label="$t('users.newPassword')"
-              :type="showNewPassword ? 'text' : 'password'"
-              outlined
-              :rules="[
+            <q-input v-model="resetPasswordForm.password" :label="$t('users.newPassword')"
+              :type="showNewPassword ? 'text' : 'password'" outlined :rules="[
                 val => !!val || $t('users.validation.passwordRequired'),
                 val => val.length >= 8 || $t('users.validation.passwordMinLength')
-              ]"
-              :error="hasResetError('password')"
-              :error-message="getResetError('password')"
-            >
+              ]" :error="hasResetError('password')" :error-message="getResetError('password')">
               <template v-slot:prepend>
                 <q-icon name="lock" />
               </template>
               <template v-slot:append>
-                <q-btn 
-                  flat 
-                  round 
-                  dense 
-                  :icon="showNewPassword ? 'visibility_off' : 'visibility'"
-                  @click="showNewPassword = !showNewPassword" 
-                />
+                <q-btn flat round dense :icon="showNewPassword ? 'visibility_off' : 'visibility'"
+                  @click="showNewPassword = !showNewPassword" />
               </template>
             </q-input>
 
-            <q-input
-              v-model="resetPasswordForm.password_confirmation"
-              :label="$t('users.confirmNewPassword')"
-              :type="showConfirmPassword ? 'text' : 'password'"
-              outlined
-              :rules="[
+            <q-input v-model="resetPasswordForm.password_confirmation" :label="$t('users.confirmNewPassword')"
+              :type="showConfirmPassword ? 'text' : 'password'" outlined :rules="[
                 val => !!val || $t('users.validation.confirmPasswordRequired'),
                 val => val === resetPasswordForm.password || $t('users.validation.passwordsMismatch')
-              ]"
-              :error="hasResetError('password_confirmation')"
-              :error-message="getResetError('password_confirmation')"
-            >
+              ]" :error="hasResetError('password_confirmation')"
+              :error-message="getResetError('password_confirmation')">
               <template v-slot:prepend>
                 <q-icon name="lock" />
               </template>
               <template v-slot:append>
-                <q-btn 
-                  flat 
-                  round 
-                  dense 
-                  :icon="showConfirmPassword ? 'visibility_off' : 'visibility'"
-                  @click="showConfirmPassword = !showConfirmPassword" 
-                />
+                <q-btn flat round dense :icon="showConfirmPassword ? 'visibility_off' : 'visibility'"
+                  @click="showConfirmPassword = !showConfirmPassword" />
               </template>
             </q-input>
           </q-form>
@@ -235,13 +212,8 @@
 
         <q-card-actions align="right">
           <q-btn flat :label="$t('common.cancel')" @click="closeResetDialog" />
-          <q-btn 
-            color="blue" 
-            :label="$t('users.resetPassword')" 
-            @click="handleResetPassword"
-            :loading="resetLoading"
-            :disable="!isResetFormValid"
-          />
+          <q-btn color="blue" :label="$t('users.resetPassword')" @click="handleResetPassword" :loading="resetLoading"
+            :disable="!isResetFormValid" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -441,7 +413,7 @@ const closeResetDialog = () => {
 
 const handleResetPassword = async () => {
   if (!isResetFormValid.value) return
-  
+
   resetLoading.value = true
   resetErrors.value = {}
 

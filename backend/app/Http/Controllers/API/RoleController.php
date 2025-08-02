@@ -197,4 +197,25 @@ class RoleController extends Controller
             'data' => $permissions
         ]);
     }
+
+    /**
+     * Get all roles for form select options
+     */
+    public function all(Request $request)
+    {
+        // Check permission
+        if (!$request->user()->can('view_roles')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $roles = Role::select('id', 'name')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $roles
+        ]);
+    }
 }

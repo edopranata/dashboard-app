@@ -106,8 +106,8 @@
                 :type="showPasswordConfirm ? 'text' : 'password'" outlined :rules="[
                   val => !!val || $t('users.validation.confirmPasswordRequired'),
                   val => val === form.password || $t('users.validation.passwordsMismatch')
-                ]" :error="hasError('password_confirmation')"
-                :error-message="getError('password_confirmation')" class="form-input">
+                ]" :error="hasError('password_confirmation')" :error-message="getError('password_confirmation')"
+                class="form-input">
                 <template v-slot:prepend>
                   <q-icon name="lock" />
                 </template>
@@ -162,6 +162,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { userService } from 'src/services/userService'
+import { roleService } from 'src/services/roleService'
 
 const $q = useQuasar()
 const route = useRoute()
@@ -186,11 +187,27 @@ const form = reactive({
   roles: []
 })
 
-const roleOptions = ref([
-  { label: 'Super Admin', value: 'Super Admin' },
-  { label: 'Owner', value: 'Owner' },
-  { label: 'User', value: 'User' }
-])
+const roleOptions = ref([])
+
+// Methods
+const fetchRoles = async () => {
+  try {
+    const response = await roleService.getAllRoles()
+    if (response.success) {
+      roleOptions.value = response.data.map(role => ({
+        label: role.name,
+        value: role.name
+      }))
+    }
+  } catch (err) {
+    console.error('Failed to fetch roles:', err)
+    $q.notify({
+      type: 'negative',
+      message: t('roles.messages.failedToLoadRoles') || 'Failed to load roles',
+      position: 'top'
+    })
+  }
+}
 
 // Computed
 const isEdit = computed(() => !!route.params.id)
@@ -353,7 +370,11 @@ watch(
 )
 
 // Lifecycle
-onMounted(() => {
+onMounted(async () => {
+  // Fetch roles first
+  await fetchRoles()
+
+  // Then fetch user data if editing
   if (isEdit.value) {
     fetchUser()
   }

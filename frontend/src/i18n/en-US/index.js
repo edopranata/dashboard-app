@@ -263,7 +263,13 @@ export default {
     },
     messages: {
       roleCreated: 'Role created successfully',
+      roleUpdated: 'Role updated successfully',
+      roleDeleted: 'Role deleted successfully',
       failedToCreateRole: 'Failed to create role',
+      failedToUpdateRole: 'Failed to update role',
+      failedToDeleteRole: 'Failed to delete role',
+      failedToLoadRoles: 'Failed to load roles',
+      failedToLoadRole: 'Failed to load role data',
     },
     permissionCategories: {
       userManagement: 'User Management',
