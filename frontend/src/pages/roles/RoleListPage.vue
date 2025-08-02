@@ -97,13 +97,13 @@
             <div class="permissions-chips">
               <q-chip
                 v-for="permission in getKeyPermissions(role.permissions)"
-                :key="permission"
+                :key="permission.id || permission"
                 size="sm"
                 dense
-                :color="getPermissionColor(permission)"
+                :color="getPermissionColor(permission.name || permission)"
                 text-color="white"
               >
-                {{ formatPermissionName(permission) }}
+                {{ formatPermissionName(permission.name || permission) }}
               </q-chip>
               <q-chip
                 v-if="role.permissions && role.permissions.length > 3"
@@ -298,7 +298,8 @@ const fetchRoles = async () => {
   try {
     const response = await api.get('/roles')
     if (response.data.success) {
-      roles.value = response.data.data
+      // Handle paginated response structure
+      roles.value = response.data.data.data || response.data.data
     }
   } catch (err) {
     console.error('Failed to fetch roles:', err)
@@ -316,6 +317,7 @@ const fetchPermissions = async () => {
   try {
     const response = await api.get('/permissions')
     if (response.data.success) {
+      // Permissions is not paginated, direct access to data
       permissions.value = response.data.data
     }
   } catch (err) {
@@ -510,11 +512,13 @@ const getGroupedRolePermissions = (permissions) => {
   
   const groups = {}
   permissions.forEach(permission => {
-    const category = permission.split('_')[1] || 'general'
+    // Handle permission as object with name property
+    const permissionName = permission.name || permission
+    const category = permissionName.split('_')[1] || 'general'
     if (!groups[category]) {
       groups[category] = []
     }
-    groups[category].push(permission)
+    groups[category].push(permissionName)
   })
   return groups
 }
