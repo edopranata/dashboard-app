@@ -8,24 +8,23 @@
                 </div>
 
                 <!-- Title -->
-                <h3 class="development-title">Under Development</h3>
+                <h3 class="development-title">{{ $t('common.underDevelopment') }}</h3>
 
                 <!-- Description -->
                 <p class="development-description">
-                    This feature is currently being developed and will be available soon.
-                    Thank you for your patience!
+                    {{ $t('common.underDevelopmentDescription') }}
                 </p>
 
                 <!-- Action Button -->
-                <q-btn color="primary" label="Back to Dashboard" icon="arrow_back" :to="{ name: 'dashboard' }" no-caps
-                    rounded class="back-btn" />
+                <q-btn color="primary" :label="$t('common.backToDashboard')" icon="arrow_back"
+                    :to="{ name: 'dashboard' }" no-caps rounded class="back-btn" />
 
                 <!-- Progress indicator -->
                 <div class="progress-section">
-                    <p class="progress-text">Development Progress</p>
+                    <p class="progress-text">{{ $t('common.developmentProgress') }}</p>
                     <q-linear-progress :value="0.3" color="orange-6" track-color="orange-2" size="8px" rounded
                         class="progress-bar" />
-                    <p class="progress-percentage">30% Complete</p>
+                    <p class="progress-percentage">{{ $t('common.progressComplete', { percent: 30 }) }}</p>
                 </div>
             </div>
         </div>

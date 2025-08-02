@@ -3,15 +3,15 @@
         <q-form @submit="handleResetPassword" class="reset-form">
             <!-- Header -->
             <div class="form-header">
-                <h5>Reset Password</h5>
-                <p>Enter your new password below.</p>
+                <h5>{{ $t('auth.resetPassword') }}</h5>
+                <p>{{ $t('auth.enterNewPassword') }}</p>
             </div>
 
             <!-- New Password field -->
             <div class="form-group">
-                <q-input v-model="form.password" :type="showPassword ? 'text' : 'password'" label="New Password"
-                    outlined dense :loading="loading" :error="!!errors.password" :error-message="errors.password"
-                    @update:model-value="clearError('password')" class="form-input">
+                <q-input v-model="form.password" :type="showPassword ? 'text' : 'password'"
+                    :label="$t('auth.newPassword')" outlined dense :loading="loading" :error="!!errors.password"
+                    :error-message="errors.password" @update:model-value="clearError('password')" class="form-input">
                     <template v-slot:prepend>
                         <q-icon name="lock" color="grey-6" />
                     </template>
@@ -25,7 +25,7 @@
             <!-- Confirm Password field -->
             <div class="form-group">
                 <q-input v-model="form.password_confirmation" :type="showConfirmPassword ? 'text' : 'password'"
-                    label="Confirm New Password" outlined dense :loading="loading"
+                    :label="$t('auth.confirmNewPassword')" outlined dense :loading="loading"
                     :error="!!errors.password_confirmation" :error-message="errors.password_confirmation"
                     @update:model-value="clearError('password_confirmation')" class="form-input">
                     <template v-slot:prepend>
@@ -39,11 +39,11 @@
             </div>
 
             <!-- Submit button -->
-            <q-btn type="submit" color="primary" label="Reset Password" :loading="loading"
+            <q-btn type="submit" color="primary" :label="$t('auth.resetPassword')" :loading="loading"
                 :disable="!isFormValid || loading" class="submit-btn" no-caps rounded>
                 <template v-slot:loading>
                     <q-spinner-hourglass class="on-left" />
-                    Resetting...
+                    {{ $t('auth.resetting') }}
                 </template>
             </q-btn>
 
@@ -51,7 +51,7 @@
             <div class="back-to-login">
                 <router-link to="/auth/login" class="back-link">
                     <q-icon name="arrow_back" size="16px" />
-                    Back to Sign In
+                    {{ $t('auth.backToSignIn') }}
                 </router-link>
             </div>
         </q-form>
@@ -62,9 +62,11 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Notify } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
 const form = ref({
     password: '',
@@ -95,15 +97,15 @@ const validateForm = () => {
     const newErrors = {}
 
     if (!form.value.password) {
-        newErrors.password = 'Password is required'
+        newErrors.password = t('auth.validation.passwordRequired')
     } else if (form.value.password.length < 8) {
-        newErrors.password = 'Password must be at least 8 characters'
+        newErrors.password = t('auth.validation.passwordMinLength')
     }
 
     if (!form.value.password_confirmation) {
-        newErrors.password_confirmation = 'Please confirm your password'
+        newErrors.password_confirmation = t('auth.validation.confirmPasswordRequired')
     } else if (form.value.password !== form.value.password_confirmation) {
-        newErrors.password_confirmation = 'Passwords do not match'
+        newErrors.password_confirmation = t('auth.validation.passwordsMismatch')
     }
 
     errors.value = newErrors
@@ -126,7 +128,7 @@ const handleResetPassword = async () => {
 
         Notify.create({
             type: 'positive',
-            message: 'Password reset successfully!',
+            message: t('common.messages.passwordResetSuccess'),
             position: 'top'
         })
 
@@ -137,7 +139,7 @@ const handleResetPassword = async () => {
         console.error('Reset password error:', error)
         Notify.create({
             type: 'negative',
-            message: 'Failed to reset password. Please try again.',
+            message: t('common.messages.passwordResetError'),
             position: 'top'
         })
     } finally {

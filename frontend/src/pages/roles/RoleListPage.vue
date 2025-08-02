@@ -4,78 +4,48 @@
     <div class="page-header">
       <div class="header-content">
         <div>
-          <h4>Role Management</h4>
-          <p>Manage roles and their permissions in the system</p>
+          <h4>{{ $t('roles.roleManagement') }}</h4>
+          <p>{{ $t('roles.roleManagementDescription') }}</p>
         </div>
-        <q-btn
-          color="primary"
-          icon="add"
-          label="Add Role"
-          @click="createRole"
-          :disable="!canCreateRoles"
-        />
+        <q-btn color="primary" icon="add" :label="$t('roles.addRole')" @click="createRole" :disable="!canCreateRoles" />
       </div>
     </div>
 
     <!-- Roles Grid -->
     <div class="roles-grid">
-      <q-card
-        v-for="role in roles"
-        :key="role.id"
-        flat
-        bordered
-        class="role-card"
-        :class="{ 'system-role': isSystemRole(role.name) }"
-      >
+      <q-card v-for="role in roles" :key="role.id" flat bordered class="role-card"
+        :class="{ 'system-role': isSystemRole(role.name) }">
         <q-card-section>
           <div class="role-header">
             <div class="role-info">
-              <q-icon
-                :name="getRoleIcon(role.name)"
-                :color="getRoleColor(role.name)"
-                size="md"
-                class="q-mr-sm"
-              />
+              <q-icon :name="getRoleIcon(role.name)" :color="getRoleColor(role.name)" size="md" class="q-mr-sm" />
               <div>
                 <div class="role-name">{{ role.name }}</div>
                 <div class="role-description">{{ getRoleDescription(role.name) }}</div>
               </div>
             </div>
-            <q-btn-dropdown
-              flat
-              dense
-              icon="more_vert"
-              :disable="isSystemRole(role.name) && !authStore.isSuperAdmin"
-            >
+            <q-btn-dropdown flat dense icon="more_vert" :disable="isSystemRole(role.name) && !authStore.isSuperAdmin">
               <q-list>
                 <q-item clickable v-close-popup @click="viewRole(role)">
                   <q-item-section avatar>
                     <q-icon name="visibility" />
                   </q-item-section>
-                  <q-item-section>View Details</q-item-section>
+                  <q-item-section>{{ $t('roles.viewDetails') }}</q-item-section>
                 </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="editRole(role)"
-                  v-if="canEditRoles && (!isSystemRole(role.name) || authStore.isSuperAdmin)"
-                >
+                <q-item clickable v-close-popup @click="editRole(role)"
+                  v-if="canEditRoles && (!isSystemRole(role.name) || authStore.isSuperAdmin)">
                   <q-item-section avatar>
                     <q-icon name="edit" />
                   </q-item-section>
-                  <q-item-section>Edit Role</q-item-section>
+                  <q-item-section>{{ $t('roles.editRole') }}</q-item-section>
                 </q-item>
                 <q-separator v-if="canDeleteRoles && !isSystemRole(role.name)" />
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="confirmDelete(role)"
-                  v-if="canDeleteRoles && !isSystemRole(role.name)"
-                >
+                <q-item clickable v-close-popup @click="confirmDelete(role)"
+                  v-if="canDeleteRoles && !isSystemRole(role.name)">
                   <q-item-section avatar>
                     <q-icon name="delete" color="red" />
                   </q-item-section>
-                  <q-item-section>Delete Role</q-item-section>
+                  <q-item-section>{{ $t('roles.deleteRole') }}</q-item-section>
                 </q-item>
               </q-list>
             </q-btn-dropdown>
@@ -95,23 +65,12 @@
           <div class="permissions-preview">
             <div class="permissions-label">Key Permissions:</div>
             <div class="permissions-chips">
-              <q-chip
-                v-for="permission in getKeyPermissions(role.permissions)"
-                :key="permission.id || permission"
-                size="sm"
-                dense
-                :color="getPermissionColor(permission.name || permission)"
-                text-color="white"
-              >
+              <q-chip v-for="permission in getKeyPermissions(role.permissions)" :key="permission.id || permission"
+                size="sm" dense :color="getPermissionColor(permission.name || permission)" text-color="white">
                 {{ formatPermissionName(permission.name || permission) }}
               </q-chip>
-              <q-chip
-                v-if="role.permissions && role.permissions.length > 3"
-                size="sm"
-                dense
-                color="grey"
-                text-color="white"
-              >
+              <q-chip v-if="role.permissions && role.permissions.length > 3" size="sm" dense color="grey"
+                text-color="white">
                 +{{ (role.permissions?.length || 0) - 3 }} more
               </q-chip>
             </div>
@@ -131,13 +90,9 @@
 
         <q-card-section>
           <q-form @submit="saveRole" class="q-gutter-md">
-            <q-input
-              v-model="roleForm.name"
-              label="Role Name"
-              outlined
+            <q-input v-model="roleForm.name" label="Role Name" outlined
               :rules="[val => !!val || 'Role name is required']"
-              :disable="selectedRole?.id && isSystemRole(selectedRole?.name)"
-            />
+              :disable="selectedRole?.id && isSystemRole(selectedRole?.name)" />
 
             <div class="permissions-section">
               <div class="section-title">Permissions</div>
@@ -146,31 +101,21 @@
                 <p class="q-mt-sm text-grey-6">Loading permissions...</p>
               </div>
               <div v-else class="permissions-grid">
-                <div
-                  v-for="(categoryData, categoryKey) in groupedPermissions"
-                  :key="categoryKey"
-                  class="permission-category"
-                >
+                <div v-for="(categoryData, categoryKey) in groupedPermissions" :key="categoryKey"
+                  class="permission-category">
                   <div class="category-header">
-                    <q-checkbox
-                      :model-value="isCategorySelected(categoryData.permissions)"
+                    <q-checkbox :model-value="isCategorySelected(categoryData.permissions)"
                       @update:model-value="toggleCategory(categoryData.permissions, $event)"
-                      :indeterminate="isCategoryIndeterminate(categoryData.permissions)"
-                    />
+                      :indeterminate="isCategoryIndeterminate(categoryData.permissions)" />
                     <div class="category-info">
                       <span class="category-name">{{ categoryData.label }}</span>
                       <span class="category-description">{{ categoryData.description }}</span>
                     </div>
                   </div>
                   <div class="category-permissions">
-                    <q-checkbox
-                      v-for="permission in categoryData.permissions"
-                      :key="permission.name"
-                      v-model="roleForm.permissions"
-                      :val="permission.name"
-                      :label="formatPermissionName(permission.name)"
-                      class="permission-item"
-                    />
+                    <q-checkbox v-for="permission in categoryData.permissions" :key="permission.name"
+                      v-model="roleForm.permissions" :val="permission.name"
+                      :label="formatPermissionName(permission.name)" class="permission-item" />
                   </div>
                 </div>
               </div>
@@ -180,12 +125,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="Cancel" v-close-popup />
-          <q-btn
-            color="primary"
-            label="Save"
-            @click="saveRole"
-            :loading="saving"
-          />
+          <q-btn color="primary" label="Save" @click="saveRole" :loading="saving" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -202,11 +142,7 @@
         <q-card-section v-if="selectedRole">
           <div class="role-details-content">
             <div class="role-header-detail">
-              <q-icon
-                :name="getRoleIcon(selectedRole.name)"
-                :color="getRoleColor(selectedRole.name)"
-                size="lg"
-              />
+              <q-icon :name="getRoleIcon(selectedRole.name)" :color="getRoleColor(selectedRole.name)" size="lg" />
               <div class="role-info-detail">
                 <div class="role-name-detail">{{ selectedRole.name }}</div>
                 <div class="role-description-detail">{{ getRoleDescription(selectedRole.name) }}</div>
@@ -227,21 +163,12 @@
             <div class="permissions-detail">
               <div class="section-title">All Permissions</div>
               <div class="permissions-list">
-                <div
-                  v-for="(categoryData, categoryKey) in getFilteredGroupedPermissions(selectedRole.permissions)"
-                  :key="categoryKey"
-                  class="permission-group"
-                  v-show="categoryData.permissions.length > 0"
-                >
+                <div v-for="(categoryData, categoryKey) in getFilteredGroupedPermissions(selectedRole.permissions)"
+                  :key="categoryKey" class="permission-group" v-show="categoryData.permissions.length > 0">
                   <div class="group-title">{{ categoryData.label }}</div>
                   <div class="group-permissions">
-                    <q-chip
-                      v-for="permission in categoryData.permissions"
-                      :key="permission.name"
-                      :color="getPermissionColor(permission.name)"
-                      text-color="white"
-                      size="sm"
-                    >
+                    <q-chip v-for="permission in categoryData.permissions" :key="permission.name"
+                      :color="getPermissionColor(permission.name)" text-color="white" size="sm">
                       {{ formatPermissionName(permission.name) }}
                     </q-chip>
                   </div>
@@ -263,10 +190,12 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { api } from 'src/boot/axios'
 import { useAuthStore } from 'src/stores/auth'
 
 const $q = useQuasar()
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 // State
@@ -302,7 +231,7 @@ const fetchRoles = async () => {
     console.error('Failed to fetch roles:', err)
     $q.notify({
       type: 'negative',
-      message: 'Failed to fetch roles',
+      message: t('roles.messages.failedToCreateRole'),
       position: 'top'
     })
   } finally {
@@ -355,7 +284,7 @@ const saveRole = async () => {
       await api.put(`/roles/${selectedRole.value.id}`, roleData)
       $q.notify({
         type: 'positive',
-        message: 'Role updated successfully',
+        message: t('roles.roleUpdated'),
         position: 'top'
       })
     } else {
@@ -363,7 +292,7 @@ const saveRole = async () => {
       await api.post('/roles', roleData)
       $q.notify({
         type: 'positive',
-        message: 'Role created successfully',
+        message: t('roles.roleCreated'),
         position: 'top'
       })
     }
@@ -372,7 +301,7 @@ const saveRole = async () => {
     fetchRoles()
   } catch (err) {
     console.error('Failed to save role:', err)
-    const message = err.response?.data?.message || 'Failed to save role'
+    const message = err.response?.data?.message || t('roles.messages.failedToCreateRole')
     $q.notify({
       type: 'negative',
       message,
@@ -385,8 +314,8 @@ const saveRole = async () => {
 
 const confirmDelete = (role) => {
   $q.dialog({
-    title: 'Confirm Delete',
-    message: `Are you sure you want to delete role "${role.name}"?`,
+    title: t('roles.deleteConfirm'),
+    message: t('users.deleteWarning', { name: role.name }),
     cancel: true,
     persistent: true
   }).onOk(async () => {
@@ -394,13 +323,13 @@ const confirmDelete = (role) => {
       await api.delete(`/roles/${role.id}`)
       $q.notify({
         type: 'positive',
-        message: 'Role deleted successfully',
+        message: t('roles.roleDeleted'),
         position: 'top'
       })
       fetchRoles()
     } catch (err) {
       console.error('Failed to delete role:', err)
-      const message = err.response?.data?.message || 'Failed to delete role'
+      const message = err.response?.data?.message || t('roles.messages.failedToCreateRole')
       $q.notify({
         type: 'negative',
         message,
@@ -485,7 +414,7 @@ const getPermissionColor = (permission) => {
     'delete_': 'red',
     'manage_': 'purple'
   }
-  
+
   for (const prefix in colors) {
     if (permission.startsWith(prefix)) {
       return colors[prefix]
@@ -503,16 +432,16 @@ const formatPermissionName = (permission) => {
 
 const getFilteredGroupedPermissions = (rolePermissions) => {
   if (!rolePermissions || !groupedPermissions.value) return {}
-  
+
   const result = {}
   const rolePermissionNames = rolePermissions.map(p => p.name || p)
-  
+
   Object.keys(groupedPermissions.value).forEach(categoryKey => {
     const categoryData = groupedPermissions.value[categoryKey]
-    const filteredPermissions = categoryData.permissions.filter(p => 
+    const filteredPermissions = categoryData.permissions.filter(p =>
       rolePermissionNames.includes(p.name)
     )
-    
+
     if (filteredPermissions.length > 0) {
       result[categoryKey] = {
         label: categoryData.label,
@@ -520,7 +449,7 @@ const getFilteredGroupedPermissions = (rolePermissions) => {
       }
     }
   })
-  
+
   return result
 }
 
@@ -533,22 +462,24 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .role-list-page {
   padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .page-header {
   margin-bottom: 2rem;
-  
+
   .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     h4 {
       margin: 0 0 0.5rem;
       font-weight: 600;
       color: #2d3748;
     }
-    
+
     p {
       margin: 0;
       color: #718096;
@@ -564,11 +495,11 @@ onMounted(async () => {
 
 .role-card {
   transition: all 0.2s ease;
-  
+
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-  
+
   &.system-role {
     border-left: 4px solid #f56565;
   }
@@ -579,18 +510,18 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
-  
+
   .role-info {
     display: flex;
     align-items: center;
-    
+
     .role-name {
       font-weight: 600;
       font-size: 1.1rem;
       color: #2d3748;
       margin-bottom: 0.25rem;
     }
-    
+
     .role-description {
       font-size: 0.875rem;
       color: #718096;
@@ -602,7 +533,7 @@ onMounted(async () => {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
-  
+
   .stat-item {
     display: flex;
     align-items: center;
@@ -619,7 +550,7 @@ onMounted(async () => {
     color: #4a5568;
     margin-bottom: 0.5rem;
   }
-  
+
   .permissions-chips {
     display: flex;
     flex-wrap: wrap;
@@ -645,7 +576,7 @@ onMounted(async () => {
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 1rem;
-  
+
   .category-header {
     display: flex;
     align-items: center;
@@ -653,17 +584,17 @@ onMounted(async () => {
     margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #e2e8f0;
-    
+
     .category-info {
       display: flex;
       flex-direction: column;
-      
+
       .category-name {
         font-weight: 500;
         color: #2d3748;
         font-size: 0.9rem;
       }
-      
+
       .category-description {
         font-size: 0.75rem;
         color: #718096;
@@ -671,12 +602,12 @@ onMounted(async () => {
       }
     }
   }
-  
+
   .category-permissions {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    
+
     .permission-item {
       font-size: 0.875rem;
     }
@@ -689,7 +620,7 @@ onMounted(async () => {
     align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    
+
     .role-info-detail {
       .role-name-detail {
         font-size: 1.25rem;
@@ -697,19 +628,19 @@ onMounted(async () => {
         color: #2d3748;
         margin-bottom: 0.25rem;
       }
-      
+
       .role-description-detail {
         color: #718096;
       }
     }
   }
-  
+
   .role-stats-detail {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-    
+
     .stat-item {
       display: flex;
       align-items: center;
@@ -717,24 +648,24 @@ onMounted(async () => {
       color: #718096;
     }
   }
-  
+
   .permissions-detail {
     .section-title {
       font-weight: 600;
       margin-bottom: 1rem;
       color: #2d3748;
     }
-    
+
     .permissions-list {
       .permission-group {
         margin-bottom: 1rem;
-        
+
         .group-title {
           font-weight: 500;
           color: #4a5568;
           margin-bottom: 0.5rem;
         }
-        
+
         .group-permissions {
           display: flex;
           flex-wrap: wrap;
@@ -747,90 +678,161 @@ onMounted(async () => {
 
 // Dark mode styles
 .body--dark {
+  .role-list-page {
+    background: #121212;
+  }
+
   .page-header {
     h4 {
-      color: #f7fafc;
+      color: #ffffff !important;
+      font-weight: 600;
     }
-    
+
     p {
-      color: #a0aec0;
+      color: #e0e0e0 !important;
     }
   }
-  
+
+  .q-card {
+    background: #1e1e1e !important;
+    border-color: #333333 !important;
+  }
+
   .role-header {
     .role-info {
       .role-name {
-        color: #f7fafc;
+        color: #ffffff !important;
+        font-weight: 600;
       }
-      
+
       .role-description {
-        color: #a0aec0;
+        color: #bbbbbb !important;
       }
     }
   }
-  
+
   .role-stats {
     .stat-item {
-      color: #a0aec0;
+      color: #e0e0e0 !important;
     }
   }
-  
+
   .permissions-preview {
     .permissions-label {
-      color: #cbd5e0;
+      color: #ffffff !important;
+      font-weight: 500;
     }
   }
-  
+
   .permissions-section {
     .section-title {
-      color: #f7fafc;
+      color: #ffffff !important;
+      font-weight: 600;
     }
   }
-  
+
   .permission-category {
-    background-color: #2d3748;
-    border-color: #4a5568;
-    
+    background-color: #2a2a2a !important;
+    border-color: #444444 !important;
+
     .category-header {
-      border-color: #4a5568;
-      
+      border-color: #444444 !important;
+
       .category-name {
-        color: #f7fafc;
+        color: #ffffff !important;
+        font-weight: 600;
       }
     }
   }
-  
+
   .role-details-content {
     .role-header-detail {
       .role-info-detail {
         .role-name-detail {
-          color: #f7fafc;
+          color: #ffffff !important;
+          font-weight: 600;
         }
-        
+
         .role-description-detail {
-          color: #a0aec0;
+          color: #bbbbbb !important;
         }
       }
     }
-    
+
     .role-stats-detail {
       .stat-item {
-        color: #a0aec0;
+        color: #e0e0e0 !important;
       }
     }
-    
+
     .permissions-detail {
       .section-title {
-        color: #f7fafc;
+        color: #ffffff !important;
+        font-weight: 600;
       }
-      
+
       .permissions-list {
         .permission-group {
           .group-title {
-            color: #cbd5e0;
+            color: #ffffff !important;
+            font-weight: 500;
           }
         }
       }
+    }
+  }
+
+  // Fix input labels and text
+  .q-field--outlined .q-field__control:before {
+    border-color: #555555 !important;
+  }
+
+  .q-field--outlined.q-field--focused .q-field__control:before {
+    border-color: #90caf9 !important;
+  }
+
+  .q-field__label {
+    color: #e0e0e0 !important;
+  }
+
+  .q-field--focused .q-field__label {
+    color: #90caf9 !important;
+  }
+
+  // Fix select dropdown text
+  .q-select .q-field__native {
+    color: #ffffff !important;
+  }
+
+  // Fix input text
+  .q-input .q-field__native {
+    color: #ffffff !important;
+  }
+
+  // Fix icons
+  .q-field__prepend .q-icon,
+  .q-field__append .q-icon {
+    color: #90caf9 !important;
+  }
+
+  // Fix placeholder text
+  .q-field__input::placeholder {
+    color: #888888 !important;
+  }
+
+  // Fix table text
+  .q-table {
+    background: #1e1e1e !important;
+
+    th {
+      color: #ffffff !important;
+      background: #2a2a2a !important;
+      font-weight: 600;
+    }
+
+    td {
+      color: #e0e0e0 !important;
+      border-color: #333333 !important;
     }
   }
 }
@@ -840,11 +842,11 @@ onMounted(async () => {
   .roles-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .permissions-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .page-header {
     .header-content {
       flex-direction: column;

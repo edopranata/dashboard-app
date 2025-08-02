@@ -4,8 +4,8 @@
     <div class="page-header">
       <div class="header-content">
         <div class="header-info">
-          <h4 class="page-title">Profile Settings</h4>
-          <p class="page-subtitle">Manage your account information and preferences</p>
+          <h4 class="page-title">{{ $t('profile.title') }}</h4>
+          <p class="page-subtitle">{{ $t('profile.subtitle') }}</p>
         </div>
       </div>
     </div>
@@ -17,7 +17,7 @@
           <q-card-section class="card-header">
             <div class="card-title">
               <q-icon name="person" class="q-mr-sm" />
-              Profile Information
+              {{ $t('profile.profileInformation') }}
             </div>
           </q-card-section>
 
@@ -25,35 +25,36 @@
             <q-form @submit="updateProfile" class="q-gutter-md">
               <div class="row q-gutter-md">
                 <div class="col-12 col-sm-6">
-                  <q-input v-model="profileForm.name" label="Full Name" outlined
-                    :rules="[val => !!val || 'Name is required']" />
+                  <q-input v-model="profileForm.name" :label="$t('profile.fullName')" outlined
+                    :rules="[val => !!val || $t('profile.nameRequired')]" />
                 </div>
 
                 <div class="col-12 col-sm-6">
-                  <q-input v-model="profileForm.email" label="Email Address" type="email" outlined :rules="[
-                    val => !!val || 'Email is required',
-                    val => /.+@.+\..+/.test(val) || 'Please enter a valid email'
+                  <q-input v-model="profileForm.email" :label="$t('profile.emailAddress')" type="email" outlined :rules="[
+                    val => !!val || $t('profile.emailRequired'),
+                    val => /.+@.+\..+/.test(val) || $t('profile.validEmailRequired')
                   ]" />
                 </div>
               </div>
 
               <div class="row q-gutter-md">
                 <div class="col-12 col-sm-6">
-                  <q-input v-model="profileForm.phone" label="Phone Number" outlined mask="(###) ### - ####"
-                    unmasked-value />
+                  <q-input v-model="profileForm.phone" :label="$t('profile.phoneNumber')" outlined
+                    mask="(###) ### - ####" unmasked-value />
                 </div>
 
                 <div class="col-12 col-sm-6">
-                  <q-select v-model="profileForm.timezone" :options="timezoneOptions" label="Timezone" outlined
-                    emit-value map-options />
+                  <q-select v-model="profileForm.timezone" :options="timezoneOptions" :label="$t('profile.timezone')"
+                    outlined emit-value map-options />
                 </div>
               </div>
 
-              <q-input v-model="profileForm.bio" label="Bio" type="textarea" outlined rows="3" counter
+              <q-input v-model="profileForm.bio" :label="$t('profile.bio')" type="textarea" outlined rows="3" counter
                 maxlength="500" />
 
               <div class="form-actions">
-                <q-btn type="submit" color="primary" label="Update Profile" :loading="updatingProfile" icon="save" />
+                <q-btn type="submit" color="primary" :label="$t('profile.updateProfile')" :loading="updatingProfile"
+                  icon="save" />
               </div>
             </q-form>
           </q-card-section>
@@ -86,20 +87,20 @@
           <q-card-section>
             <div class="user-stats">
               <div class="stat-item">
-                <div class="stat-label">Member Since</div>
+                <div class="stat-label">{{ $t('profile.memberSince') }}</div>
                 <div class="stat-value">{{ formatDate(authStore.user?.created_at) }}</div>
               </div>
 
               <div class="stat-item">
-                <div class="stat-label">Last Login</div>
+                <div class="stat-label">{{ $t('profile.lastLogin') }}</div>
                 <div class="stat-value">{{ formatDate(authStore.user?.last_login_at) }}</div>
               </div>
 
               <div class="stat-item">
-                <div class="stat-label">Account Status</div>
+                <div class="stat-label">{{ $t('profile.accountStatus') }}</div>
                 <div class="stat-value">
                   <q-badge :color="authStore.user?.email_verified_at ? 'positive' : 'warning'"
-                    :label="authStore.user?.email_verified_at ? 'Verified' : 'Pending'" />
+                    :label="authStore.user?.email_verified_at ? $t('profile.verified') : $t('profile.pending')" />
                 </div>
               </div>
             </div>
@@ -115,7 +116,7 @@
           <q-card-section class="card-header">
             <div class="card-title">
               <q-icon name="security" class="q-mr-sm" />
-              Security Settings
+              {{ $t('profile.securitySettings') }}
             </div>
           </q-card-section>
 
@@ -123,28 +124,30 @@
             <q-form @submit="updatePassword" class="q-gutter-md">
               <div class="row q-gutter-md">
                 <div class="col-12 col-md-4">
-                  <q-input v-model="passwordForm.current_password" label="Current Password" type="password" outlined
-                    :rules="[val => !!val || 'Current password is required']" />
+                  <q-input v-model="passwordForm.current_password" :label="$t('profile.currentPassword')"
+                    type="password" outlined :rules="[val => !!val || $t('profile.currentPasswordRequired')]" />
                 </div>
 
                 <div class="col-12 col-md-4">
-                  <q-input v-model="passwordForm.password" label="New Password" type="password" outlined :rules="[
-                    val => !!val || 'New password is required',
-                    val => val.length >= 8 || 'Password must be at least 8 characters'
-                  ]" />
+                  <q-input v-model="passwordForm.password" :label="$t('profile.newPassword')" type="password" outlined
+                    :rules="[
+                      val => !!val || $t('profile.newPasswordRequired'),
+                      val => val.length >= 8 || $t('profile.passwordMinLength')
+                    ]" />
                 </div>
 
                 <div class="col-12 col-md-4">
-                  <q-input v-model="passwordForm.password_confirmation" label="Confirm New Password" type="password"
-                    outlined :rules="[
-                      val => !!val || 'Password confirmation is required',
-                      val => val === passwordForm.password || 'Passwords do not match'
+                  <q-input v-model="passwordForm.password_confirmation" :label="$t('profile.confirmNewPassword')"
+                    type="password" outlined :rules="[
+                      val => !!val || $t('profile.passwordConfirmationRequired'),
+                      val => val === passwordForm.password || $t('profile.passwordsDoNotMatch')
                     ]" />
                 </div>
               </div>
 
               <div class="form-actions">
-                <q-btn type="submit" color="warning" label="Update Password" :loading="updatingPassword" icon="lock" />
+                <q-btn type="submit" color="warning" :label="$t('profile.updatePassword')" :loading="updatingPassword"
+                  icon="lock" />
               </div>
             </q-form>
           </q-card-section>
@@ -159,7 +162,7 @@
           <q-card-section class="card-header">
             <div class="card-title">
               <q-icon name="tune" class="q-mr-sm" />
-              Preferences
+              {{ $t('profile.preferences') }}
             </div>
           </q-card-section>
 
@@ -167,16 +170,16 @@
             <div class="preferences-grid">
               <div class="preference-item">
                 <div class="preference-info">
-                  <div class="preference-label">Dark Mode</div>
-                  <div class="preference-desc">Switch between light and dark themes</div>
+                  <div class="preference-label">{{ $t('profile.darkMode') }}</div>
+                  <div class="preference-desc">{{ $t('profile.darkModeDesc') }}</div>
                 </div>
                 <q-toggle v-model="preferences.darkMode" @update:model-value="toggleDarkMode" color="primary" />
               </div>
 
               <div class="preference-item">
                 <div class="preference-info">
-                  <div class="preference-label">Email Notifications</div>
-                  <div class="preference-desc">Receive notifications via email</div>
+                  <div class="preference-label">{{ $t('profile.emailNotifications') }}</div>
+                  <div class="preference-desc">{{ $t('profile.emailNotificationsDesc') }}</div>
                 </div>
                 <q-toggle v-model="preferences.emailNotifications" @update:model-value="updatePreferences"
                   color="primary" />
@@ -184,8 +187,8 @@
 
               <div class="preference-item">
                 <div class="preference-info">
-                  <div class="preference-label">Browser Notifications</div>
-                  <div class="preference-desc">Show notifications in your browser</div>
+                  <div class="preference-label">{{ $t('profile.browserNotifications') }}</div>
+                  <div class="preference-desc">{{ $t('profile.browserNotificationsDesc') }}</div>
                 </div>
                 <q-toggle v-model="preferences.browserNotifications" @update:model-value="updatePreferences"
                   color="primary" />
@@ -193,8 +196,8 @@
 
               <div class="preference-item">
                 <div class="preference-info">
-                  <div class="preference-label">Weekly Reports</div>
-                  <div class="preference-desc">Receive weekly activity reports</div>
+                  <div class="preference-label">{{ $t('profile.weeklyReports') }}</div>
+                  <div class="preference-desc">{{ $t('profile.weeklyReportsDesc') }}</div>
                 </div>
                 <q-toggle v-model="preferences.weeklyReports" @update:model-value="updatePreferences" color="primary" />
               </div>
@@ -209,10 +212,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from 'src/stores/auth'
 
 // Composables
 const $q = useQuasar()
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 // Reactive data
@@ -310,14 +315,14 @@ const updateProfile = async () => {
 
     $q.notify({
       type: 'positive',
-      message: 'Profile updated successfully',
+      message: t('profile.profileUpdated'),
       position: 'top'
     })
   } catch (error) {
     console.error('Failed to update profile:', error)
     $q.notify({
       type: 'negative',
-      message: 'Failed to update profile',
+      message: t('profile.updateFailed'),
       position: 'top'
     })
   } finally {
@@ -340,14 +345,14 @@ const updatePassword = async () => {
 
     $q.notify({
       type: 'positive',
-      message: 'Password updated successfully',
+      message: t('profile.passwordUpdated'),
       position: 'top'
     })
   } catch (error) {
     console.error('Failed to update password:', error)
     $q.notify({
       type: 'negative',
-      message: 'Failed to update password',
+      message: t('profile.updateFailed'),
       position: 'top'
     })
   } finally {

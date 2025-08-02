@@ -4,15 +4,10 @@
     <div class="page-header">
       <div class="header-content">
         <div>
-          <h4>{{ isEdit ? 'Edit User' : 'Create User' }}</h4>
-          <p>{{ isEdit ? 'Update user information and roles' : 'Add a new user to the system' }}</p>
+          <h4>{{ isEdit ? $t('users.editUser') : $t('users.createUser') }}</h4>
+          <p>{{ isEdit ? $t('users.updateUserDescription') : $t('users.addUserDescription') }}</p>
         </div>
-        <q-btn
-          flat
-          icon="arrow_back"
-          label="Back to Users"
-          :to="{ name: 'users.index' }"
-        />
+        <q-btn flat icon="arrow_back" :label="$t('users.backToUsers')" :to="{ name: 'users.index' }" />
       </div>
     </div>
 
@@ -26,38 +21,23 @@
               <div class="form-section">
                 <div class="section-title">
                   <q-icon name="person" />
-                  Personal Information
+                  {{ $t('users.personalInformation') }}
                 </div>
-                
+
                 <div class="form-fields">
-                  <q-input
-                    v-model="form.name"
-                    label="Full Name *"
-                    outlined
-                    :rules="[
-                      val => !!val || 'Name is required',
-                      val => val.length >= 2 || 'Name must be at least 2 characters'
-                    ]"
-                    :error="hasError('name')"
-                    :error-message="getError('name')"
-                  >
+                  <q-input v-model="form.name" :label="$t('users.fullNameRequired')" outlined :rules="[
+                    val => !!val || $t('users.validation.nameRequired'),
+                    val => val.length >= 2 || $t('users.validation.nameMinLength')
+                  ]" :error="hasError('name')" :error-message="getError('name')">
                     <template v-slot:prepend>
                       <q-icon name="account_circle" />
                     </template>
                   </q-input>
 
-                  <q-input
-                    v-model="form.email"
-                    label="Email Address *"
-                    type="email"
-                    outlined
-                    :rules="[
-                      val => !!val || 'Email is required',
-                      val => /.+@.+\..+/.test(val) || 'Please enter a valid email'
-                    ]"
-                    :error="hasError('email')"
-                    :error-message="getError('email')"
-                  >
+                  <q-input v-model="form.email" :label="$t('users.emailAddressRequired')" type="email" outlined :rules="[
+                    val => !!val || $t('users.validation.emailRequired'),
+                    val => /.+@.+\..+/.test(val) || $t('users.validation.validEmailRequired')
+                  ]" :error="hasError('email')" :error-message="getError('email')">
                     <template v-slot:prepend>
                       <q-icon name="email" />
                     </template>
@@ -69,61 +49,37 @@
               <div class="form-section">
                 <div class="section-title">
                   <q-icon name="security" />
-                  Security Settings
+                  {{ $t('users.securitySettings') }}
                 </div>
-                
+
                 <div class="form-fields">
-                  <q-input
-                    v-model="form.password"
-                    :label="isEdit ? 'New Password (Leave blank to keep current)' : 'Password *'"
-                    :type="showPassword ? 'text' : 'password'"
-                    outlined
-                    :rules="isEdit ? [] : [
-                      val => !!val || 'Password is required',
-                      val => val.length >= 8 || 'Password must be at least 8 characters'
-                    ]"
-                    :error="hasError('password')"
-                    :error-message="getError('password')"
-                  >
+                  <q-input v-model="form.password"
+                    :label="isEdit ? $t('users.newPasswordOptional') : $t('users.passwordRequired')"
+                    :type="showPassword ? 'text' : 'password'" outlined :rules="isEdit ? [] : [
+                      val => !!val || $t('users.validation.passwordRequired'),
+                      val => val.length >= 8 || $t('users.validation.passwordMinLength')
+                    ]" :error="hasError('password')" :error-message="getError('password')">
                     <template v-slot:prepend>
                       <q-icon name="lock" />
                     </template>
                     <template v-slot:append>
-                      <q-btn
-                        flat
-                        round
-                        dense
-                        :icon="showPassword ? 'visibility_off' : 'visibility'"
-                        @click="showPassword = !showPassword"
-                      />
+                      <q-btn flat round dense :icon="showPassword ? 'visibility_off' : 'visibility'"
+                        @click="showPassword = !showPassword" />
                     </template>
                   </q-input>
 
-                  <q-input
-                    v-model="form.password_confirmation"
-                    label="Confirm Password"
-                    :type="showPasswordConfirm ? 'text' : 'password'"
-                    outlined
-                    :rules="form.password ? [
-                      val => !!val || 'Password confirmation is required',
-                      val => val === form.password || 'Passwords do not match'
-                    ] : []"
-                    :disable="!form.password"
-                    :error="hasError('password_confirmation')"
-                    :error-message="getError('password_confirmation')"
-                  >
+                  <q-input v-model="form.password_confirmation" :label="$t('users.confirmPassword')"
+                    :type="showPasswordConfirm ? 'text' : 'password'" outlined :rules="form.password ? [
+                      val => !!val || $t('users.validation.confirmPasswordRequired'),
+                      val => val === form.password || $t('users.validation.passwordsMismatch')
+                    ] : []" :disable="!form.password" :error="hasError('password_confirmation')"
+                    :error-message="getError('password_confirmation')">
                     <template v-slot:prepend>
                       <q-icon name="lock" />
                     </template>
                     <template v-slot:append>
-                      <q-btn
-                        flat
-                        round
-                        dense
-                        :icon="showPasswordConfirm ? 'visibility_off' : 'visibility'"
-                        @click="showPasswordConfirm = !showPasswordConfirm"
-                        :disable="!form.password"
-                      />
+                      <q-btn flat round dense :icon="showPasswordConfirm ? 'visibility_off' : 'visibility'"
+                        @click="showPasswordConfirm = !showPasswordConfirm" :disable="!form.password" />
                     </template>
                   </q-input>
                 </div>
@@ -133,23 +89,14 @@
               <div class="form-section full-width">
                 <div class="section-title">
                   <q-icon name="admin_panel_settings" />
-                  Roles & Permissions
+                  {{ $t('users.rolesAndPermissions') }}
                 </div>
-                
+
                 <div class="roles-section">
-                  <q-select
-                    v-model="form.roles"
-                    :options="roleOptions"
-                    label="Assign Roles *"
-                    outlined
-                    multiple
-                    emit-value
-                    map-options
-                    use-chips
-                    :rules="[val => val && val.length > 0 || 'At least one role must be assigned']"
-                    :error="hasError('roles')"
-                    :error-message="getError('roles')"
-                  >
+                  <q-select v-model="form.roles" :options="roleOptions" :label="$t('users.assignRolesRequired')"
+                    outlined multiple emit-value map-options use-chips
+                    :rules="[val => val && val.length > 0 || $t('users.validation.roleRequired')]"
+                    :error="hasError('roles')" :error-message="getError('roles')">
                     <template v-slot:prepend>
                       <q-icon name="group" />
                     </template>
@@ -157,17 +104,10 @@
 
                   <!-- Selected Roles Preview -->
                   <div v-if="form.roles.length > 0" class="selected-roles">
-                    <div class="preview-title">Selected Roles:</div>
+                    <div class="preview-title">{{ $t('users.selectedRoles') }}:</div>
                     <div class="roles-chips">
-                      <q-chip
-                        v-for="role in form.roles"
-                        :key="role"
-                        :color="getRoleColor(role)"
-                        text-color="white"
-                        :icon="getRoleIcon(role)"
-                        removable
-                        @remove="removeRole(role)"
-                      >
+                      <q-chip v-for="role in form.roles" :key="role" :color="getRoleColor(role)" text-color="white"
+                        :icon="getRoleIcon(role)" removable @remove="removeRole(role)">
                         {{ role }}
                       </q-chip>
                     </div>
@@ -178,19 +118,9 @@
 
             <!-- Form Actions -->
             <div class="form-actions">
-              <q-btn
-                flat
-                label="Cancel"
-                :to="{ name: 'users.index' }"
-                class="q-mr-sm"
-              />
-              <q-btn
-                type="submit"
-                color="primary"
-                :label="isEdit ? 'Update User' : 'Create User'"
-                :loading="loading"
-                :disable="!isFormValid"
-              />
+              <q-btn flat :label="$t('common.cancel')" :to="{ name: 'users.index' }" class="q-mr-sm" />
+              <q-btn type="submit" color="primary" :label="isEdit ? $t('users.updateUser') : $t('users.createUser')"
+                :loading="loading" :disable="!isFormValid" />
             </div>
           </q-form>
         </q-card-section>
@@ -203,11 +133,13 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { api } from 'src/boot/axios'
 
 const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
 // State
 const loading = ref(false)
@@ -234,22 +166,22 @@ const roleOptions = ref([
 const isEdit = computed(() => !!route.params.id)
 
 const isFormValid = computed(() => {
-  return form.name && 
-         form.email && 
-         form.roles.length > 0 && 
-         (!form.password || form.password === form.password_confirmation)
+  return form.name &&
+    form.email &&
+    form.roles.length > 0 &&
+    (!form.password || form.password === form.password_confirmation)
 })
 
 // Methods
 const fetchUser = async () => {
   if (!isEdit.value) return
-  
+
   loading.value = true
   try {
     const response = await api.get(`/users/${route.params.id}`)
     if (response.data.success) {
       currentUser.value = response.data.data
-      
+
       // Populate form
       form.name = currentUser.value.name
       form.email = currentUser.value.email
@@ -261,7 +193,7 @@ const fetchUser = async () => {
     console.error('Failed to fetch user:', err)
     $q.notify({
       type: 'negative',
-      message: 'Failed to load user data',
+      message: t('users.messages.failedToLoadUser'),
       position: 'top'
     })
     router.push({ name: 'users.index' })
@@ -273,7 +205,7 @@ const fetchUser = async () => {
 const handleSubmit = async () => {
   loading.value = true
   errors.value = {}
-  
+
   try {
     const userData = {
       name: form.name,
@@ -291,7 +223,7 @@ const handleSubmit = async () => {
       await api.put(`/users/${route.params.id}`, userData)
       $q.notify({
         type: 'positive',
-        message: 'User updated successfully',
+        message: t('users.messages.userUpdated'),
         position: 'top'
       })
     } else {
@@ -299,7 +231,7 @@ const handleSubmit = async () => {
       await api.post('/users', userData)
       $q.notify({
         type: 'positive',
-        message: 'User created successfully',
+        message: t('users.messages.userCreated'),
         position: 'top'
       })
     }
@@ -307,12 +239,12 @@ const handleSubmit = async () => {
     router.push({ name: 'users.index' })
   } catch (err) {
     console.error('Failed to save user:', err)
-    
+
     if (err.response?.data?.errors) {
       errors.value = err.response.data.errors
     }
-    
-    const message = err.response?.data?.message || 'Failed to save user'
+
+    const message = err.response?.data?.message || t('users.messages.failedToSaveUser')
     $q.notify({
       type: 'negative',
       message,
@@ -396,18 +328,18 @@ onMounted(() => {
 
 .page-header {
   margin-bottom: 2rem;
-  
+
   .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     h4 {
       margin: 0 0 0.5rem;
       font-weight: 600;
       color: #2d3748;
     }
-    
+
     p {
       margin: 0;
       color: #718096;
@@ -425,12 +357,12 @@ onMounted(() => {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     margin-bottom: 2rem;
-    
+
     .form-section {
       &.full-width {
         grid-column: 1 / -1;
       }
-      
+
       .section-title {
         display: flex;
         align-items: center;
@@ -441,7 +373,7 @@ onMounted(() => {
         padding-bottom: 0.5rem;
         border-bottom: 2px solid #e2e8f0;
       }
-      
+
       .form-fields {
         display: flex;
         flex-direction: column;
@@ -454,13 +386,13 @@ onMounted(() => {
 .roles-section {
   .selected-roles {
     margin-top: 1rem;
-    
+
     .preview-title {
       font-weight: 500;
       color: #4a5568;
       margin-bottom: 0.5rem;
     }
-    
+
     .roles-chips {
       display: flex;
       flex-wrap: wrap;
@@ -479,27 +411,85 @@ onMounted(() => {
 
 // Dark mode styles
 .body--dark {
+  .user-form-page {
+    background: #121212;
+  }
+
   .page-header {
     h4 {
-      color: #f7fafc;
+      color: #ffffff !important;
+      font-weight: 600;
     }
-    
+
     p {
-      color: #a0aec0;
+      color: #e0e0e0 !important;
     }
   }
-  
+
+  .q-card {
+    background: #1e1e1e !important;
+    border-color: #333333 !important;
+  }
+
   .form-section {
     .section-title {
-      color: #f7fafc;
-      border-color: #4a5568;
+      color: #ffffff !important;
+      border-color: #444444 !important;
+      font-weight: 600;
+
+      .q-icon {
+        color: #90caf9 !important;
+      }
     }
   }
-  
+
   .selected-roles {
     .preview-title {
-      color: #cbd5e0;
+      color: #ffffff !important;
+      font-weight: 500;
     }
+  }
+
+  .form-actions {
+    border-color: #333333 !important;
+  }
+
+  // Fix input labels and text
+  .q-field--outlined .q-field__control:before {
+    border-color: #555555 !important;
+  }
+
+  .q-field--outlined.q-field--focused .q-field__control:before {
+    border-color: #90caf9 !important;
+  }
+
+  .q-field__label {
+    color: #e0e0e0 !important;
+  }
+
+  .q-field--focused .q-field__label {
+    color: #90caf9 !important;
+  }
+
+  // Fix select dropdown text
+  .q-select .q-field__native {
+    color: #ffffff !important;
+  }
+
+  // Fix input text
+  .q-input .q-field__native {
+    color: #ffffff !important;
+  }
+
+  // Fix icons in inputs
+  .q-field__prepend .q-icon,
+  .q-field__append .q-icon {
+    color: #90caf9 !important;
+  }
+
+  // Fix placeholder text
+  .q-field__input::placeholder {
+    color: #888888 !important;
   }
 }
 
@@ -511,7 +501,7 @@ onMounted(() => {
       gap: 1.5rem;
     }
   }
-  
+
   .page-header {
     .header-content {
       flex-direction: column;

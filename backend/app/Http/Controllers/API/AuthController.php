@@ -25,7 +25,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation error',
+                'message' => __('messages.validation.validation_failed'),
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -35,7 +35,7 @@ class AuthController extends Controller
         if (!Auth::attempt($credentials)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid credentials'
+                'message' => __('messages.auth.failed')
             ], 401);
         }
 
@@ -44,7 +44,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Login successful',
+            'message' => __('messages.auth.login_success'),
             'data' => [
                 'user' => [
                     'id' => $user->id,
@@ -67,7 +67,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Logged out successfully'
+            'message' => __('messages.auth.logout_success')
         ]);
     }
 

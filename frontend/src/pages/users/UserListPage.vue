@@ -4,16 +4,11 @@
     <div class="page-header">
       <div class="header-content">
         <div>
-          <h4>User Management</h4>
-          <p>Manage users and their roles in the system</p>
+          <h4>{{ $t('users.userManagement') }}</h4>
+          <p>{{ $t('users.userManagementDescription') }}</p>
         </div>
-        <q-btn
-          color="primary"
-          icon="add"
-          label="Add User"
-          @click="showCreateDialog = true"
-          :disable="!canCreateUsers"
-        />
+        <q-btn color="primary" icon="add" :label="$t('users.addUser')" @click="showCreateDialog = true"
+          :disable="!canCreateUsers" />
       </div>
     </div>
 
@@ -22,39 +17,19 @@
       <q-card-section>
         <div class="row q-gutter-md">
           <div class="col-md-4 col-sm-6 col-xs-12">
-            <q-input
-              v-model="filters.search"
-              placeholder="Search users..."
-              outlined
-              dense
-              clearable
-              @input="debouncedSearch"
-            >
+            <q-input v-model="filters.search" :placeholder="$t('users.searchUsers')" outlined dense clearable
+              @input="debouncedSearch">
               <template v-slot:prepend>
                 <q-icon name="search" />
               </template>
             </q-input>
           </div>
           <div class="col-md-3 col-sm-6 col-xs-12">
-            <q-select
-              v-model="filters.role"
-              :options="roleOptions"
-              label="Filter by Role"
-              outlined
-              dense
-              emit-value
-              map-options
-              clearable
-              @update:model-value="fetchUsers"
-            />
+            <q-select v-model="filters.role" :options="roleOptions" :label="$t('users.filterByRole')" outlined dense
+              emit-value map-options clearable @update:model-value="fetchUsers" />
           </div>
           <div class="col-auto">
-            <q-btn
-              flat
-              icon="refresh"
-              @click="fetchUsers"
-              :loading="loading"
-            />
+            <q-btn flat icon="refresh" @click="fetchUsers" :loading="loading" />
           </div>
         </div>
       </q-card-section>
@@ -62,16 +37,8 @@
 
     <!-- Users Table -->
     <q-card flat bordered>
-      <q-table
-        :rows="users"
-        :columns="columns"
-        :loading="loading"
-        :pagination="pagination"
-        @request="onRequest"
-        row-key="id"
-        binary-state-sort
-        :rows-per-page-options="[10, 25, 50]"
-      >
+      <q-table :rows="users" :columns="columns" :loading="loading" :pagination="pagination" @request="onRequest"
+        row-key="id" binary-state-sort :rows-per-page-options="[10, 25, 50]">
         <!-- Name column with avatar -->
         <template v-slot:body-cell-name="props">
           <q-td :props="props">
@@ -91,14 +58,8 @@
         <template v-slot:body-cell-roles="props">
           <q-td :props="props">
             <div class="roles-list">
-              <q-chip
-                v-for="role in props.row.roles"
-                :key="role.id"
-                :color="getRoleColor(role.name)"
-                text-color="white"
-                size="sm"
-                dense
-              >
+              <q-chip v-for="role in props.row.roles" :key="role.id" :color="getRoleColor(role.name)" text-color="white"
+                size="sm" dense>
                 {{ role.name }}
               </q-chip>
             </div>
@@ -108,12 +69,7 @@
         <!-- Status column -->
         <template v-slot:body-cell-status="props">
           <q-td :props="props">
-            <q-chip
-              :color="props.row.email_verified_at ? 'green' : 'orange'"
-              text-color="white"
-              size="sm"
-              dense
-            >
+            <q-chip :color="props.row.email_verified_at ? 'green' : 'orange'" text-color="white" size="sm" dense>
               {{ props.row.email_verified_at ? 'Active' : 'Pending' }}
             </q-chip>
           </q-td>
@@ -123,34 +79,15 @@
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
             <q-btn-group flat>
-              <q-btn
-                flat
-                dense
-                icon="visibility"
-                color="primary"
-                @click="viewUser(props.row)"
-              >
+              <q-btn flat dense icon="visibility" color="primary" @click="viewUser(props.row)">
                 <q-tooltip>View Details</q-tooltip>
               </q-btn>
-              <q-btn
-                flat
-                dense
-                icon="edit"
-                color="orange"
-                @click="editUser(props.row)"
-                v-if="canEditUsers"
-              >
-                <q-tooltip>Edit User</q-tooltip>
+              <q-btn flat dense icon="edit" color="orange" @click="editUser(props.row)" v-if="canEditUsers">
+                <q-tooltip>{{ $t('users.editUser') }}</q-tooltip>
               </q-btn>
-              <q-btn
-                flat
-                dense
-                icon="delete"
-                color="red"
-                @click="confirmDelete(props.row)"
-                v-if="canDeleteUsers && !props.row.roles.some(role => role.name === 'Super Admin')"
-              >
-                <q-tooltip>Delete User</q-tooltip>
+              <q-btn flat dense icon="delete" color="red" @click="confirmDelete(props.row)"
+                v-if="canDeleteUsers && !props.row.roles.some(role => role.name === 'Super Admin')">
+                <q-tooltip>{{ $t('users.deleteUser') }}</q-tooltip>
               </q-btn>
             </q-btn-group>
           </q-td>
@@ -169,48 +106,20 @@
 
         <q-card-section>
           <q-form @submit="saveUser" class="q-gutter-md">
-            <q-input
-              v-model="userForm.name"
-              label="Full Name"
-              outlined
-              :rules="[val => !!val || 'Name is required']"
-            />
-            <q-input
-              v-model="userForm.email"
-              label="Email"
-              type="email"
-              outlined
-              :rules="[val => !!val || 'Email is required']"
-            />
-            <q-input
-              v-model="userForm.password"
-              label="Password"
-              type="password"
-              outlined
+            <q-input v-model="userForm.name" label="Full Name" outlined :rules="[val => !!val || 'Name is required']" />
+            <q-input v-model="userForm.email" label="Email" type="email" outlined
+              :rules="[val => !!val || 'Email is required']" />
+            <q-input v-model="userForm.password" label="Password" type="password" outlined
               :rules="selectedUser?.id ? [] : [val => !!val || 'Password is required']"
-              :hint="selectedUser?.id ? 'Leave blank to keep current password' : ''"
-            />
-            <q-select
-              v-model="userForm.roles"
-              :options="roleOptions"
-              label="Roles"
-              outlined
-              multiple
-              emit-value
-              map-options
-              :rules="[val => val && val.length > 0 || 'At least one role is required']"
-            />
+              :hint="selectedUser?.id ? 'Leave blank to keep current password' : ''" />
+            <q-select v-model="userForm.roles" :options="roleOptions" label="Roles" outlined multiple emit-value
+              map-options :rules="[val => val && val.length > 0 || 'At least one role is required']" />
           </q-form>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat label="Cancel" v-close-popup />
-          <q-btn
-            color="primary"
-            label="Save"
-            @click="saveUser"
-            :loading="saving"
-          />
+          <q-btn color="primary" label="Save" @click="saveUser" :loading="saving" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -227,7 +136,8 @@
         <q-card-section v-if="selectedUser">
           <div class="user-details-content">
             <q-avatar size="64px" class="q-mb-md">
-              <img :src="`https://ui-avatars.com/api/?name=${selectedUser.name}&background=1976d2&color=fff&size=128`" />
+              <img
+                :src="`https://ui-avatars.com/api/?name=${selectedUser.name}&background=1976d2&color=fff&size=128`" />
             </q-avatar>
             <div class="detail-item">
               <strong>Name:</strong> {{ selectedUser.name }}
@@ -237,24 +147,15 @@
             </div>
             <div class="detail-item">
               <strong>Status:</strong>
-              <q-chip
-                :color="selectedUser.email_verified_at ? 'green' : 'orange'"
-                text-color="white"
-                size="sm"
-              >
+              <q-chip :color="selectedUser.email_verified_at ? 'green' : 'orange'" text-color="white" size="sm">
                 {{ selectedUser.email_verified_at ? 'Active' : 'Pending' }}
               </q-chip>
             </div>
             <div class="detail-item">
               <strong>Roles:</strong>
               <div class="roles-list q-mt-xs">
-                <q-chip
-                  v-for="role in selectedUser.roles"
-                  :key="role.id"
-                  :color="getRoleColor(role.name)"
-                  text-color="white"
-                  size="sm"
-                >
+                <q-chip v-for="role in selectedUser.roles" :key="role.id" :color="getRoleColor(role.name)"
+                  text-color="white" size="sm">
                   {{ role.name }}
                 </q-chip>
               </div>
@@ -275,11 +176,13 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { api } from 'src/boot/axios'
 import { useAuthStore } from 'src/stores/auth'
 import { debounce } from 'quasar'
 
 const $q = useQuasar()
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 // State
@@ -367,7 +270,7 @@ const fetchUsers = async () => {
     }
 
     const response = await api.get('/users', { params })
-    
+
     if (response.data.success) {
       users.value = response.data.data.data
       pagination.value.rowsNumber = response.data.data.total
@@ -377,7 +280,7 @@ const fetchUsers = async () => {
     console.error('Failed to fetch users:', err)
     $q.notify({
       type: 'negative',
-      message: 'Failed to fetch users',
+      message: t('users.failedToLoadUsers'),
       position: 'top'
     })
   } finally {
@@ -430,7 +333,7 @@ const saveUser = async () => {
       await api.put(`/users/${selectedUser.value.id}`, userData)
       $q.notify({
         type: 'positive',
-        message: 'User updated successfully',
+        message: t('users.userUpdated'),
         position: 'top'
       })
     } else {
@@ -438,7 +341,7 @@ const saveUser = async () => {
       await api.post('/users', userData)
       $q.notify({
         type: 'positive',
-        message: 'User created successfully',
+        message: t('users.userCreated'),
         position: 'top'
       })
     }
@@ -447,7 +350,7 @@ const saveUser = async () => {
     resetForm()
     fetchUsers()
   } catch (error) {
-    const message = error.response?.data?.message || 'Failed to save user'
+    const message = error.response?.data?.message || t('users.messages.failedToSaveUser')
     $q.notify({
       type: 'negative',
       message,
@@ -460,8 +363,8 @@ const saveUser = async () => {
 
 const confirmDelete = (user) => {
   $q.dialog({
-    title: 'Confirm Delete',
-    message: `Are you sure you want to delete user "${user.name}"?`,
+    title: t('users.confirmDelete'),
+    message: t('users.deleteWarning', { name: user.name }),
     cancel: true,
     persistent: true
   }).onOk(async () => {
@@ -469,12 +372,12 @@ const confirmDelete = (user) => {
       await api.delete(`/users/${user.id}`)
       $q.notify({
         type: 'positive',
-        message: 'User deleted successfully',
+        message: t('users.userDeleted'),
         position: 'top'
       })
       fetchUsers()
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to delete user'
+      const message = error.response?.data?.message || t('users.messages.failedToSaveUser')
       $q.notify({
         type: 'negative',
         message,
@@ -519,22 +422,24 @@ onMounted(() => {
 <style lang="scss" scoped>
 .user-list-page {
   padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .page-header {
   margin-bottom: 2rem;
-  
+
   .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     h4 {
       margin: 0 0 0.5rem;
       font-weight: 600;
       color: #2d3748;
     }
-    
+
     p {
       margin: 0;
       color: #718096;
@@ -546,13 +451,13 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  
+
   .user-details {
     .user-name {
       font-weight: 500;
       color: #2d3748;
     }
-    
+
     .user-email {
       font-size: 0.875rem;
       color: #718096;
@@ -568,11 +473,11 @@ onMounted(() => {
 
 .user-details-content {
   text-align: center;
-  
+
   .detail-item {
     margin-bottom: 1rem;
     text-align: left;
-    
+
     strong {
       color: #2d3748;
     }
@@ -581,34 +486,103 @@ onMounted(() => {
 
 // Dark mode styles
 .body--dark {
+  .user-list-page {
+    background: #121212;
+  }
+
   .page-header {
     h4 {
-      color: #f7fafc;
+      color: #ffffff !important;
+      font-weight: 600;
     }
-    
+
     p {
-      color: #a0aec0;
+      color: #e0e0e0 !important;
     }
   }
-  
+
+  .q-card {
+    background: #1e1e1e !important;
+    border-color: #333333 !important;
+  }
+
   .user-info {
     .user-details {
       .user-name {
-        color: #f7fafc;
+        color: #ffffff !important;
+        font-weight: 500;
       }
-      
+
       .user-email {
-        color: #a0aec0;
+        color: #bbbbbb !important;
       }
     }
   }
-  
+
   .user-details-content {
     .detail-item {
       strong {
-        color: #f7fafc;
+        color: #ffffff !important;
+      }
+
+      span {
+        color: #e0e0e0 !important;
       }
     }
+  }
+
+  // Fix table headers and text
+  .q-table {
+    background: #1e1e1e !important;
+
+    th {
+      color: #ffffff !important;
+      background: #2a2a2a !important;
+      font-weight: 600;
+    }
+
+    td {
+      color: #e0e0e0 !important;
+      border-color: #333333 !important;
+    }
+  }
+
+  // Fix input labels and text
+  .q-field--outlined .q-field__control:before {
+    border-color: #555555 !important;
+  }
+
+  .q-field--outlined.q-field--focused .q-field__control:before {
+    border-color: #90caf9 !important;
+  }
+
+  .q-field__label {
+    color: #e0e0e0 !important;
+  }
+
+  .q-field--focused .q-field__label {
+    color: #90caf9 !important;
+  }
+
+  // Fix select dropdown text
+  .q-select .q-field__native {
+    color: #ffffff !important;
+  }
+
+  // Fix input text
+  .q-input .q-field__native {
+    color: #ffffff !important;
+  }
+
+  // Fix icons
+  .q-field__prepend .q-icon,
+  .q-field__append .q-icon {
+    color: #90caf9 !important;
+  }
+
+  // Fix placeholder text
+  .q-field__input::placeholder {
+    color: #888888 !important;
   }
 }
 </style>

@@ -8,9 +8,10 @@
           <p class="page-subtitle">{{ $t('dashboard.subtitle') }}</p>
         </div>
         <div class="header-actions">
-          <q-btn color="positive" icon="notifications" :label="$t('dashboard.testNotification')" @click="testNotification" class="q-mr-sm"
-            outline />
-          <q-btn color="primary" icon="add" :label="$t('dashboard.quickAction')" @click="showQuickActionDialog = true" />
+          <q-btn color="positive" icon="notifications" :label="$t('dashboard.testNotification')"
+            @click="testNotification" class="q-mr-sm" outline />
+          <q-btn color="primary" icon="add" :label="$t('dashboard.quickAction')"
+            @click="showQuickActionDialog = true" />
         </div>
       </div>
     </div>
@@ -142,20 +143,22 @@
             <q-card-section class="card-header">
               <div class="card-title">
                 <q-icon name="bolt" class="q-mr-sm" />
-                Quick Actions
+                {{ $t('dashboard.quickActions') }}
               </div>
             </q-card-section>
 
             <q-card-section class="q-pt-none">
               <div class="quick-actions">
                 <q-btn v-if="authStore.hasPermission('create_users')" class="quick-action-btn" color="primary"
-                  icon="person_add" label="Add User" :to="{ name: 'users.create' }" no-caps outline />
+                  icon="person_add" :label="$t('dashboard.addUser')" :to="{ name: 'users.create' }" no-caps outline />
                 <q-btn v-if="authStore.hasPermission('create_roles')" class="quick-action-btn" color="secondary"
-                  icon="add_moderator" label="Add Role" :to="{ name: 'roles.create' }" no-caps outline />
+                  icon="add_moderator" :label="$t('dashboard.addRole')" :to="{ name: 'roles.create' }" no-caps
+                  outline />
                 <q-btn v-if="authStore.hasPermission('view_users')" class="quick-action-btn" color="positive"
-                  icon="manage_accounts" label="Manage Users" :to="{ name: 'users.index' }" no-caps outline />
-                <q-btn class="quick-action-btn" color="info" icon="settings" label="Settings" :to="{ name: 'profile' }"
-                  no-caps outline />
+                  icon="manage_accounts" :label="$t('dashboard.manageUsers')" :to="{ name: 'users.index' }" no-caps
+                  outline />
+                <q-btn class="quick-action-btn" color="info" icon="settings" :label="$t('dashboard.settings')"
+                  :to="{ name: 'profile' }" no-caps outline />
               </div>
             </q-card-section>
           </q-card>
@@ -165,7 +168,7 @@
             <q-card-section class="card-header">
               <div class="card-title">
                 <q-icon name="monitor_heart" class="q-mr-sm" />
-                System Status
+                {{ $t('dashboard.systemStatus') }}
               </div>
             </q-card-section>
 
@@ -174,22 +177,22 @@
                 <div class="status-item">
                   <div class="status-indicator status-indicator--online"></div>
                   <div class="status-details">
-                    <div class="status-label">Database</div>
-                    <div class="status-value">Online</div>
+                    <div class="status-label">{{ $t('dashboard.database') }}</div>
+                    <div class="status-value">{{ $t('dashboard.online') }}</div>
                   </div>
                 </div>
                 <div class="status-item">
                   <div class="status-indicator status-indicator--online"></div>
                   <div class="status-details">
-                    <div class="status-label">API Server</div>
-                    <div class="status-value">Online</div>
+                    <div class="status-label">{{ $t('dashboard.apiServer') }}</div>
+                    <div class="status-value">{{ $t('dashboard.online') }}</div>
                   </div>
                 </div>
                 <div class="status-item">
                   <div class="status-indicator status-indicator--warning"></div>
                   <div class="status-details">
-                    <div class="status-label">Cache</div>
-                    <div class="status-value">Warning</div>
+                    <div class="status-label">{{ $t('dashboard.cache') }}</div>
+                    <div class="status-value">{{ $t('dashboard.warning') }}</div>
                   </div>
                 </div>
               </div>
@@ -203,28 +206,28 @@
     <q-dialog v-model="showQuickActionDialog">
       <q-card style="min-width: 400px">
         <q-card-section class="card-header">
-          <div class="card-title">Quick Actions</div>
+          <div class="card-title">{{ $t('dashboard.quickActions') }}</div>
         </q-card-section>
 
         <q-card-section>
           <div class="quick-actions-grid">
             <q-btn v-if="authStore.hasPermission('create_users')" class="quick-dialog-btn" color="primary"
-              icon="person_add" label="Add New User" :to="{ name: 'users.create' }" no-caps
+              icon="person_add" :label="$t('dashboard.addNewUser')" :to="{ name: 'users.create' }" no-caps
               @click="showQuickActionDialog = false" />
             <q-btn v-if="authStore.hasPermission('create_roles')" class="quick-dialog-btn" color="secondary"
-              icon="add_moderator" label="Create Role" :to="{ name: 'roles.create' }" no-caps
+              icon="add_moderator" :label="$t('dashboard.createRole')" :to="{ name: 'roles.create' }" no-caps
               @click="showQuickActionDialog = false" />
-            <q-btn class="quick-dialog-btn" color="positive" icon="analytics" label="View Analytics"
+            <q-btn class="quick-dialog-btn" color="positive" icon="analytics" :label="$t('dashboard.viewAnalytics')"
               :to="{ name: 'analytics' }" no-caps @click="showQuickActionDialog = false" />
-            <q-btn class="quick-dialog-btn" color="info" icon="settings" label="System Settings"
+            <q-btn class="quick-dialog-btn" color="info" icon="settings" :label="$t('dashboard.systemSettings')"
               :to="{ name: 'settings' }" no-caps @click="showQuickActionDialog = false" />
-            <q-btn class="quick-dialog-btn" color="warning" icon="psychology" label="Test Dialog" no-caps
-              @click="testDialog" />
+            <q-btn class="quick-dialog-btn" color="warning" icon="psychology" :label="$t('dashboard.testDialog')"
+              no-caps @click="testDialog" />
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="grey" v-close-popup />
+          <q-btn flat :label="$t('actions.cancel')" color="grey" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -234,11 +237,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from 'src/stores/auth'
 import { api } from 'src/boot/axios'
 
 // Composables
 const $q = useQuasar()
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 // Reactive data
@@ -382,7 +387,7 @@ const testNotification = () => {
     position: 'top-right',
     timeout: 3000,
     actions: [
-      { label: 'Dismiss', color: 'white', handler: () => { } }
+      { label: t('common.ok'), color: 'white', handler: () => { } }
     ]
   })
 }
@@ -391,29 +396,29 @@ const testDialog = () => {
   showQuickActionDialog.value = false
 
   $q.dialog({
-    title: 'Test Dialog',
-    message: 'This is a test dialog to verify the Dialog plugin is working correctly!',
+    title: t('dashboard.testDialog'),
+    message: t('messages.info'),
     persistent: true,
     ok: {
       push: true,
-      label: 'Awesome!',
+      label: t('common.ok'),
       color: 'primary'
     },
     cancel: {
       push: true,
       color: 'negative',
-      label: 'Close'
+      label: t('common.cancel')
     }
   }).onOk(() => {
     $q.notify({
       type: 'positive',
-      message: 'Dialog confirmed!',
+      message: t('messages.success'),
       icon: 'thumb_up'
     })
   }).onCancel(() => {
     $q.notify({
       type: 'info',
-      message: 'Dialog cancelled',
+      message: t('common.cancel'),
       icon: 'info'
     })
   })
@@ -689,39 +694,50 @@ onMounted(() => {
 
 // Dark mode styles
 .body--dark {
+  .dashboard-page {
+    background: #121212;
+  }
+
   .page-header {
     .header-content {
       .welcome-section {
         .page-title {
-          color: #f7fafc;
+          color: #ffffff !important;
+          font-weight: 600;
         }
 
         .page-subtitle {
-          color: #a0aec0;
+          color: #e0e0e0 !important;
         }
       }
     }
   }
 
+  .q-card {
+    background: #1e1e1e !important;
+    border-color: #333333 !important;
+  }
+
   .content-card {
     .card-header {
       .card-title {
-        color: #f7fafc;
+        color: #ffffff !important;
+        font-weight: 600;
       }
     }
   }
 
   .activity-list {
     .activity-item {
-      border-bottom-color: #4a5568;
+      border-bottom-color: #333333 !important;
 
       .activity-content {
         .activity-text {
-          color: #f7fafc;
+          color: #ffffff !important;
         }
 
         .activity-time {
-          color: #a0aec0;
+          color: #bbbbbb !important;
         }
       }
     }
@@ -729,17 +745,33 @@ onMounted(() => {
 
   .system-status {
     .status-item {
-      border-bottom-color: #4a5568;
+      border-bottom-color: #333333 !important;
 
       .status-details {
         .status-label {
-          color: #f7fafc;
+          color: #ffffff !important;
+          font-weight: 500;
         }
 
         .status-value {
-          color: #a0aec0;
+          color: #e0e0e0 !important;
         }
       }
+    }
+  }
+
+  // Fix stat cards text
+  .stat-card {
+    .q-card-section {
+      color: #ffffff !important;
+    }
+
+    .text-h6 {
+      color: #ffffff !important;
+    }
+
+    .text-subtitle2 {
+      color: #bbbbbb !important;
     }
   }
 }

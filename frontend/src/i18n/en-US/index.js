@@ -20,18 +20,24 @@ export default {
     import: 'Import',
     view: 'View',
     manage: 'Manage',
-    update: 'Update'
+    update: 'Update',
   },
 
   // Navigation
   nav: {
     dashboard: 'Dashboard',
-    users: 'Users',
-    roles: 'Roles',
+    users: 'User Management',
+    roles: 'Role Management',
     permissions: 'Permissions',
     profile: 'Profile',
     settings: 'Settings',
-    logout: 'Logout'
+    logout: 'Logout',
+    allUsers: 'All Users',
+    addUser: 'Add User',
+    allRoles: 'All Roles',
+    addRole: 'Add Role',
+    analytics: 'Analytics',
+    systemLogs: 'System Logs',
   },
 
   // Authentication
@@ -45,34 +51,94 @@ export default {
     rememberMe: 'Remember Me',
     forgotPassword: 'Forgot Password?',
     welcomeBack: 'Welcome Back!',
+    loginSubtitle: 'Sign in to continue to your account',
     loginSuccess: 'Login successful!',
     logoutSuccess: 'Logout successful!',
     invalidCredentials: 'Invalid email or password',
-    loginRequired: 'Please login first'
+    loginRequired: 'Please login first',
+    pleaseEnterEmailPassword: 'Please enter your email and password',
+    signInToContinue: 'Sign in to continue',
+    resetPassword: 'Reset Password',
+    resetting: 'Resetting...',
+    backToSignIn: 'Back to Sign In',
+    resetPasswordTitle: 'Reset Your Password',
+    resetPasswordSubtitle: 'Enter your new password below',
+    validation: {
+      passwordRequired: 'Password is required',
+      passwordMinLength: 'Password must be at least 8 characters',
+      confirmPasswordRequired: 'Please confirm your password',
+      passwordsMismatch: 'Passwords do not match',
+    },
+    dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: 'Already have an account?',
+    createAccount: 'Create Account',
+    enterEmail: 'Enter your email',
+    enterPassword: 'Enter your password',
+    passwordMustBeAtLeast: 'Password must be at least 6 characters',
+    emailIsRequired: 'Email is required',
+    passwordIsRequired: 'Password is required',
+    validEmailRequired: 'Please enter a valid email address',
+    signingIn: 'Signing In...',
+    demoCredentials: 'Demo Credentials',
+    superAdmin: 'Super Admin',
+    owner: 'Owner',
+    user: 'User',
+  },
+
+  // App
+  app: {
+    title: 'Dashboard Management',
+    dashboard: 'Dashboard',
+    management: 'Management',
+    version: 'Version',
+    language: 'Language',
+    theme: 'Theme',
+    profile: 'Profile',
+    logout: 'Logout',
+    login: 'Login',
+    register: 'Register',
+    home: 'Home',
+    about: 'About',
+    contact: 'Contact',
+    help: 'Help',
+    settings: 'Settings',
+    users: 'User Management',
+    roles: 'Role Management',
+    permissions: 'Permission Management',
+    analytics: 'Analytics',
+    reports: 'Reports',
+    logs: 'System Logs',
   },
 
   // Dashboard
   dashboard: {
-    title: 'Dashboard',
     welcome: 'Welcome back, {name}!',
-    subtitle: 'Here\'s what\'s happening with your dashboard today.',
-    stats: {
-      totalUsers: 'Total Users',
-      totalRoles: 'Total Roles',
-      activeToday: 'Active Today',
-      permissions: 'Permissions'
-    },
-    recentActivity: 'Recent Activity',
-    quickActions: 'Quick Actions',
-    systemStatus: 'System Status',
+    subtitle: "Here's what's happening with your system today",
     testNotification: 'Test Notify',
     quickAction: 'Quick Action',
+    quickActions: 'Quick Actions',
+    recentActivity: 'Recent Activity',
+    systemStatus: 'System Status',
     database: 'Database',
     apiServer: 'API Server',
     cache: 'Cache',
     online: 'Online',
     warning: 'Warning',
-    offline: 'Offline'
+    addUser: 'Add User',
+    addRole: 'Add Role',
+    manageUsers: 'Manage Users',
+    settings: 'Settings',
+    addNewUser: 'Add New User',
+    createRole: 'Create Role',
+    viewAnalytics: 'View Analytics',
+    systemSettings: 'System Settings',
+    testDialog: 'Test Dialog',
+    stats: {
+      totalUsers: 'Total Users',
+      totalRoles: 'Total Roles',
+      activeToday: 'Active Today',
+      permissions: 'Permissions',
+    },
   },
 
   // Users
@@ -85,6 +151,23 @@ export default {
     manageUsers: 'Manage Users',
     userList: 'User List',
     userDetails: 'User Details',
+    userManagement: 'User Management',
+    userManagementDescription: 'Manage users and their roles in the system',
+    updateUser: 'Update User',
+    deleteUser: 'Delete User',
+    backToUsers: 'Back to Users',
+    updateUserDescription: 'Update user information and roles',
+    addUserDescription: 'Add a new user to the system',
+    personalInformation: 'Personal Information',
+    securitySettings: 'Security Settings',
+    rolesAndPermissions: 'Roles & Permissions',
+    fullNameRequired: 'Full Name *',
+    emailAddressRequired: 'Email Address *',
+    newPasswordOptional: 'New Password (Leave blank to keep current)',
+    passwordRequired: 'Password *',
+    confirmPassword: 'Confirm Password',
+    assignRolesRequired: 'Assign Roles *',
+    selectedRoles: 'Selected Roles',
     name: 'Name',
     email: 'Email',
     roles: 'Roles',
@@ -93,13 +176,46 @@ export default {
     updatedAt: 'Updated At',
     active: 'Active',
     inactive: 'Inactive',
+    pending: 'Pending',
     noUsers: 'No users found',
     deleteConfirm: 'Are you sure you want to delete this user?',
+    deleteWarning:
+      'This action cannot be undone. The user "{name}" will be permanently removed from the system.',
     userCreated: 'User created successfully',
     userUpdated: 'User updated successfully',
     userDeleted: 'User deleted successfully',
     selectRoles: 'Select Roles',
-    assignRoles: 'Assign Roles'
+    assignRoles: 'Assign Roles',
+    searchUsers: 'Search users...',
+    filterByRole: 'Filter by Role',
+    filterByStatus: 'Filter by Status',
+    created: 'Created',
+    lastUpdated: 'Last Updated',
+    user: 'User',
+    viewUser: 'View User',
+    viewDetails: 'View Details',
+    editUserTooltip: 'Edit User',
+    deleteUserTooltip: 'Delete User',
+    confirmDelete: 'Confirm Delete',
+    failedToLoadUsers: 'Failed to load users',
+    actions: 'Actions',
+    validation: {
+      nameRequired: 'Name is required',
+      nameMinLength: 'Name must be at least 2 characters',
+      emailRequired: 'Email is required',
+      validEmailRequired: 'Please enter a valid email',
+      passwordRequired: 'Password is required',
+      passwordMinLength: 'Password must be at least 8 characters',
+      confirmPasswordRequired: 'Password confirmation is required',
+      passwordsMismatch: 'Passwords do not match',
+      roleRequired: 'At least one role must be assigned',
+    },
+    messages: {
+      userCreated: 'User created successfully',
+      userUpdated: 'User updated successfully',
+      failedToLoadUser: 'Failed to load user data',
+      failedToSaveUser: 'Failed to save user',
+    },
   },
 
   // Roles
@@ -110,9 +226,19 @@ export default {
     addRole: 'Add Role',
     roleList: 'Role List',
     roleDetails: 'Role Details',
+    roleManagement: 'Role Management',
+    roleManagementDescription: 'Manage roles and their permissions in the system',
+    createRoleDescription: 'Add a new role with specific permissions',
+    viewDetails: 'View Details',
+    deleteRole: 'Delete Role',
+    roleNameRequired: 'Role Name *',
+    roleNameHint: 'Enter a unique role name',
+    permissions: 'Permissions',
+    permissionsDescription:
+      'Select the permissions that this role should have. You can select individual permissions or entire categories.',
+    loadingPermissions: 'Loading permissions...',
     name: 'Role Name',
     description: 'Description',
-    permissions: 'Permissions',
     users: 'Users',
     noRoles: 'No roles found',
     deleteConfirm: 'Are you sure you want to delete this role?',
@@ -121,12 +247,20 @@ export default {
     roleDeleted: 'Role deleted successfully',
     selectPermissions: 'Select Permissions',
     assignPermissions: 'Assign Permissions',
+    validation: {
+      roleNameRequired: 'Role name is required',
+      roleNameMinLength: 'Role name must be at least 3 characters',
+    },
+    messages: {
+      roleCreated: 'Role created successfully',
+      failedToCreateRole: 'Failed to create role',
+    },
     permissionCategories: {
       userManagement: 'User Management',
       roleManagement: 'Role Management',
       systemAccess: 'System Access',
-      administration: 'Administration'
-    }
+      administration: 'Administration',
+    },
   },
 
   // Permissions
@@ -157,7 +291,7 @@ export default {
     view_logs: 'View Logs',
     system_admin: 'System Admin',
     view_permissions: 'View Permissions',
-    manage_permissions: 'Manage Permissions'
+    manage_permissions: 'Manage Permissions',
   },
 
   // Settings
@@ -172,7 +306,7 @@ export default {
     systemMode: 'Follow System',
     notifications: 'Notifications',
     privacy: 'Privacy',
-    security: 'Security'
+    security: 'Security',
   },
 
   // Language Switcher
@@ -181,7 +315,7 @@ export default {
     english: 'English',
     indonesian: 'Bahasa Indonesia',
     changeLanguage: 'Change Language',
-    languageChanged: 'Language changed successfully'
+    languageChanged: 'Language changed successfully',
   },
 
   // Common Messages
@@ -203,7 +337,9 @@ export default {
     validationError: 'Validation error',
     accessDenied: 'Access denied',
     notFound: 'Not found',
-    comingSoon: 'Coming Soon'
+    comingSoon: 'Coming Soon',
+    pageNotFound: 'Oops. Nothing here...',
+    goHome: 'Go Home',
   },
 
   // Validation
@@ -217,7 +353,7 @@ export default {
     numeric: 'Only numbers are allowed',
     alphaNumeric: 'Only letters and numbers are allowed',
     confirmed: 'Confirmation does not match',
-    unique: 'This value is already taken'
+    unique: 'This value is already taken',
   },
 
   // Quick Actions
@@ -227,7 +363,7 @@ export default {
     createRole: 'Create Role',
     viewAnalytics: 'View Analytics',
     systemSettings: 'System Settings',
-    testDialog: 'Test Dialog'
+    testDialog: 'Test Dialog',
   },
 
   // System Status
@@ -235,7 +371,36 @@ export default {
     status: 'Status',
     responseTime: 'Response Time',
     usage: 'Usage',
-    storage: 'Storage'
+    storage: 'Storage',
+  },
+
+  // Common
+  common: {
+    yes: 'Yes',
+    no: 'No',
+    ok: 'OK',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    warning: 'Warning',
+    error: 'Error',
+    success: 'Success',
+    info: 'Information',
+    loading: 'Loading...',
+    noData: 'No data available',
+    selectAll: 'Select All',
+    deselectAll: 'Deselect All',
+    required: 'Required',
+    optional: 'Optional',
+    underDevelopment: 'Under Development',
+    underDevelopmentDescription:
+      'This feature is currently being developed and will be available soon. Thank you for your patience!',
+    backToDashboard: 'Back to Dashboard',
+    developmentProgress: 'Development Progress',
+    progressComplete: '{percent}% Complete',
+    messages: {
+      passwordResetSuccess: 'Password reset successfully!',
+      passwordResetError: 'Failed to reset password. Please try again.',
+    },
   },
 
   // Time/Date
@@ -246,6 +411,49 @@ export default {
     weeksAgo: '{count} weeks ago',
     monthsAgo: '{count} months ago',
     yearsAgo: '{count} years ago',
-    justNow: 'Just now'
-  }
+    justNow: 'Just now',
+  },
+
+  // Profile
+  profile: {
+    title: 'Profile Settings',
+    subtitle: 'Manage your account information and preferences',
+    profileInformation: 'Profile Information',
+    fullName: 'Full Name',
+    emailAddress: 'Email Address',
+    phoneNumber: 'Phone Number',
+    timezone: 'Timezone',
+    bio: 'Bio',
+    updateProfile: 'Update Profile',
+    nameRequired: 'Name is required',
+    emailRequired: 'Email is required',
+    validEmailRequired: 'Please enter a valid email',
+    memberSince: 'Member Since',
+    lastLogin: 'Last Login',
+    accountStatus: 'Account Status',
+    verified: 'Verified',
+    pending: 'Pending',
+    securitySettings: 'Security Settings',
+    currentPassword: 'Current Password',
+    newPassword: 'New Password',
+    confirmNewPassword: 'Confirm New Password',
+    updatePassword: 'Update Password',
+    currentPasswordRequired: 'Current password is required',
+    newPasswordRequired: 'New password is required',
+    passwordMinLength: 'Password must be at least 8 characters',
+    passwordConfirmationRequired: 'Password confirmation is required',
+    passwordsDoNotMatch: 'Passwords do not match',
+    preferences: 'Preferences',
+    darkMode: 'Dark Mode',
+    darkModeDesc: 'Switch between light and dark themes',
+    emailNotifications: 'Email Notifications',
+    emailNotificationsDesc: 'Receive notifications via email',
+    browserNotifications: 'Browser Notifications',
+    browserNotificationsDesc: 'Show notifications in your browser',
+    weeklyReports: 'Weekly Reports',
+    weeklyReportsDesc: 'Receive weekly activity reports',
+    profileUpdated: 'Profile updated successfully',
+    passwordUpdated: 'Password updated successfully',
+    updateFailed: 'Update failed. Please try again.',
+  },
 }
