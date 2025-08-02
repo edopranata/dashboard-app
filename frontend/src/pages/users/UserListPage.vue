@@ -93,13 +93,13 @@
             <div class="roles-list">
               <q-chip
                 v-for="role in props.row.roles"
-                :key="role"
-                :color="getRoleColor(role)"
+                :key="role.id"
+                :color="getRoleColor(role.name)"
                 text-color="white"
                 size="sm"
                 dense
               >
-                {{ role }}
+                {{ role.name }}
               </q-chip>
             </div>
           </q-td>
@@ -148,7 +148,7 @@
                 icon="delete"
                 color="red"
                 @click="confirmDelete(props.row)"
-                v-if="canDeleteUsers && !props.row.roles.includes('Super Admin')"
+                v-if="canDeleteUsers && !props.row.roles.some(role => role.name === 'Super Admin')"
               >
                 <q-tooltip>Delete User</q-tooltip>
               </q-btn>
@@ -250,12 +250,12 @@
               <div class="roles-list q-mt-xs">
                 <q-chip
                   v-for="role in selectedUser.roles"
-                  :key="role"
-                  :color="getRoleColor(role)"
+                  :key="role.id"
+                  :color="getRoleColor(role.name)"
                   text-color="white"
                   size="sm"
                 >
-                  {{ role }}
+                  {{ role.name }}
                 </q-chip>
               </div>
             </div>
@@ -407,7 +407,7 @@ const editUser = (user) => {
   userForm.name = user.name
   userForm.email = user.email
   userForm.password = ''
-  userForm.roles = user.roles
+  userForm.roles = user.roles.map(role => role.name)
   showCreateDialog.value = true
 }
 
