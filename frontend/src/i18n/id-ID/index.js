@@ -456,4 +456,26 @@ export default {
     passwordUpdated: 'Kata sandi berhasil diperbarui',
     updateFailed: 'Pembaruan gagal. Silakan coba lagi.',
   },
+
+  // Avatar
+  avatar: {
+    user_avatar: 'Avatar Pengguna',
+    user_avatar_alt: 'Avatar {name}',
+    drag_drop_or_click: 'Seret & lepas atau klik untuk unggah',
+    supported_formats: 'Didukung: JPG, PNG, WebP',
+    max_file_size: 'Ukuran file maksimal: 2MB',
+    delete_avatar: 'Hapus Avatar',
+    confirm_delete: 'Hapus Avatar?',
+    delete_confirmation_message: 'Apakah Anda yakin ingin menghapus avatar Anda? Tindakan ini tidak dapat dibatalkan.',
+    upload_success: 'Avatar berhasil diunggah',
+    upload_failed: 'Gagal mengunggah avatar',
+    delete_success: 'Avatar berhasil dihapus',
+    delete_failed: 'Gagal menghapus avatar',
+    invalid_file_type: 'Tipe file tidak valid. Silakan unggah gambar JPG, PNG, atau WebP.',
+    file_too_large: 'Ukuran file terlalu besar. Maksimal 2MB.',
+    processing: 'Memproses avatar...',
+    change_avatar: 'Ubah Avatar',
+    current_avatar: 'Avatar Saat Ini',
+    default_avatar: 'Avatar Default',
+  },
 }

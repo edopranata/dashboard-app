@@ -66,11 +66,15 @@
         <q-card class="avatar-card" flat bordered>
           <q-card-section class="text-center">
             <div class="avatar-section">
-              <q-avatar size="120px" color="primary" text-color="white" class="q-mb-md">
-                {{ userInitials }}
-              </q-avatar>
+              <!-- Avatar Upload Component -->
+              <AvatarUpload 
+                :display-size="'120px'"
+                @avatar-updated="handleAvatarUpdate"
+                @avatar-deleted="handleAvatarDelete"
+                @upload-progress="handleUploadProgress"
+              />
 
-              <h6 class="user-name">{{ authStore.userName }}</h6>
+              <h6 class="user-name q-mt-md">{{ authStore.userName }}</h6>
               <p class="user-email">{{ authStore.userEmail }}</p>
 
               <div class="user-roles">
@@ -210,10 +214,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from 'src/stores/auth'
+import AvatarUpload from 'src/components/AvatarUpload.vue'
 
 // Composables
 const $q = useQuasar()
@@ -255,15 +260,7 @@ const timezoneOptions = [
 ]
 
 // Computed
-const userInitials = computed(() => {
-  if (!authStore.userName) return '?'
-  return authStore.userName
-    .split(' ')
-    .map(name => name.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-})
+// (userInitials removed - now using AvatarUpload component)
 
 // Methods
 const initializeForm = () => {
@@ -369,6 +366,34 @@ const toggleDarkMode = (value) => {
 const updatePreferences = () => {
   // Save preferences to localStorage
   localStorage.setItem('userPreferences', JSON.stringify(preferences.value))
+}
+
+// Avatar handlers
+const handleAvatarUpdate = () => {
+  $q.notify({
+    type: 'positive',
+    message: t('avatar.upload_success'),
+    position: 'top'
+  })
+  
+  // Optionally refresh user data in auth store
+  authStore.refreshUser()
+}
+
+const handleAvatarDelete = () => {
+  $q.notify({
+    type: 'positive',
+    message: t('avatar.delete_success'),
+    position: 'top'
+  })
+  
+  // Optionally refresh user data in auth store
+  authStore.refreshUser()
+}
+
+const handleUploadProgress = (progressData) => {
+  // Handle upload progress if needed
+  console.log('Avatar upload progress:', progressData)
 }
 
 // Lifecycle

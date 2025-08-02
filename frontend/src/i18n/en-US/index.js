@@ -456,4 +456,26 @@ export default {
     passwordUpdated: 'Password updated successfully',
     updateFailed: 'Update failed. Please try again.',
   },
+
+  // Avatar
+  avatar: {
+    user_avatar: 'User Avatar',
+    user_avatar_alt: '{name} avatar',
+    drag_drop_or_click: 'Drag & drop or click to upload',
+    supported_formats: 'Supported: JPG, PNG, WebP',
+    max_file_size: 'Maximum file size: 2MB',
+    delete_avatar: 'Delete Avatar',
+    confirm_delete: 'Delete Avatar?',
+    delete_confirmation_message: 'Are you sure you want to delete your avatar? This action cannot be undone.',
+    upload_success: 'Avatar uploaded successfully',
+    upload_failed: 'Failed to upload avatar',
+    delete_success: 'Avatar deleted successfully',
+    delete_failed: 'Failed to delete avatar',
+    invalid_file_type: 'Invalid file type. Please upload JPG, PNG, or WebP image.',
+    file_too_large: 'File size too large. Maximum size is 2MB.',
+    processing: 'Processing avatar...',
+    change_avatar: 'Change Avatar',
+    current_avatar: 'Current Avatar',
+    default_avatar: 'Default Avatar',
+  },
 }
