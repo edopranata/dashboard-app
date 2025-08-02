@@ -44,26 +44,35 @@ class RolePermissionSeeder extends Seeder
             // Profile
             'view_profile',
             'edit_profile',
+            'upload_avatar',
+            'delete_avatar',
 
             // System
             'manage_settings',
             'view_logs',
             'system_admin',
+
+            // Advanced Features (Phase 6+)
+            'view_activity_logs',
+            'manage_activity_logs',
+            'bulk_operations',
+            'export_data',
+            'import_data',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Create roles and assign permissions
 
-        // Super Admin Role (all permissions)
-        $superAdminRole = Role::create(['name' => 'Super Admin']);
-        $superAdminRole->givePermissionTo(Permission::all());
+        // Super Admin Role (ALL permissions - automatically gets any new permissions)
+        $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
+        $superAdminRole->syncPermissions(Permission::all()); // Sync ensures Super Admin ALWAYS has ALL permissions
 
         // Owner Role (high-level management)
-        $ownerRole = Role::create(['name' => 'Owner']);
-        $ownerRole->givePermissionTo([
+        $ownerRole = Role::firstOrCreate(['name' => 'Owner']);
+        $ownerRole->syncPermissions([
             'view_users',
             'create_users',
             'edit_users',
@@ -73,45 +82,57 @@ class RolePermissionSeeder extends Seeder
             'view_analytics',
             'view_profile',
             'edit_profile',
+            'upload_avatar',
+            'delete_avatar',
+            'view_activity_logs',
+            'export_data',
         ]);
 
         // User Role (basic access)
-        $userRole = Role::create(['name' => 'User']);
-        $userRole->givePermissionTo([
+        $userRole = Role::firstOrCreate(['name' => 'User']);
+        $userRole->syncPermissions([
             'view_dashboard',
             'view_profile',
             'edit_profile',
+            'upload_avatar',
+            'delete_avatar',
         ]);
 
         // Create Super Admin user
-        $superAdmin = User::create([
-            'name' => 'Super Administrator',
-            'email' => 'admin@dashboard.com',
-            'password' => bcrypt('SuperAdmin123!'),
-            'email_verified_at' => now(),
-        ]);
+        $superAdmin = User::firstOrCreate(
+            ['email' => 'admin@dashboard.com'],
+            [
+                'name' => 'Super Administrator',
+                'password' => bcrypt('SuperAdmin123!'),
+                'email_verified_at' => now(),
+            ]
+        );
 
-        $superAdmin->assignRole('Super Admin');
+        $superAdmin->syncRoles(['Super Admin']);
 
         // Create sample Owner user
-        $owner = User::create([
-            'name' => 'John Owner',
-            'email' => 'owner@dashboard.com',
-            'password' => bcrypt('Owner123!'),
-            'email_verified_at' => now(),
-        ]);
+        $owner = User::firstOrCreate(
+            ['email' => 'owner@dashboard.com'],
+            [
+                'name' => 'John Owner',
+                'password' => bcrypt('Owner123!'),
+                'email_verified_at' => now(),
+            ]
+        );
 
-        $owner->assignRole('Owner');
+        $owner->syncRoles(['Owner']);
 
         // Create sample regular user
-        $user = User::create([
-            'name' => 'Jane User',
-            'email' => 'user@dashboard.com',
-            'password' => bcrypt('User123!'),
-            'email_verified_at' => now(),
-        ]);
+        $user = User::firstOrCreate(
+            ['email' => 'user@dashboard.com'],
+            [
+                'name' => 'Jane User',
+                'password' => bcrypt('User123!'),
+                'email_verified_at' => now(),
+            ]
+        );
 
-        $user->assignRole('User');
+        $user->syncRoles(['User']);
 
         $this->command->info('Roles, permissions, and default users created successfully!');
         $this->command->info('Super Admin: admin@dashboard.com / SuperAdmin123!');
