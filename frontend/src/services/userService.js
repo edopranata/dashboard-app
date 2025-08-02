@@ -59,5 +59,17 @@ export const userService = {
     } catch (error) {
       throw error.response?.data || error
     }
-  }
+  },
+
+  /**
+   * Reset user password
+   */
+  async resetPassword(id, passwordData) {
+    try {
+      const response = await api.put(`/users/${id}/reset-password`, passwordData)
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error
+    }
+  },
 }

@@ -28,13 +28,13 @@ class UserController extends Controller
         // Generate simple initials-based avatar using SVG
         $initials = $this->getInitials($user->name);
         $backgroundColor = $this->generateColorFromString($user->email);
-        
+
         $svg = '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
             <rect width="200" height="200" fill="' . $backgroundColor . '"/>
-            <text x="100" y="125" font-family="Arial, sans-serif" font-size="80" font-weight="bold" 
+            <text x="100" y="125" font-family="Arial, sans-serif" font-size="80" font-weight="bold"
                   text-anchor="middle" fill="white">' . $initials . '</text>
         </svg>';
-        
+
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
@@ -45,14 +45,14 @@ class UserController extends Controller
     {
         $words = explode(' ', trim($name));
         $initials = '';
-        
+
         foreach ($words as $word) {
             if (!empty($word)) {
                 $initials .= strtoupper(substr($word, 0, 1));
                 if (strlen($initials) >= 2) break;
             }
         }
-        
+
         return $initials ?: 'U';
     }
 
@@ -68,7 +68,7 @@ class UserController extends Controller
             '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe',
             '#43e97b', '#fa709a', '#fee140', '#a8edea', '#d299c2'
         ];
-        
+
         $index = hexdec(substr($hash, 0, 2)) % count($colors);
         return $colors[$index];
     }    /**
@@ -173,7 +173,7 @@ class UserController extends Controller
     /**
      * Display the specified user
      */
-    public function show(Request $request, User $user)
+    public function show(Request $request, $id)
     {
         // Check permission
         if (!$request->user()->can('view_users')) {
@@ -183,21 +183,40 @@ class UserController extends Controller
             ], 403);
         }
 
-        $user->load('roles', 'permissions');
+        $user = User::with('roles', 'permissions')->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
 
         // Add avatar URL
         $user->avatar = $this->generateAvatarUrl($user);
 
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'timezone' => $user->timezone,
+                'bio' => $user->bio,
+                'avatar' => $user->avatar,
+                'roles' => $user->roles,
+                'permissions' => $user->permissions,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ]
         ]);
     }
 
     /**
      * Update the specified user
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
         // Check permission
         if (!$request->user()->can('edit_users')) {
@@ -205,6 +224,15 @@ class UserController extends Controller
                 'success' => false,
                 'message' => 'Unauthorized access'
             ], 403);
+        }
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
         }
 
         // Prevent editing Super Admin by non-Super Admin
@@ -215,7 +243,7 @@ class UserController extends Controller
             ], 403);
         }
 
-        $validator = Validator::make($request->all(), [
+        $validationRules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
@@ -223,7 +251,9 @@ class UserController extends Controller
             'bio' => 'nullable|string|max:500',
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,name'
-        ]);
+        ];
+
+        $validator = Validator::make($request->all(), $validationRules);
 
         if ($validator->fails()) {
             return response()->json([
@@ -233,8 +263,11 @@ class UserController extends Controller
             ], 422);
         }
 
+        // Prepare data for update (password excluded - use reset password endpoint instead)
+        $updateData = $request->only('name', 'email', 'phone', 'timezone', 'bio');
+
         // Update user data (excluding avatar - avatar is managed through Profile page only)
-        $user->update($request->only('name', 'email', 'phone', 'timezone', 'bio'));
+        $user->update($updateData);
         $user->syncRoles($request->roles);
 
         // Load relationships and add avatar URL
@@ -251,7 +284,7 @@ class UserController extends Controller
     /**
      * Remove the specified user
      */
-    public function destroy(Request $request, User $user)
+    public function destroy(Request $request, $id)
     {
         // Check permission
         if (!$request->user()->can('delete_users')) {
@@ -259,6 +292,15 @@ class UserController extends Controller
                 'success' => false,
                 'message' => 'Unauthorized access'
             ], 403);
+        }
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
         }
 
         // Prevent deleting Super Admin
@@ -282,6 +324,51 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User deleted successfully'
+        ]);
+    }
+
+    /**
+     * Reset user password
+     */
+    public function resetPassword(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Prevent Super Admin password reset
+        if ($user->roles->contains('name', 'Super Admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot reset Super Admin password'
+            ], 403);
+        }
+
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password reset successfully'
         ]);
     }
 }

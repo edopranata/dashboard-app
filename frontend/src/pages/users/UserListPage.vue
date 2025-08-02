@@ -8,8 +8,8 @@
           <p class="page-subtitle">{{ $t('users.userManagementDescription') }}</p>
         </div>
         <div class="header-actions">
-          <q-btn color="primary" icon="add" :label="$t('users.addUser')" 
-            :to="{ name: 'users.create' }" :disable="!canCreateUsers" class="action-btn" />
+          <q-btn color="primary" icon="add" :label="$t('users.addUser')" :to="{ name: 'users.create' }"
+            :disable="!canCreateUsers" class="action-btn" />
         </div>
       </div>
     </div>
@@ -88,9 +88,13 @@
               <q-btn flat dense icon="visibility" color="primary" @click="viewUser(props.row)">
                 <q-tooltip>View Details</q-tooltip>
               </q-btn>
-              <q-btn flat dense icon="edit" color="orange" 
-                :to="{ name: 'users.edit', params: { id: props.row.id } }" v-if="canEditUsers">
+              <q-btn flat dense icon="edit" color="orange" :to="{ name: 'users.edit', params: { id: props.row.id } }"
+                v-if="canEditUsers">
                 <q-tooltip>{{ $t('users.editUser') }}</q-tooltip>
+              </q-btn>
+              <q-btn flat dense icon="lock_reset" color="blue" @click="showResetPasswordDialog(props.row)"
+                v-if="canEditUsers && !props.row.roles.some(role => role.name === 'Super Admin')">
+                <q-tooltip>{{ $t('users.resetPassword') }}</q-tooltip>
               </q-btn>
               <q-btn flat dense icon="delete" color="red" @click="confirmDelete(props.row)"
                 v-if="canDeleteUsers && !props.row.roles.some(role => role.name === 'Super Admin')">
@@ -158,6 +162,89 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <!-- Reset Password Dialog -->
+    <q-dialog v-model="showResetDialog" persistent>
+      <q-card style="min-width: 400px">
+        <q-card-section class="row items-center">
+          <q-icon name="lock_reset" color="blue" size="md" class="q-mr-sm" />
+          <div class="text-h6">{{ $t('users.resetPassword') }}</div>
+          <q-space />
+          <q-btn icon="close" flat round dense @click="closeResetDialog" />
+        </q-card-section>
+
+        <q-card-section v-if="selectedUserForReset">
+          <div class="text-body2 q-mb-md">
+            {{ $t('users.resetPasswordDescription', { name: selectedUserForReset.name }) }}
+          </div>
+
+          <q-form @submit="handleResetPassword" class="q-gutter-md">
+            <q-input
+              v-model="resetPasswordForm.password"
+              :label="$t('users.newPassword')"
+              :type="showNewPassword ? 'text' : 'password'"
+              outlined
+              :rules="[
+                val => !!val || $t('users.validation.passwordRequired'),
+                val => val.length >= 8 || $t('users.validation.passwordMinLength')
+              ]"
+              :error="hasResetError('password')"
+              :error-message="getResetError('password')"
+            >
+              <template v-slot:prepend>
+                <q-icon name="lock" />
+              </template>
+              <template v-slot:append>
+                <q-btn 
+                  flat 
+                  round 
+                  dense 
+                  :icon="showNewPassword ? 'visibility_off' : 'visibility'"
+                  @click="showNewPassword = !showNewPassword" 
+                />
+              </template>
+            </q-input>
+
+            <q-input
+              v-model="resetPasswordForm.password_confirmation"
+              :label="$t('users.confirmNewPassword')"
+              :type="showConfirmPassword ? 'text' : 'password'"
+              outlined
+              :rules="[
+                val => !!val || $t('users.validation.confirmPasswordRequired'),
+                val => val === resetPasswordForm.password || $t('users.validation.passwordsMismatch')
+              ]"
+              :error="hasResetError('password_confirmation')"
+              :error-message="getResetError('password_confirmation')"
+            >
+              <template v-slot:prepend>
+                <q-icon name="lock" />
+              </template>
+              <template v-slot:append>
+                <q-btn 
+                  flat 
+                  round 
+                  dense 
+                  :icon="showConfirmPassword ? 'visibility_off' : 'visibility'"
+                  @click="showConfirmPassword = !showConfirmPassword" 
+                />
+              </template>
+            </q-input>
+          </q-form>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat :label="$t('common.cancel')" @click="closeResetDialog" />
+          <q-btn 
+            color="blue" 
+            :label="$t('users.resetPassword')" 
+            @click="handleResetPassword"
+            :loading="resetLoading"
+            :disable="!isResetFormValid"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -179,6 +266,19 @@ const loading = ref(false)
 const showDetailsDialog = ref(false)
 const selectedUser = ref(null)
 
+// Reset password state
+const showResetDialog = ref(false)
+const selectedUserForReset = ref(null)
+const resetLoading = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
+const resetErrors = ref({})
+
+const resetPasswordForm = reactive({
+  password: '',
+  password_confirmation: ''
+})
+
 const filters = reactive({
   search: '',
   role: null
@@ -194,6 +294,13 @@ const pagination = ref({
 const canCreateUsers = computed(() => authStore.hasPermission('create_users'))
 const canEditUsers = computed(() => authStore.hasPermission('edit_users'))
 const canDeleteUsers = computed(() => authStore.hasPermission('delete_users'))
+
+const isResetFormValid = computed(() => {
+  return resetPasswordForm.password &&
+    resetPasswordForm.password_confirmation &&
+    resetPasswordForm.password === resetPasswordForm.password_confirmation &&
+    resetPasswordForm.password.length >= 8
+})
 
 const roleOptions = ref([
   { label: 'Super Admin', value: 'Super Admin' },
@@ -311,6 +418,71 @@ const confirmDelete = (user) => {
       })
     }
   })
+}
+
+// Reset password methods
+const showResetPasswordDialog = (user) => {
+  selectedUserForReset.value = user
+  resetPasswordForm.password = ''
+  resetPasswordForm.password_confirmation = ''
+  resetErrors.value = {}
+  showResetDialog.value = true
+}
+
+const closeResetDialog = () => {
+  showResetDialog.value = false
+  selectedUserForReset.value = null
+  resetPasswordForm.password = ''
+  resetPasswordForm.password_confirmation = ''
+  resetErrors.value = {}
+  showNewPassword.value = false
+  showConfirmPassword.value = false
+}
+
+const handleResetPassword = async () => {
+  if (!isResetFormValid.value) return
+  
+  resetLoading.value = true
+  resetErrors.value = {}
+
+  try {
+    const response = await userService.resetPassword(selectedUserForReset.value.id, {
+      password: resetPasswordForm.password,
+      password_confirmation: resetPasswordForm.password_confirmation
+    })
+
+    if (response.success) {
+      $q.notify({
+        type: 'positive',
+        message: t('users.messages.passwordResetSuccess'),
+        position: 'top'
+      })
+      closeResetDialog()
+    }
+  } catch (err) {
+    console.error('Reset password error:', err)
+
+    if (err.errors) {
+      resetErrors.value = err.errors
+    }
+
+    const message = err.message || t('users.messages.failedToResetPassword')
+    $q.notify({
+      type: 'negative',
+      message,
+      position: 'top'
+    })
+  } finally {
+    resetLoading.value = false
+  }
+}
+
+const hasResetError = (field) => {
+  return resetErrors.value[field] && resetErrors.value[field].length > 0
+}
+
+const getResetError = (field) => {
+  return resetErrors.value[field] ? resetErrors.value[field][0] : ''
 }
 
 const getRoleColor = (role) => {

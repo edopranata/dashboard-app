@@ -62,9 +62,8 @@
             </div>
 
             <div class="form-group">
-              <q-input v-model="form.timezone" :label="$t('users.timezone')" outlined 
-                placeholder="e.g., Asia/Jakarta" :error="hasError('timezone')" 
-                :error-message="getError('timezone')" class="form-input">
+              <q-input v-model="form.timezone" :label="$t('users.timezone')" outlined placeholder="e.g., Asia/Jakarta"
+                :error="hasError('timezone')" :error-message="getError('timezone')" class="form-input">
                 <template v-slot:prepend>
                   <q-icon name="schedule" />
                 </template>
@@ -75,9 +74,8 @@
           <!-- Bio Section -->
           <div class="form-row">
             <div class="form-group full-width">
-              <q-input v-model="form.bio" :label="$t('users.bio')" type="textarea" outlined rows="3" 
-                counter maxlength="500" :error="hasError('bio')" :error-message="getError('bio')" 
-                class="form-input">
+              <q-input v-model="form.bio" :label="$t('users.bio')" type="textarea" outlined rows="3" counter
+                maxlength="500" :error="hasError('bio')" :error-message="getError('bio')" class="form-input">
                 <template v-slot:prepend>
                   <q-icon name="description" />
                 </template>
@@ -85,12 +83,11 @@
             </div>
           </div>
 
-          <!-- Security -->
-          <div class="form-row">
+          <!-- Security - Only show for create mode -->
+          <div v-if="!isEdit" class="form-row">
             <div class="form-group">
-              <q-input v-model="form.password"
-                :label="isEdit ? $t('users.newPasswordOptional') : $t('users.passwordRequired')"
-                :type="showPassword ? 'text' : 'password'" outlined :rules="isEdit ? [] : [
+              <q-input v-model="form.password" :label="$t('users.passwordRequired')"
+                :type="showPassword ? 'text' : 'password'" outlined :rules="[
                   val => !!val || $t('users.validation.passwordRequired'),
                   val => val.length >= 8 || $t('users.validation.passwordMinLength')
                 ]" :error="hasError('password')" :error-message="getError('password')" class="form-input">
@@ -106,17 +103,17 @@
 
             <div class="form-group">
               <q-input v-model="form.password_confirmation" :label="$t('users.confirmPassword')"
-                :type="showPasswordConfirm ? 'text' : 'password'" outlined :rules="form.password ? [
+                :type="showPasswordConfirm ? 'text' : 'password'" outlined :rules="[
                   val => !!val || $t('users.validation.confirmPasswordRequired'),
                   val => val === form.password || $t('users.validation.passwordsMismatch')
-                ] : []" :disable="!form.password" :error="hasError('password_confirmation')"
+                ]" :error="hasError('password_confirmation')"
                 :error-message="getError('password_confirmation')" class="form-input">
                 <template v-slot:prepend>
                   <q-icon name="lock" />
                 </template>
                 <template v-slot:append>
                   <q-btn flat round dense :icon="showPasswordConfirm ? 'visibility_off' : 'visibility'"
-                    @click="showPasswordConfirm = !showPasswordConfirm" :disable="!form.password" />
+                    @click="showPasswordConfirm = !showPasswordConfirm" />
                 </template>
               </q-input>
             </div>
@@ -160,7 +157,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -202,7 +199,8 @@ const isFormValid = computed(() => {
   return form.name &&
     form.email &&
     form.roles.length > 0 &&
-    (!form.password || form.password === form.password_confirmation)
+    // Only validate password for create mode
+    (isEdit.value || (form.password && form.password === form.password_confirmation))
 })
 
 // Methods
@@ -215,9 +213,11 @@ const fetchUser = async () => {
     if (response.success) {
       currentUser.value = response.data
 
-      // Populate form
-      form.name = currentUser.value.name
-      form.email = currentUser.value.email
+      // Populate form with nextTick to ensure reactivity
+      await nextTick()
+
+      form.name = currentUser.value.name || ''
+      form.email = currentUser.value.email || ''
       form.phone = currentUser.value.phone || ''
       form.timezone = currentUser.value.timezone || ''
       form.bio = currentUser.value.bio || ''
@@ -252,7 +252,8 @@ const handleSubmit = async () => {
       roles: form.roles
     }
 
-    if (form.password) {
+    // Only include password for create mode
+    if (!isEdit.value && form.password) {
       userData.password = form.password
       userData.password_confirmation = form.password_confirmation
     }
@@ -337,6 +338,9 @@ watch(
       Object.assign(form, {
         name: '',
         email: '',
+        phone: '',
+        timezone: '',
+        bio: '',
         password: '',
         password_confirmation: '',
         roles: []

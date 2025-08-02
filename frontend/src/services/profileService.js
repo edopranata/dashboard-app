@@ -32,11 +32,11 @@ export const profileService = {
     try {
       const formData = new FormData()
       formData.append('avatar', file)
-      
+
       const response = await api.post('/profile/avatar', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
       return response.data
     } catch (error) {
@@ -54,5 +54,5 @@ export const profileService = {
     } catch (error) {
       throw error.response?.data || error
     }
-  }
+  },
 }

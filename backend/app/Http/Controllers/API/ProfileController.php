@@ -194,13 +194,13 @@ class ProfileController extends Controller
         // Generate simple initials-based avatar using SVG
         $initials = $this->getInitials($user->name);
         $backgroundColor = $this->generateColorFromString($user->email);
-        
+
         $svg = '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
             <rect width="200" height="200" fill="' . $backgroundColor . '"/>
-            <text x="100" y="125" font-family="Arial, sans-serif" font-size="80" font-weight="bold" 
+            <text x="100" y="125" font-family="Arial, sans-serif" font-size="80" font-weight="bold"
                   text-anchor="middle" fill="white">' . $initials . '</text>
         </svg>';
-        
+
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
@@ -211,14 +211,14 @@ class ProfileController extends Controller
     {
         $words = explode(' ', trim($name));
         $initials = '';
-        
+
         foreach ($words as $word) {
             if (!empty($word)) {
                 $initials .= strtoupper(substr($word, 0, 1));
                 if (strlen($initials) >= 2) break;
             }
         }
-        
+
         return $initials ?: 'U';
     }
 
@@ -234,7 +234,7 @@ class ProfileController extends Controller
             '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe',
             '#43e97b', '#fa709a', '#fee140', '#a8edea', '#d299c2'
         ];
-        
+
         $index = hexdec(substr($hash, 0, 2)) % count($colors);
         return $colors[$index];
     }

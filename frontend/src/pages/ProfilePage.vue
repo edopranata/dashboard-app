@@ -72,7 +72,8 @@
     <!-- Tab Navigation using modern-tabs -->
     <div class="modern-tabs">
       <q-card flat class="tabs-card">
-        <q-tabs v-model="activeTab" :active-color="$q.screen.darkMode ? 'white' : 'white'" indicator-color="primary" align="left" narrow-indicator>
+        <q-tabs v-model="activeTab" :active-color="$q.screen.darkMode ? 'white' : 'white'" indicator-color="primary"
+          align="left" narrow-indicator>
           <q-tab name="general" icon="person" :label="$t('profile.general')" />
           <q-tab name="security" icon="security" :label="$t('profile.security')" />
           <q-tab name="preferences" icon="tune" :label="$t('profile.preferences')" />
@@ -579,7 +580,7 @@ const handleAvatarUpdate = () => {
     message: t('avatar.upload_success'),
     position: 'top'
   })
-  
+
   // Avatar is already updated in the component via the API response
 }
 
@@ -589,7 +590,7 @@ const handleAvatarDelete = () => {
     message: t('avatar.delete_success'),
     position: 'top'
   })
-  
+
   // Avatar is already updated in the component via the API response
 }
 
