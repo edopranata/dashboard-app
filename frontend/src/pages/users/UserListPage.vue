@@ -10,7 +10,7 @@
         <q-btn
           color="primary"
           icon="add"
-          label="Add User"
+          :label="$t('users.addUser')"
           @click="showCreateDialog = true"
           :disable="!canCreateUsers"
         />
@@ -24,7 +24,7 @@
           <div class="col-md-4 col-sm-6 col-xs-12">
             <q-input
               v-model="filters.search"
-              placeholder="Search users..."
+              :placeholder="$t('users.searchUsers')"
               outlined
               dense
               clearable
@@ -39,7 +39,7 @@
             <q-select
               v-model="filters.role"
               :options="roleOptions"
-              label="Filter by Role"
+              :label="$t('users.filterByRole')"
               outlined
               dense
               emit-value

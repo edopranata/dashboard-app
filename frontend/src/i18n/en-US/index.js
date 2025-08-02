@@ -1,5 +1,5 @@
 export default {
-  // Common Actions
+    // Common Actions
   actions: {
     create: 'Create',
     edit: 'Edit',
@@ -26,12 +26,18 @@ export default {
   // Navigation
   nav: {
     dashboard: 'Dashboard',
-    users: 'Users',
-    roles: 'Roles',
+    users: 'User Management',
+    roles: 'Role Management',
     permissions: 'Permissions',
     profile: 'Profile',
     settings: 'Settings',
-    logout: 'Logout'
+    logout: 'Logout',
+    allUsers: 'All Users',
+    addUser: 'Add User',
+    allRoles: 'All Roles',
+    addRole: 'Add Role',
+    analytics: 'Analytics',
+    systemLogs: 'System Logs'
   },
 
   // Authentication
@@ -45,6 +51,7 @@ export default {
     rememberMe: 'Remember Me',
     forgotPassword: 'Forgot Password?',
     welcomeBack: 'Welcome Back!',
+    loginSubtitle: 'Sign in to continue to your account',
     loginSuccess: 'Login successful!',
     logoutSuccess: 'Logout successful!',
     invalidCredentials: 'Invalid email or password',
@@ -59,19 +66,19 @@ export default {
     passwordMustBeAtLeast: 'Password must be at least 6 characters',
     emailIsRequired: 'Email is required',
     passwordIsRequired: 'Password is required',
-    validEmailRequired: 'Please enter a valid email address'
+    validEmailRequired: 'Please enter a valid email address',
   },
 
   // Dashboard
   dashboard: {
     title: 'Dashboard',
     welcome: 'Welcome back, {name}!',
-    subtitle: 'Here\'s what\'s happening with your dashboard today.',
+    subtitle: "Here's what's happening with your dashboard today.",
     stats: {
       totalUsers: 'Total Users',
       totalRoles: 'Total Roles',
       activeToday: 'Active Today',
-      permissions: 'Permissions'
+      permissions: 'Permissions',
     },
     recentActivity: 'Recent Activity',
     quickActions: 'Quick Actions',
@@ -83,7 +90,15 @@ export default {
     cache: 'Cache',
     online: 'Online',
     warning: 'Warning',
-    offline: 'Offline'
+    addUser: 'Add User',
+    addRole: 'Add Role',
+    manageUsers: 'Manage Users',
+    settings: 'Settings',
+    addNewUser: 'Add New User',
+    createRole: 'Create Role',
+    viewAnalytics: 'View Analytics',
+    systemSettings: 'System Settings',
+    testDialog: 'Test Dialog'
   },
 
   // Users
@@ -104,13 +119,20 @@ export default {
     updatedAt: 'Updated At',
     active: 'Active',
     inactive: 'Inactive',
+    pending: 'Pending',
     noUsers: 'No users found',
     deleteConfirm: 'Are you sure you want to delete this user?',
+    deleteWarning: 'This action cannot be undone. The user "{name}" will be permanently removed from the system.',
     userCreated: 'User created successfully',
     userUpdated: 'User updated successfully',
     userDeleted: 'User deleted successfully',
     selectRoles: 'Select Roles',
-    assignRoles: 'Assign Roles'
+    assignRoles: 'Assign Roles',
+    searchUsers: 'Search users...',
+    filterByRole: 'Filter by Role',
+    filterByStatus: 'Filter by Status',
+    created: 'Created',
+    lastUpdated: 'Last Updated'
   },
 
   // Roles
@@ -136,8 +158,8 @@ export default {
       userManagement: 'User Management',
       roleManagement: 'Role Management',
       systemAccess: 'System Access',
-      administration: 'Administration'
-    }
+      administration: 'Administration',
+    },
   },
 
   // Permissions
@@ -168,7 +190,7 @@ export default {
     view_logs: 'View Logs',
     system_admin: 'System Admin',
     view_permissions: 'View Permissions',
-    manage_permissions: 'Manage Permissions'
+    manage_permissions: 'Manage Permissions',
   },
 
   // Settings
@@ -183,7 +205,7 @@ export default {
     systemMode: 'Follow System',
     notifications: 'Notifications',
     privacy: 'Privacy',
-    security: 'Security'
+    security: 'Security',
   },
 
   // Language Switcher
@@ -192,7 +214,7 @@ export default {
     english: 'English',
     indonesian: 'Bahasa Indonesia',
     changeLanguage: 'Change Language',
-    languageChanged: 'Language changed successfully'
+    languageChanged: 'Language changed successfully',
   },
 
   // Common Messages
@@ -216,7 +238,7 @@ export default {
     notFound: 'Not found',
     comingSoon: 'Coming Soon',
     pageNotFound: 'Oops. Nothing here...',
-    goHome: 'Go Home'
+    goHome: 'Go Home',
   },
 
   // Validation
@@ -230,7 +252,7 @@ export default {
     numeric: 'Only numbers are allowed',
     alphaNumeric: 'Only letters and numbers are allowed',
     confirmed: 'Confirmation does not match',
-    unique: 'This value is already taken'
+    unique: 'This value is already taken',
   },
 
   // Quick Actions
@@ -240,7 +262,7 @@ export default {
     createRole: 'Create Role',
     viewAnalytics: 'View Analytics',
     systemSettings: 'System Settings',
-    testDialog: 'Test Dialog'
+    testDialog: 'Test Dialog',
   },
 
   // System Status
@@ -248,7 +270,7 @@ export default {
     status: 'Status',
     responseTime: 'Response Time',
     usage: 'Usage',
-    storage: 'Storage'
+    storage: 'Storage',
   },
 
   // Common
@@ -268,10 +290,11 @@ export default {
     required: 'Required',
     optional: 'Optional',
     underDevelopment: 'Under Development',
-    underDevelopmentDescription: 'This feature is currently being developed and will be available soon. Thank you for your patience!',
+    underDevelopmentDescription:
+      'This feature is currently being developed and will be available soon. Thank you for your patience!',
     backToDashboard: 'Back to Dashboard',
     developmentProgress: 'Development Progress',
-    progressComplete: '{percent}% Complete'
+    progressComplete: '{percent}% Complete',
   },
 
   // Time/Date
@@ -282,6 +305,6 @@ export default {
     weeksAgo: '{count} weeks ago',
     monthsAgo: '{count} months ago',
     yearsAgo: '{count} years ago',
-    justNow: 'Just now'
-  }
+    justNow: 'Just now',
+  },
 }

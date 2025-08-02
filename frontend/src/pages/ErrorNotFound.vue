@@ -9,15 +9,7 @@
         {{ $t('messages.pageNotFound') }}
       </div>
 
-      <q-btn
-        class="q-mt-xl"
-        color="white"
-        text-color="blue"
-        unelevated
-        to="/"
-        :label="$t('messages.goHome')"
-        no-caps
-      />
+      <q-btn class="q-mt-xl" color="white" text-color="blue" unelevated to="/" :label="$t('messages.goHome')" no-caps />
     </div>
   </div>
 </template>

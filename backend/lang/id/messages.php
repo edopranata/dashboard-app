@@ -1,7 +1,7 @@
 <?php
 
 return [
-    // Authentication  
+    // Authentication
     'auth' => [
         'failed' => 'Kredensial ini tidak cocok dengan catatan kami.',
         'password' => 'Kata sandi yang diberikan salah.',

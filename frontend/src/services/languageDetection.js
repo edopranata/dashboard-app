@@ -44,7 +44,6 @@ class LanguageDetectionService {
       console.log('🌐 Using default locale:', this.defaultLocale)
       LocalStorage.set('locale', this.defaultLocale)
       return this.defaultLocale
-
     } catch (error) {
       console.warn('Language detection failed, using default:', error)
       return this.defaultLocale
@@ -66,16 +65,16 @@ class LanguageDetectionService {
       const services = [
         {
           url: 'https://ipapi.co/json/',
-          parseResponse: (data) => data.country_code
+          parseResponse: (data) => data.country_code,
         },
         {
           url: 'https://freegeoip.app/json/',
-          parseResponse: (data) => data.country_code
+          parseResponse: (data) => data.country_code,
         },
         {
           url: 'https://ip-api.com/json/',
-          parseResponse: (data) => data.countryCode
-        }
+          parseResponse: (data) => data.countryCode,
+        },
       ]
 
       for (const service of services) {
@@ -83,26 +82,26 @@ class LanguageDetectionService {
           const response = await fetch(service.url, {
             method: 'GET',
             headers: {
-              'Accept': 'application/json',
+              Accept: 'application/json',
             },
-            timeout: 3000
+            timeout: 3000,
           })
 
           if (!response.ok) continue
 
           const data = await response.json()
           const countryCode = service.parseResponse(data)
-          
+
           if (countryCode) {
             const locale = this.mapCountryToLocale(countryCode)
-            
+
             // Cache the result
             this.cache.set('ip-detection', {
               locale,
               timestamp: Date.now(),
-              countryCode
+              countryCode,
             })
-            
+
             return locale
           }
         } catch (serviceError) {
@@ -133,9 +132,7 @@ class LanguageDetectionService {
 
       // Try language code match (e.g., 'en' from 'en-GB')
       const langCode = browserLang.split('-')[0]
-      const matchingLocale = this.supportedLocales.find(locale => 
-        locale.startsWith(langCode)
-      )
+      const matchingLocale = this.supportedLocales.find((locale) => locale.startsWith(langCode))
 
       return matchingLocale || null
     } catch (error) {
@@ -150,21 +147,21 @@ class LanguageDetectionService {
   mapCountryToLocale(countryCode) {
     const countryToLocaleMap = {
       // Indonesia
-      'ID': 'id-ID',
-      
+      ID: 'id-ID',
+
       // English-speaking countries
-      'US': 'en-US',
-      'GB': 'en-US',
-      'AU': 'en-US', 
-      'CA': 'en-US',
-      'NZ': 'en-US',
-      'IE': 'en-US',
-      'ZA': 'en-US',
-      'IN': 'en-US',
-      'PH': 'en-US',
-      'SG': 'en-US',
-      'MY': 'en-US',
-      
+      US: 'en-US',
+      GB: 'en-US',
+      AU: 'en-US',
+      CA: 'en-US',
+      NZ: 'en-US',
+      IE: 'en-US',
+      ZA: 'en-US',
+      IN: 'en-US',
+      PH: 'en-US',
+      SG: 'en-US',
+      MY: 'en-US',
+
       // Default to English for other countries
       // Add more mappings as needed
     }
@@ -190,7 +187,7 @@ class LanguageDetectionService {
       savedLocale: LocalStorage.getItem('locale'),
       browserLanguage: navigator.language,
       supportedLocales: this.supportedLocales,
-      defaultLocale: this.defaultLocale
+      defaultLocale: this.defaultLocale,
     }
   }
 }

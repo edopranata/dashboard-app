@@ -9,7 +9,7 @@
                 </div>
                 <div class="header-actions">
                     <q-btn v-if="authStore.hasPermission('create_users')" color="primary" icon="person_add"
-                        label="Add User" :to="{ name: 'users.create' }" no-caps />
+                        :label="$t('users.addUser')" :to="{ name: 'users.create' }" no-caps />
                 </div>
             </div>
         </div>
@@ -19,7 +19,7 @@
             <q-card-section>
                 <div class="filter-content">
                     <div class="search-section">
-                        <q-input v-model="searchQuery" outlined placeholder="Search users..." dense clearable
+                        <q-input v-model="searchQuery" outlined :placeholder="$t('users.searchUsers')" dense clearable
                             @input="handleSearch">
                             <template v-slot:prepend>
                                 <q-icon name="search" />
@@ -28,11 +28,11 @@
                     </div>
 
                     <div class="filter-section">
-                        <q-select v-model="selectedRole" :options="roleOptions" outlined dense label="Filter by Role"
+                        <q-select v-model="selectedRole" :options="roleOptions" outlined dense :label="$t('users.filterByRole')"
                             clearable emit-value map-options @update:model-value="handleFilter" />
 
                         <q-select v-model="selectedStatus" :options="statusOptions" outlined dense
-                            label="Filter by Status" clearable emit-value map-options
+                            :label="$t('users.filterByStatus')" clearable emit-value map-options
                             @update:model-value="handleFilter" />
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                     <template v-slot:body-cell-status="props">
                         <q-td :props="props">
                             <q-badge :color="props.row.email_verified_at ? 'positive' : 'warning'"
-                                :label="props.row.email_verified_at ? 'Active' : 'Pending'" />
+                                :label="props.row.email_verified_at ? $t('users.active') : $t('users.pending')" />
                         </q-td>
                     </template>
 
@@ -149,7 +149,7 @@
                                 <h6 class="user-name">{{ selectedUser.name }}</h6>
                                 <p class="user-email">{{ selectedUser.email }}</p>
                                 <q-badge :color="selectedUser.email_verified_at ? 'positive' : 'warning'"
-                                    :label="selectedUser.email_verified_at ? 'Active' : 'Pending'" />
+                                    :label="selectedUser.email_verified_at ? $t('users.active') : $t('users.pending')" />
                             </div>
                         </div>
 
@@ -157,7 +157,7 @@
 
                         <div class="user-meta">
                             <div class="meta-item">
-                                <div class="meta-label">Roles:</div>
+                                <div class="meta-label">{{ $t('users.roles') }}:</div>
                                 <div class="meta-value">
                                     <q-chip v-for="role in selectedUser.roles" :key="role.id"
                                         :color="getRoleColor(role.name)" text-color="white" size="sm">
@@ -167,12 +167,12 @@
                             </div>
 
                             <div class="meta-item">
-                                <div class="meta-label">Created:</div>
+                                <div class="meta-label">{{ $t('users.created') }}:</div>
                                 <div class="meta-value">{{ formatDate(selectedUser.created_at) }}</div>
                             </div>
 
                             <div class="meta-item">
-                                <div class="meta-label">Last Updated:</div>
+                                <div class="meta-label">{{ $t('users.lastUpdated') }}:</div>
                                 <div class="meta-value">{{ formatDate(selectedUser.updated_at) }}</div>
                             </div>
                         </div>
@@ -180,10 +180,10 @@
                 </q-card-section>
 
                 <q-card-actions align="right">
-                    <q-btn v-if="authStore.hasPermission('update_users')" color="primary" label="Edit User"
+                    <q-btn v-if="authStore.hasPermission('update_users')" color="primary" :label="$t('users.editUser')"
                         :to="{ name: 'users.edit', params: { id: selectedUser?.id } }"
                         @click="showUserDialog = false" />
-                    <q-btn flat label="Close" color="grey" v-close-popup />
+                    <q-btn flat :label="$t('actions.close')" color="grey" v-close-popup />
                 </q-card-actions>
             </q-card>
         </q-dialog>
@@ -193,18 +193,16 @@
             <q-card>
                 <q-card-section class="row items-center">
                     <q-avatar icon="warning" color="negative" text-color="white" />
-                    <span class="q-ml-sm">Are you sure you want to delete this user?</span>
+                    <span class="q-ml-sm">{{ $t('users.deleteConfirm') }}</span>
                 </q-card-section>
 
                 <q-card-section>
-                    <p>This action cannot be undone. The user "{{ userToDelete?.name }}" will be permanently removed
-                        from the
-                        system.</p>
+                    <p>{{ $t('users.deleteWarning', { name: userToDelete?.name }) }}</p>
                 </q-card-section>
 
                 <q-card-actions align="right">
-                    <q-btn flat label="Cancel" color="primary" v-close-popup />
-                    <q-btn label="Delete" color="negative" @click="deleteUser" :loading="deleting" />
+                    <q-btn flat :label="$t('actions.cancel')" color="primary" v-close-popup />
+                    <q-btn :label="$t('actions.delete')" color="negative" @click="deleteUser" :loading="deleting" />
                 </q-card-actions>
             </q-card>
         </q-dialog>

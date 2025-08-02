@@ -27,9 +27,9 @@
 
             <!-- Password field -->
             <div class="form-group">
-                <q-input v-model="form.password" :type="showPassword ? 'text' : 'password'" :label="$t('auth.password')" outlined
-                    dense :loading="authStore.loading" :error="!!errors.password" :error-message="errors.password"
-                    @update:model-value="clearError('password')" class="form-input">
+                <q-input v-model="form.password" :type="showPassword ? 'text' : 'password'" :label="$t('auth.password')"
+                    outlined dense :loading="authStore.loading" :error="!!errors.password"
+                    :error-message="errors.password" @update:model-value="clearError('password')" class="form-input">
                     <template v-slot:prepend>
                         <q-icon name="lock" color="grey-6" />
                     </template>
@@ -42,8 +42,8 @@
 
             <!-- Remember me & Forgot password -->
             <div class="form-options">
-                <q-checkbox v-model="form.remember" :label="$t('auth.rememberMe')" color="primary" :disable="authStore.loading"
-                    class="remember-checkbox" />
+                <q-checkbox v-model="form.remember" :label="$t('auth.rememberMe')" color="primary"
+                    :disable="authStore.loading" class="remember-checkbox" />
 
                 <router-link to="/auth/forgot-password" class="forgot-password-link">
                     {{ $t('auth.forgotPassword') }}
@@ -51,8 +51,8 @@
             </div>
 
             <!-- Login button -->
-            <q-btn type="submit" color="primary" :label="$t('auth.login')" :loading="authStore.loading" :disable="!isFormValid"
-                class="login-btn" no-caps rounded>
+            <q-btn type="submit" color="primary" :label="$t('auth.login')" :loading="authStore.loading"
+                :disable="!isFormValid" class="login-btn" no-caps rounded>
                 <template v-slot:loading>
                     <q-spinner-hourglass class="on-left" />
                     {{ $t('auth.signingIn') }}

@@ -109,19 +109,19 @@
             <q-icon name="dashboard" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Dashboard</q-item-label>
+            <q-item-label>{{ $t('nav.dashboard') }}</q-item-label>
           </q-item-section>
         </q-item>
 
         <!-- User Management -->
-        <q-expansion-item v-if="authStore.hasPermission('view_users')" icon="people" label="User Management"
+        <q-expansion-item v-if="authStore.hasPermission('view_users')" icon="people" :label="$t('nav.users')"
           class="nav-expansion">
           <q-item clickable :to="{ name: 'users.index' }" class="nav-sub-item">
             <q-item-section avatar>
               <q-icon name="list" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>All Users</q-item-label>
+              <q-item-label>{{ $t('nav.allUsers') }}</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -131,20 +131,20 @@
               <q-icon name="person_add" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Add User</q-item-label>
+              <q-item-label>{{ $t('nav.addUser') }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-expansion-item>
 
         <!-- Role Management -->
         <q-expansion-item v-if="authStore.hasPermission('view_roles')" icon="admin_panel_settings"
-          label="Role Management" class="nav-expansion">
+          :label="$t('nav.roles')" class="nav-expansion">
           <q-item clickable :to="{ name: 'roles.index' }" class="nav-sub-item">
             <q-item-section avatar>
               <q-icon name="list" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>All Roles</q-item-label>
+              <q-item-label>{{ $t('nav.allRoles') }}</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -154,7 +154,7 @@
               <q-icon name="add" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Add Role</q-item-label>
+              <q-item-label>{{ $t('nav.addRole') }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-expansion-item>
@@ -165,7 +165,7 @@
             <q-icon name="analytics" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Analytics</q-item-label>
+            <q-item-label>{{ $t('nav.analytics') }}</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -177,7 +177,7 @@
             <q-icon name="settings" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Settings</q-item-label>
+            <q-item-label>{{ $t('nav.settings') }}</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -187,7 +187,7 @@
             <q-icon name="description" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>System Logs</q-item-label>
+            <q-item-label>{{ $t('nav.systemLogs') }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>

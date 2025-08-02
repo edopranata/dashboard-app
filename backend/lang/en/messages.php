@@ -33,7 +33,7 @@ return [
     // Roles
     'roles' => [
         'created' => 'Role created successfully',
-        'updated' => 'Role updated successfully', 
+        'updated' => 'Role updated successfully',
         'deleted' => 'Role deleted successfully',
         'not_found' => 'Role not found',
         'cannot_delete_assigned' => 'Cannot delete role that is assigned to users',

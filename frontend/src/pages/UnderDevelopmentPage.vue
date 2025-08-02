@@ -16,8 +16,8 @@
                 </p>
 
                 <!-- Action Button -->
-                <q-btn color="primary" :label="$t('common.backToDashboard')" icon="arrow_back" :to="{ name: 'dashboard' }" no-caps
-                    rounded class="back-btn" />
+                <q-btn color="primary" :label="$t('common.backToDashboard')" icon="arrow_back"
+                    :to="{ name: 'dashboard' }" no-caps rounded class="back-btn" />
 
                 <!-- Progress indicator -->
                 <div class="progress-section">

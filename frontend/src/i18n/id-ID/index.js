@@ -8,12 +8,12 @@ export default {
     cancel: 'Batal',
     close: 'Tutup',
     back: 'Kembali',
-    next: 'Selanjutnya',
+    next: 'Berikutnya',
     previous: 'Sebelumnya',
     submit: 'Kirim',
     reset: 'Reset',
     clear: 'Bersihkan',
-    refresh: 'Muat Ulang',
+    refresh: 'Refresh',
     search: 'Cari',
     filter: 'Filter',
     export: 'Ekspor',
@@ -26,12 +26,18 @@ export default {
   // Navigation
   nav: {
     dashboard: 'Dashboard',
-    users: 'Pengguna',
-    roles: 'Peran',
+    users: 'Manajemen Pengguna',
+    roles: 'Manajemen Peran',
     permissions: 'Izin',
     profile: 'Profil',
     settings: 'Pengaturan',
-    logout: 'Keluar'
+    logout: 'Keluar',
+    allUsers: 'Semua Pengguna',
+    addUser: 'Tambah Pengguna',
+    allRoles: 'Semua Peran',
+    addRole: 'Tambah Peran',
+    analytics: 'Analitik',
+    systemLogs: 'Log Sistem'
   },
 
   // Authentication
@@ -45,6 +51,7 @@ export default {
     rememberMe: 'Ingat Saya',
     forgotPassword: 'Lupa Kata Sandi?',
     welcomeBack: 'Selamat Datang Kembali!',
+    loginSubtitle: 'Masuk untuk melanjutkan ke akun Anda',
     loginSuccess: 'Berhasil masuk!',
     logoutSuccess: 'Berhasil keluar!',
     invalidCredentials: 'Email atau kata sandi salah',
@@ -59,7 +66,7 @@ export default {
     passwordMustBeAtLeast: 'Kata sandi minimal 6 karakter',
     emailIsRequired: 'Email wajib diisi',
     passwordIsRequired: 'Kata sandi wajib diisi',
-    validEmailRequired: 'Silakan masukkan alamat email yang valid'
+    validEmailRequired: 'Silakan masukkan alamat email yang valid',
   },
 
   // Dashboard
@@ -71,7 +78,7 @@ export default {
       totalUsers: 'Total Pengguna',
       totalRoles: 'Total Peran',
       activeToday: 'Aktif Hari Ini',
-      permissions: 'Izin'
+      permissions: 'Izin',
     },
     recentActivity: 'Aktivitas Terbaru',
     quickActions: 'Aksi Cepat',
@@ -83,7 +90,16 @@ export default {
     cache: 'Cache',
     online: 'Online',
     warning: 'Peringatan',
-    offline: 'Offline'
+    offline: 'Offline',
+    addUser: 'Tambah Pengguna',
+    addRole: 'Tambah Peran',
+    manageUsers: 'Kelola Pengguna',
+    settings: 'Pengaturan',
+    addNewUser: 'Tambah Pengguna Baru',
+    createRole: 'Buat Peran',
+    viewAnalytics: 'Lihat Analitik',
+    systemSettings: 'Pengaturan Sistem',
+    testDialog: 'Tes Dialog'
   },
 
   // Users
@@ -104,13 +120,20 @@ export default {
     updatedAt: 'Diperbarui Pada',
     active: 'Aktif',
     inactive: 'Tidak Aktif',
+    pending: 'Menunggu',
     noUsers: 'Tidak ada pengguna ditemukan',
     deleteConfirm: 'Apakah Anda yakin ingin menghapus pengguna ini?',
+    deleteWarning: 'Tindakan ini tidak dapat dibatalkan. Pengguna "{name}" akan dihapus secara permanen dari sistem.',
     userCreated: 'Pengguna berhasil dibuat',
     userUpdated: 'Pengguna berhasil diperbarui',
     userDeleted: 'Pengguna berhasil dihapus',
     selectRoles: 'Pilih Peran',
-    assignRoles: 'Tetapkan Peran'
+    assignRoles: 'Tetapkan Peran',
+    searchUsers: 'Cari pengguna...',
+    filterByRole: 'Filter berdasarkan Peran',
+    filterByStatus: 'Filter berdasarkan Status',
+    created: 'Dibuat',
+    lastUpdated: 'Terakhir Diperbarui'
   },
 
   // Roles
@@ -136,8 +159,8 @@ export default {
       userManagement: 'Kelola Pengguna',
       roleManagement: 'Kelola Peran',
       systemAccess: 'Akses Sistem',
-      administration: 'Administrasi'
-    }
+      administration: 'Administrasi',
+    },
   },
 
   // Permissions
@@ -168,7 +191,7 @@ export default {
     view_logs: 'Lihat Log',
     system_admin: 'Admin Sistem',
     view_permissions: 'Lihat Izin',
-    manage_permissions: 'Kelola Izin'
+    manage_permissions: 'Kelola Izin',
   },
 
   // Settings
@@ -183,7 +206,7 @@ export default {
     systemMode: 'Ikuti Sistem',
     notifications: 'Notifikasi',
     privacy: 'Privasi',
-    security: 'Keamanan'
+    security: 'Keamanan',
   },
 
   // Language Switcher
@@ -192,7 +215,7 @@ export default {
     english: 'English',
     indonesian: 'Bahasa Indonesia',
     changeLanguage: 'Ubah Bahasa',
-    languageChanged: 'Bahasa berhasil diubah'
+    languageChanged: 'Bahasa berhasil diubah',
   },
 
   // Common Messages
@@ -216,7 +239,7 @@ export default {
     notFound: 'Tidak ditemukan',
     comingSoon: 'Segera Hadir',
     pageNotFound: 'Ups. Tidak ada apa-apa di sini...',
-    goHome: 'Kembali ke Beranda'
+    goHome: 'Kembali ke Beranda',
   },
 
   // Validation
@@ -230,7 +253,7 @@ export default {
     numeric: 'Hanya angka yang diperbolehkan',
     alphaNumeric: 'Hanya huruf dan angka yang diperbolehkan',
     confirmed: 'Konfirmasi tidak cocok',
-    unique: 'Nilai sudah digunakan'
+    unique: 'Nilai sudah digunakan',
   },
 
   // Quick Actions
@@ -240,7 +263,7 @@ export default {
     createRole: 'Buat Peran',
     viewAnalytics: 'Lihat Analitik',
     systemSettings: 'Pengaturan Sistem',
-    testDialog: 'Tes Dialog'
+    testDialog: 'Tes Dialog',
   },
 
   // System Status
@@ -248,7 +271,7 @@ export default {
     status: 'Status',
     responseTime: 'Waktu Respons',
     usage: 'Penggunaan',
-    storage: 'Penyimpanan'
+    storage: 'Penyimpanan',
   },
 
   // Common
@@ -268,10 +291,11 @@ export default {
     required: 'Wajib',
     optional: 'Opsional',
     underDevelopment: 'Dalam Pengembangan',
-    underDevelopmentDescription: 'Fitur ini sedang dalam pengembangan dan akan tersedia segera. Terima kasih atas kesabaran Anda!',
+    underDevelopmentDescription:
+      'Fitur ini sedang dalam pengembangan dan akan tersedia segera. Terima kasih atas kesabaran Anda!',
     backToDashboard: 'Kembali ke Dashboard',
     developmentProgress: 'Progress Pengembangan',
-    progressComplete: '{percent}% Selesai'
+    progressComplete: '{percent}% Selesai',
   },
 
   // Time/Date
@@ -282,6 +306,6 @@ export default {
     weeksAgo: '{count} minggu lalu',
     monthsAgo: '{count} bulan lalu',
     yearsAgo: '{count} tahun lalu',
-    justNow: 'Baru saja'
-  }
+    justNow: 'Baru saja',
+  },
 }
