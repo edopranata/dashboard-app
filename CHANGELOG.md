@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Planned for v1.1.0-beta.1
+### Planned for v1.1.0-beta.1 (Phase 5)
 - Language switcher (Indonesian/English)
 - Advanced search and filters
 - Export/Import functionality
@@ -14,10 +14,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0-beta.1] - 2025-08-02
+## [1.0.0-beta.1] - 2025-08-02 🎉
 
-### ✨ Added
-- **Complete User Management System**
+### ✨ Phase 4 Complete: User Management System
+- **Complete Role/Create Functionality**
+  - Dynamic permissions loading from database
+  - Permission categorization (User Management, Role Management, System Access, Administration)
+  - Real-time validation and user feedback
+  - Responsive design with grid layout
+- **Enhanced Role Management**
+  - Dynamic permission selection in dialogs
+  - Category-based permission grouping
+  - Proper loading states and error handling
+- **Backend API Improvements**
+  - New PermissionController with grouped permissions API
+  - Fixed RoleController guard mismatch issues
+  - Added /api/permissions/grouped endpoint
+  - Proper permission validation with guard constraints
+- **Code Quality Enhancements**
+  - Removed all hardcoded permissions (100% database-driven)
+  - Clean up deprecated functions
+  - Consistent API response structure
+  - Performance optimized with single API call for permissions
   - User CRUD operations with proper validation
   - User list with pagination, search, and filters
   - User details modal with comprehensive information
