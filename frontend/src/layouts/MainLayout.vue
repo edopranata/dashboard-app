@@ -4,8 +4,13 @@
     <q-header elevated :class="$q.dark.isActive ? 'bg-dark text-white header-dark' : 'bg-white text-dark header-light'"
       height-hint="64" style="transition: background-color 0.3s ease, color 0.3s ease;">
       <q-toolbar class="q-px-md">
-        <!-- Menu button for mobile -->
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" class="q-mr-sm lt-lg" />
+        <!-- Always visible menu toggle button with animation -->
+        <q-btn flat dense round @click="toggleLeftDrawer" class="menu-toggle-btn q-mr-md"
+          :class="{ 'state-changing': isToggling }" aria-label="Toggle Menu">
+          <q-icon :name="leftDrawerOpen ? 'menu_open' : 'menu'" size="24px" class="menu-icon"
+            :class="{ 'icon-rotated': leftDrawerOpen }" />
+          <q-tooltip>{{ leftDrawerOpen ? 'Close Sidebar' : 'Open Sidebar' }}</q-tooltip>
+        </q-btn>
 
         <!-- Logo/Brand -->
         <div class="header-brand">
@@ -43,7 +48,7 @@
             </q-avatar>
             <q-tooltip>Profile</q-tooltip>
             <q-menu>
-              <q-list style="min-width: 200px">
+              <q-list style="min-width: 300px">
                 <q-item>
                   <q-item-section avatar>
                     <q-avatar size="40px" :color="userAvatar ? 'transparent' : 'primary'" text-color="white">
@@ -89,7 +94,7 @@
     </q-header>
 
     <!-- Sidebar Drawer -->
-    <q-drawer v-model="leftDrawerOpen" show-if-above :width="280" :breakpoint="1024" bordered class="sidebar-drawer">
+    <q-drawer v-model="leftDrawerOpen" show-if-above :width="320" :breakpoint="1024" bordered class="sidebar-drawer">
       <!-- Sidebar Header -->
       <div class="sidebar-header">
         <div class="user-info">
@@ -228,6 +233,7 @@ const authStore = useAuthStore()
 
 // Reactive data
 const leftDrawerOpen = ref(false)
+const isToggling = ref(false)
 
 // Computed
 const userInitials = computed(() => {
@@ -253,7 +259,13 @@ const userAvatar = computed(() => {
 
 // Methods
 const toggleLeftDrawer = () => {
+  isToggling.value = true
   leftDrawerOpen.value = !leftDrawerOpen.value
+
+  // Remove animation class after animation completes
+  setTimeout(() => {
+    isToggling.value = false
+  }, 600)
 }
 
 const toggleTheme = () => {
@@ -311,6 +323,121 @@ onMounted(() => {
         background-color: rgba(255, 255, 255, 0.08);
       }
     }
+  }
+}
+
+// Menu toggle button with animation
+.menu-toggle-btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+
+  // Ripple effect background
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(102, 126, 234, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translate(-50%, -50%);
+    z-index: 0;
+  }
+
+  .menu-icon {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+
+    &.icon-rotated {
+      transform: rotate(180deg) scale(1.1);
+      color: #667eea;
+    }
+  }
+
+  &:hover {
+    transform: scale(1.05);
+
+    &::before {
+      width: 100%;
+      height: 100%;
+    }
+
+    .menu-icon {
+      transform: scale(1.1);
+
+      &.icon-rotated {
+        transform: rotate(180deg) scale(1.2);
+      }
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+
+    .menu-icon {
+      transform: scale(0.9);
+
+      &.icon-rotated {
+        transform: rotate(180deg) scale(0.9);
+      }
+    }
+  }
+
+  // Pulse animation when sidebar state changes
+  &.state-changing {
+    animation: pulse 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+  }
+}
+
+// Dark mode specific animations
+.body--dark {
+  .menu-toggle-btn {
+    &::before {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .menu-icon {
+      &.icon-rotated {
+        color: #e2e8f0;
+      }
+    }
+
+    &.state-changing {
+      animation: pulse-dark 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+}
+
+@keyframes pulse-dark {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
   }
 }
 
