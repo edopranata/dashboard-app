@@ -136,7 +136,7 @@
               label="Role Name"
               outlined
               :rules="[val => !!val || 'Role name is required']"
-              :disable="selectedRole?.id && isSystemRole(selectedRole.name)"
+              :disable="selectedRole?.id && isSystemRole(selectedRole?.name)"
             />
 
             <div class="permissions-section">
@@ -441,6 +441,7 @@ const toggleCategory = (permissions, value) => {
 
 // Utility functions
 const isSystemRole = (roleName) => {
+  if (!roleName) return false
   return ['Super Admin', 'Owner', 'User'].includes(roleName)
 }
 
