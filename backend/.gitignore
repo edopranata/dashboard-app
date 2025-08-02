@@ -29,7 +29,7 @@ Thumbs.db
 /storage/framework/cache/*
 !/storage/framework/cache/.gitkeep
 /storage/framework/sessions/*
-!/storage/framework/sessions/.gitkeep  
+!/storage/framework/sessions/.gitkeep
 /storage/framework/testing/*
 !/storage/framework/testing/.gitkeep
 /storage/framework/views/*
