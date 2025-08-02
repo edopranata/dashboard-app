@@ -8,8 +8,8 @@
           <p class="page-subtitle">{{ $t('users.userManagementDescription') }}</p>
         </div>
         <div class="header-actions">
-          <q-btn color="primary" icon="add" :label="$t('users.addUser')" @click="showCreateDialog = true"
-            :disable="!canCreateUsers" class="action-btn" />
+          <q-btn color="primary" icon="add" :label="$t('users.addUser')" 
+            :to="{ name: 'users.create' }" :disable="!canCreateUsers" class="action-btn" />
         </div>
       </div>
     </div>
@@ -88,7 +88,8 @@
               <q-btn flat dense icon="visibility" color="primary" @click="viewUser(props.row)">
                 <q-tooltip>View Details</q-tooltip>
               </q-btn>
-              <q-btn flat dense icon="edit" color="orange" @click="editUser(props.row)" v-if="canEditUsers">
+              <q-btn flat dense icon="edit" color="orange" 
+                :to="{ name: 'users.edit', params: { id: props.row.id } }" v-if="canEditUsers">
                 <q-tooltip>{{ $t('users.editUser') }}</q-tooltip>
               </q-btn>
               <q-btn flat dense icon="delete" color="red" @click="confirmDelete(props.row)"
@@ -101,40 +102,11 @@
       </q-table>
     </q-card>
 
-    <!-- Create/Edit User Dialog -->
-    <q-dialog v-model="showCreateDialog" persistent>
-      <q-card style="min-width: 500px">
-        <q-card-section class="row items-center">
-          <div class="text-h6">{{ selectedUser?.id ? 'Edit' : 'Create' }} User</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-
-        <q-card-section>
-          <q-form @submit="saveUser" class="q-gutter-md">
-            <q-input v-model="userForm.name" label="Full Name" outlined :rules="[val => !!val || 'Name is required']" />
-            <q-input v-model="userForm.email" label="Email" type="email" outlined
-              :rules="[val => !!val || 'Email is required']" />
-            <q-input v-model="userForm.password" label="Password" type="password" outlined
-              :rules="selectedUser?.id ? [] : [val => !!val || 'Password is required']"
-              :hint="selectedUser?.id ? 'Leave blank to keep current password' : ''" />
-            <q-select v-model="userForm.roles" :options="roleOptions" label="Roles" outlined multiple emit-value
-              map-options :rules="[val => val && val.length > 0 || 'At least one role is required']" />
-          </q-form>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" v-close-popup />
-          <q-btn color="primary" label="Save" @click="saveUser" :loading="saving" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
     <!-- User Details Dialog -->
     <q-dialog v-model="showDetailsDialog">
       <q-card style="min-width: 400px">
         <q-card-section class="row items-center">
-          <div class="text-h6">User Details</div>
+          <div class="text-h6">{{ $t('users.userDetails') }}</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
@@ -147,19 +119,28 @@
               </q-avatar>
             </div>
             <div class="detail-item">
-              <strong>Name:</strong> {{ selectedUser.name }}
+              <strong>{{ $t('users.name') }}:</strong> {{ selectedUser.name }}
             </div>
             <div class="detail-item">
-              <strong>Email:</strong> {{ selectedUser.email }}
+              <strong>{{ $t('users.email') }}:</strong> {{ selectedUser.email }}
+            </div>
+            <div class="detail-item" v-if="selectedUser.phone">
+              <strong>{{ $t('users.phone') }}:</strong> {{ selectedUser.phone }}
+            </div>
+            <div class="detail-item" v-if="selectedUser.timezone">
+              <strong>{{ $t('users.timezone') }}:</strong> {{ selectedUser.timezone }}
+            </div>
+            <div class="detail-item" v-if="selectedUser.bio">
+              <strong>{{ $t('users.bio') }}:</strong> {{ selectedUser.bio }}
             </div>
             <div class="detail-item">
-              <strong>Status:</strong>
+              <strong>{{ $t('users.status') }}:</strong>
               <q-chip :color="selectedUser.email_verified_at ? 'green' : 'orange'" text-color="white" size="sm">
-                {{ selectedUser.email_verified_at ? 'Active' : 'Pending' }}
+                {{ selectedUser.email_verified_at ? $t('users.active') : $t('users.pending') }}
               </q-chip>
             </div>
             <div class="detail-item">
-              <strong>Roles:</strong>
+              <strong>{{ $t('users.roles') }}:</strong>
               <div class="roles-list q-mt-xs">
                 <q-chip v-for="role in selectedUser.roles" :key="role.id" :color="getRoleColor(role.name)"
                   text-color="white" size="sm">
@@ -168,10 +149,10 @@
               </div>
             </div>
             <div class="detail-item">
-              <strong>Created:</strong> {{ formatDate(selectedUser.created_at) }}
+              <strong>{{ $t('users.created') }}:</strong> {{ formatDate(selectedUser.created_at) }}
             </div>
             <div class="detail-item">
-              <strong>Updated:</strong> {{ formatDate(selectedUser.updated_at) }}
+              <strong>{{ $t('users.lastUpdated') }}:</strong> {{ formatDate(selectedUser.updated_at) }}
             </div>
           </div>
         </q-card-section>
@@ -184,8 +165,8 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { api } from 'src/boot/axios'
 import { useAuthStore } from 'src/stores/auth'
+import { userService } from 'src/services/userService'
 import { debounce } from 'quasar'
 
 const $q = useQuasar()
@@ -195,21 +176,12 @@ const authStore = useAuthStore()
 // State
 const users = ref([])
 const loading = ref(false)
-const saving = ref(false)
-const showCreateDialog = ref(false)
 const showDetailsDialog = ref(false)
 const selectedUser = ref(null)
 
 const filters = reactive({
   search: '',
   role: null
-})
-
-const userForm = reactive({
-  name: '',
-  email: '',
-  password: '',
-  roles: []
 })
 
 const pagination = ref({
@@ -276,12 +248,12 @@ const fetchUsers = async () => {
       role: filters.role
     }
 
-    const response = await api.get('/users', { params })
+    const response = await userService.getUsers(params)
 
-    if (response.data.success) {
-      users.value = response.data.data.data
-      pagination.value.rowsNumber = response.data.data.total
-      pagination.value.page = response.data.data.current_page
+    if (response.success) {
+      users.value = response.data.data
+      pagination.value.rowsNumber = response.data.total
+      pagination.value.page = response.data.current_page
     }
   } catch (err) {
     console.error('Failed to fetch users:', err)
@@ -312,62 +284,6 @@ const viewUser = (user) => {
   showDetailsDialog.value = true
 }
 
-const editUser = (user) => {
-  selectedUser.value = user
-  userForm.name = user.name
-  userForm.email = user.email
-  userForm.password = ''
-  userForm.roles = user.roles.map(role => role.name)
-  showCreateDialog.value = true
-}
-
-const saveUser = async () => {
-  saving.value = true
-  try {
-    const userData = {
-      name: userForm.name,
-      email: userForm.email,
-      roles: userForm.roles
-    }
-
-    if (userForm.password) {
-      userData.password = userForm.password
-      userData.password_confirmation = userForm.password
-    }
-
-    if (selectedUser.value?.id) {
-      // Update user
-      await api.put(`/users/${selectedUser.value.id}`, userData)
-      $q.notify({
-        type: 'positive',
-        message: t('users.userUpdated'),
-        position: 'top'
-      })
-    } else {
-      // Create user
-      await api.post('/users', userData)
-      $q.notify({
-        type: 'positive',
-        message: t('users.userCreated'),
-        position: 'top'
-      })
-    }
-
-    showCreateDialog.value = false
-    resetForm()
-    fetchUsers()
-  } catch (error) {
-    const message = error.response?.data?.message || t('users.messages.failedToSaveUser')
-    $q.notify({
-      type: 'negative',
-      message,
-      position: 'top'
-    })
-  } finally {
-    saving.value = false
-  }
-}
-
 const confirmDelete = (user) => {
   $q.dialog({
     title: t('users.confirmDelete'),
@@ -376,15 +292,18 @@ const confirmDelete = (user) => {
     persistent: true
   }).onOk(async () => {
     try {
-      await api.delete(`/users/${user.id}`)
-      $q.notify({
-        type: 'positive',
-        message: t('users.userDeleted'),
-        position: 'top'
-      })
-      fetchUsers()
+      const response = await userService.deleteUser(user.id)
+      if (response.success) {
+        $q.notify({
+          type: 'positive',
+          message: t('users.userDeleted'),
+          position: 'top'
+        })
+        fetchUsers()
+      }
     } catch (error) {
-      const message = error.response?.data?.message || t('users.messages.failedToSaveUser')
+      console.error('Delete user error:', error)
+      const message = error.message || t('users.messages.failedToDeleteUser')
       $q.notify({
         type: 'negative',
         message,
@@ -392,14 +311,6 @@ const confirmDelete = (user) => {
       })
     }
   })
-}
-
-const resetForm = () => {
-  selectedUser.value = null
-  userForm.name = ''
-  userForm.email = ''
-  userForm.password = ''
-  userForm.roles = []
 }
 
 const getRoleColor = (role) => {

@@ -170,6 +170,9 @@ export default {
     selectedRoles: 'Selected Roles',
     name: 'Name',
     email: 'Email',
+    phone: 'Phone',
+    timezone: 'Timezone', 
+    bio: 'Bio',
     roles: 'Roles',
     status: 'Status',
     createdAt: 'Created At',
@@ -215,6 +218,7 @@ export default {
       userUpdated: 'User updated successfully',
       failedToLoadUser: 'Failed to load user data',
       failedToSaveUser: 'Failed to save user',
+      failedToDeleteUser: 'Failed to delete user',
     },
   },
 

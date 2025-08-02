@@ -62,6 +62,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from 'src/stores/auth'
+import { profileService } from 'src/services/profileService'
 
 // Props
 const props = defineProps({
@@ -105,13 +106,7 @@ const iconSize = computed(() => {
 // Methods
 const loadCurrentAvatar = async () => {
     try {
-        // First check localStorage for demo avatar
-        const savedAvatar = localStorage.getItem('userAvatar')
-
-        if (savedAvatar) {
-            currentAvatarUrl.value = savedAvatar
-            isDefault.value = false
-        } else if (authStore.user?.avatar) {
+        if (authStore.user?.avatar) {
             currentAvatarUrl.value = authStore.user.avatar
             isDefault.value = false
         } else {
@@ -147,63 +142,41 @@ const uploadAvatar = async (file) => {
     uploading.value = true
 
     try {
-        // Create FormData
-        const formData = new FormData()
-        formData.append('avatar', file)
-
         // Emit upload progress
-        emit('upload-progress', { progress: 0 })
+        emit('upload-progress', { progress: 10 })
 
-        // TODO: Replace with actual API call when backend is ready
-        // const response = await api.post('/profile/avatar', formData, {
-        //   headers: { 'Content-Type': 'multipart/form-data' },
-        //   onUploadProgress: (progressEvent) => {
-        //     const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-        //     emit('upload-progress', { progress })
-        //   }
-        // })
+        // Upload avatar using the profile service
+        const response = await profileService.uploadAvatar(file)
 
-        // For demo purposes, simulate upload progress and create preview
-        for (let i = 10; i <= 90; i += 10) {
-            await new Promise(resolve => setTimeout(resolve, 100))
-            emit('upload-progress', { progress: i })
-        }
+        emit('upload-progress', { progress: 80 })
 
-        // Create preview URL for demo
-        const reader = new FileReader()
-        reader.onload = async (e) => {
-            const newAvatarUrl = e.target.result
-            currentAvatarUrl.value = newAvatarUrl
+        if (response.success) {
+            // Update current avatar with the base64 response
+            currentAvatarUrl.value = response.data.avatar
             isDefault.value = false
 
             // Update user in auth store with new avatar
             if (authStore.user) {
-                authStore.user.avatar = newAvatarUrl
-
-                // Persist to localStorage for demo
-                localStorage.setItem('userAvatar', newAvatarUrl)
+                authStore.user.avatar = response.data.avatar
             }
 
             emit('upload-progress', { progress: 100 })
-            emit('avatar-updated', { url: newAvatarUrl })
+            emit('avatar-updated', { url: response.data.avatar })
 
             $q.notify({
                 type: 'positive',
                 message: t('avatar.upload_success'),
                 position: 'top'
             })
+        } else {
+            throw new Error(response.message || 'Upload failed')
         }
-        reader.readAsDataURL(file)
-
-        // In production, use this instead:
-        // currentAvatarUrl.value = response.data.data.avatar_url
-        // await authStore.fetchUser() // Refresh user data from server
 
     } catch (error) {
         console.error('Failed to upload avatar:', error)
         $q.notify({
             type: 'negative',
-            message: t('avatar.upload_failed'),
+            message: error.message || t('avatar.upload_failed'),
             position: 'top'
         })
     } finally {
@@ -249,39 +222,36 @@ const deleteAvatar = async () => {
     deleting.value = true
 
     try {
-        // TODO: Replace with actual API call when backend is ready
-        // await api.delete('/profile/avatar')
+        // Call the delete avatar API
+        const response = await profileService.deleteAvatar()
 
-        // Mock delete request for demo
-        await new Promise(resolve => setTimeout(resolve, 800))
+        if (response.success) {
+            // Update the avatar to the generated one (base64 initials)
+            currentAvatarUrl.value = response.data.avatar
+            isDefault.value = false // It's generated but still has an avatar
+            showDeleteDialog.value = false
 
-        currentAvatarUrl.value = null
-        isDefault.value = true
-        showDeleteDialog.value = false
+            // Update auth store
+            if (authStore.user) {
+                authStore.user.avatar = response.data.avatar
+            }
 
-        // Update auth store
-        if (authStore.user) {
-            authStore.user.avatar = null
-            // Remove from localStorage
-            localStorage.removeItem('userAvatar')
+            emit('avatar-deleted')
+
+            $q.notify({
+                type: 'positive',
+                message: t('avatar.delete_success'),
+                position: 'top'
+            })
+        } else {
+            throw new Error(response.message || 'Delete failed')
         }
-
-        emit('avatar-deleted')
-
-        $q.notify({
-            type: 'positive',
-            message: t('avatar.delete_success'),
-            position: 'top'
-        })
-
-        // In production, refresh user data:
-        // await authStore.fetchUser()
 
     } catch (error) {
         console.error('Failed to delete avatar:', error)
         $q.notify({
             type: 'negative',
-            message: t('avatar.delete_failed'),
+            message: error.message || t('avatar.delete_failed'),
             position: 'top'
         })
     } finally {
@@ -301,13 +271,7 @@ onMounted(() => {
 
 // Watch for auth store changes
 watch(() => authStore.user?.avatar, (newAvatar) => {
-    // Check localStorage first for demo avatar
-    const savedAvatar = localStorage.getItem('userAvatar')
-
-    if (savedAvatar) {
-        currentAvatarUrl.value = savedAvatar
-        isDefault.value = false
-    } else if (newAvatar) {
+    if (newAvatar) {
         currentAvatarUrl.value = newAvatar
         isDefault.value = false
     } else {

@@ -170,6 +170,9 @@ export default {
     selectedRoles: 'Peran Terpilih',
     name: 'Nama',
     email: 'Email',
+    phone: 'Telepon',
+    timezone: 'Zona Waktu',
+    bio: 'Bio',
     roles: 'Peran',
     status: 'Status',
     createdAt: 'Dibuat Pada',
@@ -215,6 +218,7 @@ export default {
       userUpdated: 'Pengguna berhasil diperbarui',
       failedToLoadUser: 'Gagal memuat data pengguna',
       failedToSaveUser: 'Gagal menyimpan pengguna',
+      failedToDeleteUser: 'Gagal menghapus pengguna',
     },
   },
 

@@ -50,6 +50,41 @@
             </div>
           </div>
 
+          <!-- Additional Information -->
+          <div class="form-row">
+            <div class="form-group">
+              <q-input v-model="form.phone" :label="$t('users.phone')" outlined mask="(###) ### - ####"
+                :error="hasError('phone')" :error-message="getError('phone')" class="form-input">
+                <template v-slot:prepend>
+                  <q-icon name="phone" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="form-group">
+              <q-input v-model="form.timezone" :label="$t('users.timezone')" outlined 
+                placeholder="e.g., Asia/Jakarta" :error="hasError('timezone')" 
+                :error-message="getError('timezone')" class="form-input">
+                <template v-slot:prepend>
+                  <q-icon name="schedule" />
+                </template>
+              </q-input>
+            </div>
+          </div>
+
+          <!-- Bio Section -->
+          <div class="form-row">
+            <div class="form-group full-width">
+              <q-input v-model="form.bio" :label="$t('users.bio')" type="textarea" outlined rows="3" 
+                counter maxlength="500" :error="hasError('bio')" :error-message="getError('bio')" 
+                class="form-input">
+                <template v-slot:prepend>
+                  <q-icon name="description" />
+                </template>
+              </q-input>
+            </div>
+          </div>
+
           <!-- Security -->
           <div class="form-row">
             <div class="form-group">
@@ -129,7 +164,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { api } from 'src/boot/axios'
+import { userService } from 'src/services/userService'
 
 const $q = useQuasar()
 const route = useRoute()
@@ -146,6 +181,9 @@ const errors = ref({})
 const form = reactive({
   name: '',
   email: '',
+  phone: '',
+  timezone: '',
+  bio: '',
   password: '',
   password_confirmation: '',
   roles: []
@@ -173,14 +211,17 @@ const fetchUser = async () => {
 
   loading.value = true
   try {
-    const response = await api.get(`/users/${route.params.id}`)
-    if (response.data.success) {
-      currentUser.value = response.data.data
+    const response = await userService.getUser(route.params.id)
+    if (response.success) {
+      currentUser.value = response.data
 
       // Populate form
       form.name = currentUser.value.name
       form.email = currentUser.value.email
-      form.roles = currentUser.value.roles || []
+      form.phone = currentUser.value.phone || ''
+      form.timezone = currentUser.value.timezone || ''
+      form.bio = currentUser.value.bio || ''
+      form.roles = currentUser.value.roles?.map(role => role.name) || []
       form.password = ''
       form.password_confirmation = ''
     }
@@ -205,6 +246,9 @@ const handleSubmit = async () => {
     const userData = {
       name: form.name,
       email: form.email,
+      phone: form.phone,
+      timezone: form.timezone,
+      bio: form.bio,
       roles: form.roles
     }
 
@@ -213,33 +257,31 @@ const handleSubmit = async () => {
       userData.password_confirmation = form.password_confirmation
     }
 
+    let response
     if (isEdit.value) {
       // Update user
-      await api.put(`/users/${route.params.id}`, userData)
-      $q.notify({
-        type: 'positive',
-        message: t('users.messages.userUpdated'),
-        position: 'top'
-      })
+      response = await userService.updateUser(route.params.id, userData)
     } else {
       // Create user
-      await api.post('/users', userData)
-      $q.notify({
-        type: 'positive',
-        message: t('users.messages.userCreated'),
-        position: 'top'
-      })
+      response = await userService.createUser(userData)
     }
 
-    router.push({ name: 'users.index' })
+    if (response.success) {
+      $q.notify({
+        type: 'positive',
+        message: isEdit.value ? t('users.messages.userUpdated') : t('users.messages.userCreated'),
+        position: 'top'
+      })
+      router.push({ name: 'users.index' })
+    }
   } catch (err) {
     console.error('Failed to save user:', err)
 
-    if (err.response?.data?.errors) {
-      errors.value = err.response.data.errors
+    if (err.errors) {
+      errors.value = err.errors
     }
 
-    const message = err.response?.data?.message || t('users.messages.failedToSaveUser')
+    const message = err.message || t('users.messages.failedToSaveUser')
     $q.notify({
       type: 'negative',
       message,

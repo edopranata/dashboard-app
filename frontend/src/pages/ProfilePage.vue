@@ -388,6 +388,7 @@ import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from 'src/stores/auth'
 import SimpleAvatarUpload from 'src/components/SimpleAvatarUpload.vue'
+import { profileService } from 'src/services/profileService'
 
 // Composables
 const $q = useQuasar()
@@ -483,19 +484,28 @@ const resetForm = () => {
 const updateProfile = async () => {
   updatingProfile.value = true
   try {
-    // Mock update - replace with actual API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // Call the update profile API
+    const response = await profileService.updateProfile(profileForm.value)
 
-    $q.notify({
-      type: 'positive',
-      message: t('profile.profileUpdated'),
-      position: 'top'
-    })
+    if (response.success) {
+      // Update auth store with new user data
+      if (authStore.user) {
+        Object.assign(authStore.user, response.data)
+      }
+
+      $q.notify({
+        type: 'positive',
+        message: t('profile.profileUpdated'),
+        position: 'top'
+      })
+    } else {
+      throw new Error(response.message || 'Update failed')
+    }
   } catch (error) {
     console.error('Failed to update profile:', error)
     $q.notify({
       type: 'negative',
-      message: t('profile.updateFailed'),
+      message: error.message || t('profile.updateFailed'),
       position: 'top'
     })
   } finally {
@@ -506,26 +516,30 @@ const updateProfile = async () => {
 const updatePassword = async () => {
   updatingPassword.value = true
   try {
-    // Mock update - replace with actual API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // Call the change password API
+    const response = await profileService.changePassword(passwordForm.value)
 
-    // Clear form
-    passwordForm.value = {
-      current_password: '',
-      password: '',
-      password_confirmation: ''
+    if (response.success) {
+      // Clear form
+      passwordForm.value = {
+        current_password: '',
+        password: '',
+        password_confirmation: ''
+      }
+
+      $q.notify({
+        type: 'positive',
+        message: t('profile.passwordUpdated'),
+        position: 'top'
+      })
+    } else {
+      throw new Error(response.message || 'Password update failed')
     }
-
-    $q.notify({
-      type: 'positive',
-      message: t('profile.passwordUpdated'),
-      position: 'top'
-    })
   } catch (error) {
     console.error('Failed to update password:', error)
     $q.notify({
       type: 'negative',
-      message: t('profile.updateFailed'),
+      message: error.message || t('profile.updateFailed'),
       position: 'top'
     })
   } finally {
@@ -565,9 +579,8 @@ const handleAvatarUpdate = () => {
     message: t('avatar.upload_success'),
     position: 'top'
   })
-
-  // No need to call fetchUser since we're updating the store directly in the component
-  // In a real app with API integration, you would call: authStore.fetchUser()
+  
+  // Avatar is already updated in the component via the API response
 }
 
 const handleAvatarDelete = () => {
@@ -576,9 +589,8 @@ const handleAvatarDelete = () => {
     message: t('avatar.delete_success'),
     position: 'top'
   })
-
-  // No need to call fetchUser since we're updating the store directly in the component
-  // In a real app with API integration, you would call: authStore.fetchUser()
+  
+  // Avatar is already updated in the component via the API response
 }
 
 const handleUploadProgress = (progressData) => {

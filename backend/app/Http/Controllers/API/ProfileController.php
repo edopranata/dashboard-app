@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Laravolt\Avatar\Facade as Avatar;
 
 class ProfileController extends Controller
 {
@@ -42,7 +43,7 @@ class ProfileController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'avatar' => $user->avatar,
+                'avatar' => $this->generateAvatarUrl($user),
                 'phone' => $user->phone,
                 'timezone' => $user->timezone,
                 'bio' => $user->bio,
@@ -92,8 +93,7 @@ class ProfileController extends Controller
                 'success' => true,
                 'message' => 'Avatar uploaded successfully',
                 'data' => [
-                    'avatar' => $user->avatar,
-                    'avatar_url' => Storage::disk('public')->url($user->avatar)
+                    'avatar' => $this->generateAvatarUrl($user)
                 ]
             ]);
 
@@ -124,7 +124,10 @@ class ProfileController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Avatar deleted successfully'
+                'message' => 'Avatar deleted successfully',
+                'data' => [
+                    'avatar' => $this->generateAvatarUrl($user)
+                ]
             ]);
 
         } catch (\Exception $e) {
@@ -173,5 +176,29 @@ class ProfileController extends Controller
             'success' => true,
             'message' => 'Password changed successfully'
         ]);
+    }
+
+    /**
+     * Generate avatar URL - either from uploaded file or dynamic generation
+     */
+    private function generateAvatarUrl($user)
+    {
+        // If user has uploaded avatar, convert to base64
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            $avatarPath = Storage::disk('public')->path($user->avatar);
+            $imageData = file_get_contents($avatarPath);
+            $base64 = base64_encode($imageData);
+            $mimeType = mime_content_type($avatarPath);
+            return 'data:' . $mimeType . ';base64,' . $base64;
+        }
+
+        // Generate dynamic avatar from initials
+        $avatar = Avatar::create($user->name)
+            ->setDimension(200, 200)
+            ->setFontSize(80)
+            ->setBackground('#' . substr(hash('sha256', $user->email), 0, 6))
+            ->toBase64();
+
+        return 'data:image/svg+xml;base64,' . $avatar;
     }
 }
