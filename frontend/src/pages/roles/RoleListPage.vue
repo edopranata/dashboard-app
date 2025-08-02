@@ -335,7 +335,8 @@ const createRole = () => {
 const editRole = (role) => {
   selectedRole.value = role
   roleForm.name = role.name
-  roleForm.permissions = role.permissions || []
+  // Convert permission objects to permission name strings
+  roleForm.permissions = role.permissions ? role.permissions.map(p => p.name || p) : []
   showRoleDialog.value = true
 }
 
