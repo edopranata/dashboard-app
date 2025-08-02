@@ -141,23 +141,30 @@
 
             <div class="permissions-section">
               <div class="section-title">Permissions</div>
-              <div class="permissions-grid">
+              <div v-if="Object.keys(groupedPermissions).length === 0" class="text-center q-pa-md">
+                <q-spinner color="primary" size="2em" />
+                <p class="q-mt-sm text-grey-6">Loading permissions...</p>
+              </div>
+              <div v-else class="permissions-grid">
                 <div
-                  v-for="(perms, category) in groupedPermissions"
-                  :key="category"
+                  v-for="(categoryData, categoryKey) in groupedPermissions"
+                  :key="categoryKey"
                   class="permission-category"
                 >
                   <div class="category-header">
                     <q-checkbox
-                      :model-value="isCategorySelected(perms)"
-                      @update:model-value="toggleCategory(perms, $event)"
-                      :indeterminate="isCategoryIndeterminate(perms)"
+                      :model-value="isCategorySelected(categoryData.permissions)"
+                      @update:model-value="toggleCategory(categoryData.permissions, $event)"
+                      :indeterminate="isCategoryIndeterminate(categoryData.permissions)"
                     />
-                    <span class="category-name">{{ formatCategoryName(category) }}</span>
+                    <div class="category-info">
+                      <span class="category-name">{{ categoryData.label }}</span>
+                      <span class="category-description">{{ categoryData.description }}</span>
+                    </div>
                   </div>
                   <div class="category-permissions">
                     <q-checkbox
-                      v-for="permission in perms"
+                      v-for="permission in categoryData.permissions"
                       :key="permission.name"
                       v-model="roleForm.permissions"
                       :val="permission.name"
@@ -221,20 +228,21 @@
               <div class="section-title">All Permissions</div>
               <div class="permissions-list">
                 <div
-                  v-for="(perms, category) in getGroupedRolePermissions(selectedRole.permissions)"
-                  :key="category"
+                  v-for="(categoryData, categoryKey) in getFilteredGroupedPermissions(selectedRole.permissions)"
+                  :key="categoryKey"
                   class="permission-group"
+                  v-show="categoryData.permissions.length > 0"
                 >
-                  <div class="group-title">{{ formatCategoryName(category) }}</div>
+                  <div class="group-title">{{ categoryData.label }}</div>
                   <div class="group-permissions">
                     <q-chip
-                      v-for="permission in perms"
-                      :key="permission"
-                      :color="getPermissionColor(permission)"
+                      v-for="permission in categoryData.permissions"
+                      :key="permission.name"
+                      :color="getPermissionColor(permission.name)"
                       text-color="white"
                       size="sm"
                     >
-                      {{ formatPermissionName(permission) }}
+                      {{ formatPermissionName(permission.name) }}
                     </q-chip>
                   </div>
                 </div>
@@ -263,7 +271,6 @@ const authStore = useAuthStore()
 
 // State
 const roles = ref([])
-const permissions = ref([])
 const loading = ref(false)
 const saving = ref(false)
 const showRoleDialog = ref(false)
@@ -280,17 +287,7 @@ const canCreateRoles = computed(() => authStore.hasPermission('create_roles'))
 const canEditRoles = computed(() => authStore.hasPermission('edit_roles'))
 const canDeleteRoles = computed(() => authStore.hasPermission('delete_roles'))
 
-const groupedPermissions = computed(() => {
-  const groups = {}
-  permissions.value.forEach(permission => {
-    const category = permission.name.split('_')[1] || 'general'
-    if (!groups[category]) {
-      groups[category] = []
-    }
-    groups[category].push(permission)
-  })
-  return groups
-})
+const groupedPermissions = ref({})
 
 // Methods
 const fetchRoles = async () => {
@@ -315,10 +312,10 @@ const fetchRoles = async () => {
 
 const fetchPermissions = async () => {
   try {
-    const response = await api.get('/permissions')
+    const response = await api.get('/permissions/grouped')
     if (response.data.success) {
-      // Permissions is not paginated, direct access to data
-      permissions.value = response.data.data
+      // Use the grouped permissions from API
+      groupedPermissions.value = response.data.data
     }
   } catch (err) {
     console.error('Failed to fetch permissions:', err)
@@ -504,24 +501,27 @@ const formatPermissionName = (permission) => {
     .join(' ')
 }
 
-const formatCategoryName = (category) => {
-  return category.charAt(0).toUpperCase() + category.slice(1)
-}
-
-const getGroupedRolePermissions = (permissions) => {
-  if (!permissions) return {}
+const getFilteredGroupedPermissions = (rolePermissions) => {
+  if (!rolePermissions || !groupedPermissions.value) return {}
   
-  const groups = {}
-  permissions.forEach(permission => {
-    // Handle permission as object with name property
-    const permissionName = permission.name || permission
-    const category = permissionName.split('_')[1] || 'general'
-    if (!groups[category]) {
-      groups[category] = []
+  const result = {}
+  const rolePermissionNames = rolePermissions.map(p => p.name || p)
+  
+  Object.keys(groupedPermissions.value).forEach(categoryKey => {
+    const categoryData = groupedPermissions.value[categoryKey]
+    const filteredPermissions = categoryData.permissions.filter(p => 
+      rolePermissionNames.includes(p.name)
+    )
+    
+    if (filteredPermissions.length > 0) {
+      result[categoryKey] = {
+        label: categoryData.label,
+        permissions: filteredPermissions
+      }
     }
-    groups[category].push(permissionName)
   })
-  return groups
+  
+  return result
 }
 
 // Lifecycle
@@ -654,9 +654,21 @@ onMounted(async () => {
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #e2e8f0;
     
-    .category-name {
-      font-weight: 500;
-      color: #2d3748;
+    .category-info {
+      display: flex;
+      flex-direction: column;
+      
+      .category-name {
+        font-weight: 500;
+        color: #2d3748;
+        font-size: 0.9rem;
+      }
+      
+      .category-description {
+        font-size: 0.75rem;
+        color: #718096;
+        margin-top: 0.125rem;
+      }
     }
   }
   

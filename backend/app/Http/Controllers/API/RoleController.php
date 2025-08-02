@@ -62,10 +62,13 @@ class RoleController extends Controller
             ], 422);
         }
 
-        $role = Role::create(['name' => $request->name]);
+        $role = Role::create(['name' => $request->name, 'guard_name' => 'web']);
 
         if ($request->has('permissions')) {
-            $role->givePermissionTo($request->permissions);
+            $permissions = Permission::whereIn('name', $request->permissions)
+                ->where('guard_name', 'web')
+                ->get();
+            $role->givePermissionTo($permissions);
         }
 
         return response()->json([
@@ -132,7 +135,10 @@ class RoleController extends Controller
         $role->update(['name' => $request->name]);
 
         if ($request->has('permissions')) {
-            $role->syncPermissions($request->permissions);
+            $permissions = Permission::whereIn('name', $request->permissions)
+                ->where('guard_name', 'web')
+                ->get();
+            $role->syncPermissions($permissions);
         }
 
         return response()->json([
