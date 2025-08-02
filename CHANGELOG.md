@@ -5,9 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0-beta.1] - 2025-08-02 ✅ **RELEASED**
 
-### Added in Phase 5 Development ✅ **COMPLETED**
+### ✨ Added - Complete Phase 5 Implementation
+
+- **Complete Internationalization System (i18n)**
+  - 390+ translation keys in English and Indonesian
+  - AuthLanguageSwitcher component for authentication pages
+  - Real-time language switching with localStorage persistence
+  - Comprehensive translation coverage for all UI components
+  - Professional implementation across all Vue components
+
+- **Enhanced Dark Mode Support**
+  - Optimized styling across all components for better readability
+  - Improved text contrast and visual hierarchy
+  - Enhanced form elements, tables, and dialog styling
+  - Professional dark theme implementation
+  - Consistent styling patterns across the application
+
+- **Code Quality & Performance Improvements**
+  - Removed unused IndexPage.vue components and associated translations
+  - Fixed all ESLint warnings and build issues
+  - Build succeeds without errors or warnings
+  - Optimized component structure and imports
+
+### 🔧 Fixed
+
+- Dark mode readability issues across all pages
+- ESLint warnings related to undefined variables and unused imports
+- Build compilation errors
+- Missing translation keys for common UI elements
+
+### 🧹 Removed
+
+- Unused IndexPage.vue files (2 files removed)
+- Duplicate and obsolete translation keys
+- Redundant component imports
+
+---
+
+## [Unreleased] - Next: v1.2.0-beta.1 (Advanced Features)
+
+### 🚀 Planned for Next Release
 
 - **Dashboard Analytics System**
 
@@ -47,7 +86,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - System notifications and confirmations
   - **Code cleanup: Removed unused IndexPage.vue and associated translation keys**
 
-### Planned for v1.1.0-beta.1 (Phase 5)
+### 🚀 Planned for Next Release
+
+- **Avatar Upload System**
+  - User profile image management with validation
+  - Image resizing and optimization
+  - Default avatar generation
+
+- **Activity Logging & Audit Trail**
+  - User action tracking and logging
+  - System change audit trail
+  - Audit report generation and export
+
+- **Advanced Search & Filtering**
+  - Global search functionality across entities
+  - Advanced filter combinations
+  - Search result highlighting and pagination
+
+- **Bulk Operations**
+  - CSV/Excel import for user data
+  - Bulk role assignments and user actions
+  - Mass operations with progress tracking
+
+- **Real-time Features**  
+  - WebSocket integration for live updates
+  - Real-time notifications system
+  - Live system status monitoring
+
+---
+
+## [1.0.0-beta.1] - 2025-07-28 ✅ **RELEASED**
+
+### 🎉 Major Release - Core Application Complete
 
 - Advanced search and filters
 - Export/Import functionality
