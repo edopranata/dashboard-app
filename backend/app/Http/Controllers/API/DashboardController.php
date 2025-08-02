@@ -32,7 +32,7 @@ class DashboardController extends Controller
                         'percentage' => rand(5, 15)
                     ],
                     [
-                        'name' => 'Manager', 
+                        'name' => 'Manager',
                         'count' => rand(5, 20),
                         'percentage' => rand(15, 35)
                     ],
@@ -64,7 +64,7 @@ class DashboardController extends Controller
                     [
                         'id' => 2,
                         'icon' => 'edit',
-                        'color' => 'secondary', 
+                        'color' => 'secondary',
                         'text' => 'User "' . $this->generateRandomName() . '" updated their profile',
                         'time' => rand(1, 3) . ' hours ago'
                     ],
@@ -134,7 +134,7 @@ class DashboardController extends Controller
     {
         $firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emily', 'Chris', 'Jessica', 'Ryan', 'Amanda', 'Kevin', 'Lisa', 'Daniel', 'Maria', 'James'];
         $lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson'];
-        
+
         return $firstNames[array_rand($firstNames)] . ' ' . $lastNames[array_rand($lastNames)];
     }
 
@@ -146,7 +146,7 @@ class DashboardController extends Controller
     private function generateRandomRole(): string
     {
         $roles = ['Admin', 'Manager', 'Supervisor', 'Employee', 'Editor', 'Viewer', 'Moderator', 'Analyst', 'Coordinator', 'Specialist'];
-        
+
         return $roles[array_rand($roles)];
     }
 }

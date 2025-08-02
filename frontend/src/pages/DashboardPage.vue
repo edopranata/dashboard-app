@@ -4,13 +4,13 @@
     <div class="page-header">
       <div class="header-content">
         <div class="welcome-section">
-          <h4 class="page-title">Welcome back, {{ authStore.userName }}!</h4>
-          <p class="page-subtitle">Here's what's happening with your dashboard today.</p>
+          <h4 class="page-title">{{ $t('dashboard.welcome', { name: authStore.userName }) }}</h4>
+          <p class="page-subtitle">{{ $t('dashboard.subtitle') }}</p>
         </div>
         <div class="header-actions">
-          <q-btn color="positive" icon="notifications" label="Test Notify" @click="testNotification" class="q-mr-sm"
+          <q-btn color="positive" icon="notifications" :label="$t('dashboard.testNotification')" @click="testNotification" class="q-mr-sm"
             outline />
-          <q-btn color="primary" icon="add" label="Quick Action" @click="showQuickActionDialog = true" />
+          <q-btn color="primary" icon="add" :label="$t('dashboard.quickAction')" @click="showQuickActionDialog = true" />
         </div>
       </div>
     </div>
@@ -26,7 +26,7 @@
               </div>
               <div class="stat-details">
                 <div class="stat-value">{{ stats.totalUsers }}</div>
-                <div class="stat-label">Total Users</div>
+                <div class="stat-label">{{ $t('dashboard.stats.totalUsers') }}</div>
                 <div class="stat-change stat-change--positive">
                   <q-icon name="trending_up" size="16px" />
                   +{{ growthMetrics.userGrowth.percentage }}%
@@ -44,8 +44,9 @@
               </div>
               <div class="stat-details">
                 <div class="stat-value">{{ stats.totalRoles }}</div>
-                <div class="stat-label">Total Roles</div>
-                <div class="stat-change" :class="growthMetrics.roleUsage.percentage > 0 ? 'stat-change--positive' : 'stat-change--neutral'">
+                <div class="stat-label">{{ $t('dashboard.stats.totalRoles') }}</div>
+                <div class="stat-change"
+                  :class="growthMetrics.roleUsage.percentage > 0 ? 'stat-change--positive' : 'stat-change--neutral'">
                   <q-icon :name="growthMetrics.roleUsage.percentage > 0 ? 'trending_up' : 'remove'" size="16px" />
                   {{ growthMetrics.roleUsage.percentage > 0 ? '+' : '' }}{{ growthMetrics.roleUsage.percentage }}%
                 </div>
@@ -62,7 +63,7 @@
               </div>
               <div class="stat-details">
                 <div class="stat-value">{{ stats.activeUsers }}</div>
-                <div class="stat-label">Active Today</div>
+                <div class="stat-label">{{ $t('dashboard.stats.activeToday') }}</div>
                 <div class="stat-change stat-change--positive">
                   <q-icon name="trending_up" size="16px" />
                   +{{ growthMetrics.activeUsers.percentage }}%
@@ -80,7 +81,7 @@
               </div>
               <div class="stat-details">
                 <div class="stat-value">{{ stats.permissions }}</div>
-                <div class="stat-label">Permissions</div>
+                <div class="stat-label">{{ $t('dashboard.stats.permissions') }}</div>
                 <div class="stat-change stat-change--neutral">
                   <q-icon name="remove" size="16px" />
                   0%
@@ -101,16 +102,16 @@
             <q-card-section class="card-header">
               <div class="card-title">
                 <q-icon name="history" class="q-mr-sm" />
-                Recent Activity
+                {{ $t('dashboard.recentActivity') }}
               </div>
               <q-btn flat icon="more_vert" round size="sm">
                 <q-menu>
                   <q-list>
                     <q-item clickable v-close-popup>
-                      <q-item-section>Refresh</q-item-section>
+                      <q-item-section>{{ $t('actions.refresh') }}</q-item-section>
                     </q-item>
                     <q-item clickable v-close-popup>
-                      <q-item-section>Export</q-item-section>
+                      <q-item-section>{{ $t('actions.export') }}</q-item-section>
                     </q-item>
                   </q-list>
                 </q-menu>
@@ -305,7 +306,7 @@ const fetchDashboardStats = async () => {
 
   try {
     const response = await api.get('/dashboard/stats')
-    
+
     if (response.data.success) {
       // Use the data from the API response
       stats.value = {
@@ -314,7 +315,7 @@ const fetchDashboardStats = async () => {
         activeUsers: response.data.data.activeUsers,
         permissions: response.data.data.permissions
       }
-      
+
       // Update growth metrics from API if available
       if (response.data.data.growthMetrics) {
         growthMetrics.value = {
@@ -324,12 +325,12 @@ const fetchDashboardStats = async () => {
           permissions: { percentage: 0 } // Static for now
         }
       }
-      
+
       // Update recent activities from API if available
       if (response.data.data.recentActivity && response.data.data.recentActivity.length > 0) {
         recentActivities.value = response.data.data.recentActivity
       }
-      
+
       $q.notify({
         type: 'positive',
         message: 'Dashboard stats loaded successfully!',
@@ -342,7 +343,7 @@ const fetchDashboardStats = async () => {
     }
   } catch (error) {
     console.error('Failed to fetch dashboard stats:', error)
-    
+
     $q.notify({
       type: 'negative',
       message: 'Failed to load dashboard stats. Using fallback data.',
@@ -350,7 +351,7 @@ const fetchDashboardStats = async () => {
       position: 'top-right',
       timeout: 3000
     })
-    
+
     // Fallback to mock data
     stats.value = {
       totalUsers: 156,

@@ -27,25 +27,7 @@
           </q-btn>
 
           <!-- Language Switcher -->
-          <q-btn flat round dense icon="language" class="q-mr-xs">
-            <q-tooltip>Language</q-tooltip>
-            <q-menu>
-              <q-list style="min-width: 100px">
-                <q-item clickable v-close-popup>
-                  <q-item-section avatar>
-                    <q-icon name="flag" />
-                  </q-item-section>
-                  <q-item-section>English</q-item-section>
-                </q-item>
-                <q-item clickable v-close-popup>
-                  <q-item-section avatar>
-                    <q-icon name="flag" />
-                  </q-item-section>
-                  <q-item-section>Indonesia</q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
+          <LanguageSwitcher class="q-mr-xs" />
 
           <!-- Notifications -->
           <q-btn flat round dense icon="notifications" class="q-mr-xs">
@@ -234,6 +216,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
+import LanguageSwitcher from 'src/components/LanguageSwitcher.vue'
 
 // Composables
 const $q = useQuasar()

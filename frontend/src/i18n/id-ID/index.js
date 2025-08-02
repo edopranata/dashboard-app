@@ -1,0 +1,251 @@
+export default {
+  // Common Actions
+  actions: {
+    create: 'Buat',
+    edit: 'Edit',
+    delete: 'Hapus',
+    save: 'Simpan',
+    cancel: 'Batal',
+    close: 'Tutup',
+    back: 'Kembali',
+    next: 'Selanjutnya',
+    previous: 'Sebelumnya',
+    submit: 'Kirim',
+    reset: 'Reset',
+    clear: 'Bersihkan',
+    refresh: 'Muat Ulang',
+    search: 'Cari',
+    filter: 'Filter',
+    export: 'Ekspor',
+    import: 'Impor',
+    view: 'Lihat',
+    manage: 'Kelola',
+    update: 'Perbarui'
+  },
+
+  // Navigation
+  nav: {
+    dashboard: 'Dashboard',
+    users: 'Pengguna',
+    roles: 'Peran',
+    permissions: 'Izin',
+    profile: 'Profil',
+    settings: 'Pengaturan',
+    logout: 'Keluar'
+  },
+
+  // Authentication
+  auth: {
+    login: 'Masuk',
+    register: 'Daftar',
+    logout: 'Keluar',
+    email: 'Email',
+    password: 'Kata Sandi',
+    confirmPassword: 'Konfirmasi Kata Sandi',
+    rememberMe: 'Ingat Saya',
+    forgotPassword: 'Lupa Kata Sandi?',
+    welcomeBack: 'Selamat Datang Kembali!',
+    loginSuccess: 'Berhasil masuk!',
+    logoutSuccess: 'Berhasil keluar!',
+    invalidCredentials: 'Email atau kata sandi salah',
+    loginRequired: 'Silakan masuk terlebih dahulu'
+  },
+
+  // Dashboard
+  dashboard: {
+    title: 'Dashboard',
+    welcome: 'Selamat datang kembali, {name}!',
+    subtitle: 'Berikut adalah yang terjadi dengan dashboard Anda hari ini.',
+    stats: {
+      totalUsers: 'Total Pengguna',
+      totalRoles: 'Total Peran',
+      activeToday: 'Aktif Hari Ini',
+      permissions: 'Izin'
+    },
+    recentActivity: 'Aktivitas Terbaru',
+    quickActions: 'Aksi Cepat',
+    systemStatus: 'Status Sistem',
+    testNotification: 'Tes Notifikasi',
+    quickAction: 'Aksi Cepat',
+    database: 'Database',
+    apiServer: 'Server API',
+    cache: 'Cache',
+    online: 'Online',
+    warning: 'Peringatan',
+    offline: 'Offline'
+  },
+
+  // Users
+  users: {
+    title: 'Pengguna',
+    createUser: 'Buat Pengguna',
+    editUser: 'Edit Pengguna',
+    addUser: 'Tambah Pengguna',
+    addNewUser: 'Tambah Pengguna Baru',
+    manageUsers: 'Kelola Pengguna',
+    userList: 'Daftar Pengguna',
+    userDetails: 'Detail Pengguna',
+    name: 'Nama',
+    email: 'Email',
+    roles: 'Peran',
+    status: 'Status',
+    createdAt: 'Dibuat Pada',
+    updatedAt: 'Diperbarui Pada',
+    active: 'Aktif',
+    inactive: 'Tidak Aktif',
+    noUsers: 'Tidak ada pengguna ditemukan',
+    deleteConfirm: 'Apakah Anda yakin ingin menghapus pengguna ini?',
+    userCreated: 'Pengguna berhasil dibuat',
+    userUpdated: 'Pengguna berhasil diperbarui',
+    userDeleted: 'Pengguna berhasil dihapus',
+    selectRoles: 'Pilih Peran',
+    assignRoles: 'Tetapkan Peran'
+  },
+
+  // Roles
+  roles: {
+    title: 'Peran',
+    createRole: 'Buat Peran',
+    editRole: 'Edit Peran',
+    addRole: 'Tambah Peran',
+    roleList: 'Daftar Peran',
+    roleDetails: 'Detail Peran',
+    name: 'Nama Peran',
+    description: 'Deskripsi',
+    permissions: 'Izin',
+    users: 'Pengguna',
+    noRoles: 'Tidak ada peran ditemukan',
+    deleteConfirm: 'Apakah Anda yakin ingin menghapus peran ini?',
+    roleCreated: 'Peran berhasil dibuat',
+    roleUpdated: 'Peran berhasil diperbarui',
+    roleDeleted: 'Peran berhasil dihapus',
+    selectPermissions: 'Pilih Izin',
+    assignPermissions: 'Tetapkan Izin',
+    permissionCategories: {
+      userManagement: 'Kelola Pengguna',
+      roleManagement: 'Kelola Peran',
+      systemAccess: 'Akses Sistem',
+      administration: 'Administrasi'
+    }
+  },
+
+  // Permissions
+  permissions: {
+    title: 'Izin',
+    name: 'Nama Izin',
+    description: 'Deskripsi',
+    category: 'Kategori',
+    // User Management
+    view_users: 'Lihat Pengguna',
+    create_users: 'Buat Pengguna',
+    edit_users: 'Edit Pengguna',
+    delete_users: 'Hapus Pengguna',
+    manage_users: 'Kelola Pengguna',
+    // Role Management
+    view_roles: 'Lihat Peran',
+    create_roles: 'Buat Peran',
+    edit_roles: 'Edit Peran',
+    delete_roles: 'Hapus Peran',
+    assign_roles: 'Tetapkan Peran',
+    // System Access
+    view_dashboard: 'Lihat Dashboard',
+    view_analytics: 'Lihat Analitik',
+    view_profile: 'Lihat Profil',
+    edit_profile: 'Edit Profil',
+    // Administration
+    manage_settings: 'Kelola Pengaturan',
+    view_logs: 'Lihat Log',
+    system_admin: 'Admin Sistem',
+    view_permissions: 'Lihat Izin',
+    manage_permissions: 'Kelola Izin'
+  },
+
+  // Settings
+  settings: {
+    title: 'Pengaturan',
+    general: 'Umum',
+    appearance: 'Tampilan',
+    language: 'Bahasa',
+    theme: 'Tema',
+    lightMode: 'Mode Terang',
+    darkMode: 'Mode Gelap',
+    systemMode: 'Ikuti Sistem',
+    notifications: 'Notifikasi',
+    privacy: 'Privasi',
+    security: 'Keamanan'
+  },
+
+  // Language Switcher
+  language: {
+    title: 'Bahasa',
+    english: 'English',
+    indonesian: 'Bahasa Indonesia',
+    changeLanguage: 'Ubah Bahasa',
+    languageChanged: 'Bahasa berhasil diubah'
+  },
+
+  // Common Messages
+  messages: {
+    success: 'Berhasil!',
+    error: 'Terjadi kesalahan!',
+    warning: 'Peringatan!',
+    info: 'Informasi',
+    loading: 'Memuat...',
+    noData: 'Tidak ada data',
+    confirmDelete: 'Apakah Anda yakin ingin menghapus item ini?',
+    itemDeleted: 'Item berhasil dihapus',
+    itemCreated: 'Item berhasil dibuat',
+    itemUpdated: 'Item berhasil diperbarui',
+    actionCompleted: 'Aksi berhasil diselesaikan',
+    actionFailed: 'Aksi gagal',
+    networkError: 'Kesalahan jaringan',
+    serverError: 'Kesalahan server',
+    validationError: 'Kesalahan validasi',
+    accessDenied: 'Akses ditolak',
+    notFound: 'Tidak ditemukan',
+    comingSoon: 'Segera Hadir'
+  },
+
+  // Validation
+  validation: {
+    required: 'Field ini wajib diisi',
+    email: 'Format email tidak valid',
+    minLength: 'Minimal {min} karakter',
+    maxLength: 'Maksimal {max} karakter',
+    min: 'Nilai minimal {min}',
+    max: 'Nilai maksimal {max}',
+    numeric: 'Hanya angka yang diperbolehkan',
+    alphaNumeric: 'Hanya huruf dan angka yang diperbolehkan',
+    confirmed: 'Konfirmasi tidak cocok',
+    unique: 'Nilai sudah digunakan'
+  },
+
+  // Quick Actions
+  quickActions: {
+    title: 'Aksi Cepat',
+    addUser: 'Tambah Pengguna',
+    createRole: 'Buat Peran',
+    viewAnalytics: 'Lihat Analitik',
+    systemSettings: 'Pengaturan Sistem',
+    testDialog: 'Tes Dialog'
+  },
+
+  // System Status
+  system: {
+    status: 'Status',
+    responseTime: 'Waktu Respons',
+    usage: 'Penggunaan',
+    storage: 'Penyimpanan'
+  },
+
+  // Time/Date
+  time: {
+    minutesAgo: '{count} menit lalu',
+    hoursAgo: '{count} jam lalu',
+    daysAgo: '{count} hari lalu',
+    weeksAgo: '{count} minggu lalu',
+    monthsAgo: '{count} bulan lalu',
+    yearsAgo: '{count} tahun lalu',
+    justNow: 'Baru saja'
+  }
+}
