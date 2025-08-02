@@ -1,5 +1,10 @@
 <template>
   <q-layout view="hHh lpR fFf">
+    <!-- Fixed Language Switcher -->
+    <div class="fixed-language-switcher">
+      <AuthLanguageSwitcher />
+    </div>
+
     <q-page-container>
       <div class="auth-container">
         <div class="auth-background">
@@ -38,6 +43,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import AuthLanguageSwitcher from 'src/components/AuthLanguageSwitcher.vue'
 
 onMounted(() => {
   // Add any initialization logic here
@@ -45,6 +51,28 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+// Fixed Language Switcher Styles
+.fixed-language-switcher {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
 .auth-container {
   min-height: 100vh;
   display: flex;
@@ -149,6 +177,16 @@ onMounted(() => {
 
 // Dark mode support
 .body--dark {
+  .fixed-language-switcher {
+    background: rgba(45, 55, 72, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background: rgba(45, 55, 72, 0.9);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+
   .auth-container {
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
   }
@@ -169,6 +207,12 @@ onMounted(() => {
 
 // Responsive design
 @media (max-width: 480px) {
+  .fixed-language-switcher {
+    top: 16px;
+    right: 16px;
+    padding: 3px;
+  }
+
   .auth-content {
     padding: 1rem;
   }

@@ -11,8 +11,8 @@
         <div class="header-brand">
           <q-icon name="dashboard_customize" size="32px" color="primary" class="q-mr-sm" />
           <div class="brand-text">
-            <div class="brand-title">Dashboard</div>
-            <div class="brand-subtitle">Management</div>
+            <div class="brand-title">{{ $t('app.dashboard') }}</div>
+            <div class="brand-subtitle">{{ $t('app.management') }}</div>
           </div>
         </div>
 
