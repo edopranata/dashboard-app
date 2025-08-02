@@ -65,7 +65,7 @@ main ←─── release/v1.1.0 ←─── develop ←─── feature/new-f
 ### Phase 5: UI/UX Enhancements (v1.1.0-beta.1) 🚧 CURRENT
 
 - ✅ Dashboard analytics with dynamic stats
-- 🔄 Language switcher
+- ✅ Language switcher (Indonesian/English)
 - 🔄 Advanced search & filters
 - 🔄 Export/Import functionality
 - 🔄 Activity logging

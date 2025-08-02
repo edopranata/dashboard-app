@@ -8,18 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added in Phase 5 Development
-
 - **Dashboard Analytics System**
   - Dynamic dashboard stats API with rich dummy data
-  - Real-time statistics for users, roles, and system metrics
+  - Real-time statistics for users, roles, and system metrics  
   - Growth metrics with percentage calculations
   - Random activity feed with realistic user interactions
   - System status monitoring (database, API, cache, storage)
   - Proper error handling and fallback mechanisms
 
+- **Multilingual Support (i18n)**
+  - Complete language switcher with Indonesian and English
+  - Professional dropdown interface with language flags
+  - Persistent language preference with localStorage
+  - Comprehensive translation keys for all UI components
+  - Real-time language switching without page reload
+  - Fallback locale support for missing translations
+
 ### Planned for v1.1.0-beta.1 (Phase 5)
 
-- Language switcher (Indonesian/English)
 - Advanced search and filters
 - Export/Import functionality
 - Activity logging system system
