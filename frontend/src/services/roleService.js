@@ -94,7 +94,7 @@ export const roleService = {
   // Get permissions
   async getPermissions() {
     try {
-      const response = await api.get('/roles/permissions')
+      const response = await api.get('/permissions/grouped')
       return response.data
     } catch (error) {
       console.error('Error fetching permissions:', error)

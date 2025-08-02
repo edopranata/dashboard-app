@@ -3,8 +3,15 @@
     <div class="page-header">
       <div class="header-content">
         <div class="header-info">
-          <h4 class="page-title">{{ $t('roles.createRole') }}</h4>
-          <p class="page-subtitle">{{ $t('roles.createRoleDescription') }}</p>
+          <h4 class="page-title">
+            {{ isEdit ? $t('roles.editRole') : $t('roles.createRole') }}
+          </h4>
+          <p class="page-subtitle">
+            {{ isEdit ? $t('roles.editRoleDescription') : $t('roles.createRoleDescription') }}
+          </p>
+        </div>
+        <div class="header-actions">
+          <q-btn flat icon="arrow_back" :label="$t('roles.backToRoles')" @click="goBack" class="action-btn" />
         </div>
       </div>
     </div>
@@ -25,7 +32,8 @@
               <q-input v-model="roleForm.name" :label="$t('roles.roleNameRequired')" outlined :rules="[
                 val => !!val || $t('roles.validation.roleNameRequired'),
                 val => val.length >= 3 || $t('roles.validation.roleNameMinLength')
-              ]" lazy-rules :hint="$t('roles.roleNameHint')" class="form-input">
+              ]" lazy-rules :hint="$t('roles.roleNameHint')" class="form-input"
+                :disable="isEdit && isSystemRole(roleForm.name)">
                 <template v-slot:prepend>
                   <q-icon name="security" />
                 </template>
@@ -40,7 +48,7 @@
               {{ $t('roles.permissionsDescription') }}
             </p>
 
-            <div v-if="loading" class="text-center q-pa-md">
+            <div v-if="Object.keys(permissionGroups).length === 0" class="text-center q-pa-md">
               <q-spinner color="primary" size="2em" />
               <p class="q-mt-sm text-grey-6">{{ $t('roles.loadingPermissions') }}</p>
             </div>
@@ -139,8 +147,8 @@
           <div class="form-actions">
             <q-btn flat :label="$t('common.cancel')" color="grey-7" :to="{ name: 'roles.index' }" :disable="saving"
               class="action-btn" />
-            <q-btn type="submit" :label="$t('roles.createRole')" color="primary" :loading="saving"
-              :disable="!roleForm.name || roleForm.permissions.length === 0" class="action-btn">
+            <q-btn type="submit" :label="isEdit ? $t('common.update') : $t('roles.createRole')" color="primary"
+              :loading="saving" :disable="!roleForm.name || roleForm.permissions.length === 0" class="action-btn">
               <template v-slot:loading>
                 <q-spinner-facebook />
               </template>
@@ -153,13 +161,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted, computed, nextTick } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { api } from 'src/boot/axios'
+import { roleService } from 'src/services/roleService'
 
 const router = useRouter()
+const route = useRoute()
 const $q = useQuasar()
 const { t } = useI18n()
 
@@ -167,27 +176,59 @@ const { t } = useI18n()
 const loading = ref(false)
 const saving = ref(false)
 const permissionGroups = ref({})
+const currentRole = ref(null)
 
 const roleForm = reactive({
   name: '',
   permissions: []
 })
 
-// Load permissions
-const fetchPermissions = async () => {
+// Computed
+const isEdit = computed(() => !!route.params.id)
+
+// Load role data for edit mode
+const fetchRole = async () => {
+  if (!isEdit.value) return
+
   loading.value = true
   try {
-    const response = await api.get('/permissions/grouped')
-    permissionGroups.value = response.data.data || {}
+    const response = await roleService.getRole(route.params.id)
+    if (response.success) {
+      currentRole.value = response.data
+
+      // Populate form with nextTick to ensure reactivity
+      await nextTick()
+
+      roleForm.name = currentRole.value.name || ''
+      roleForm.permissions = currentRole.value.permissions?.map(p => p.name || p) || []
+    }
+  } catch (err) {
+    console.error('Failed to fetch role:', err)
+    $q.notify({
+      type: 'negative',
+      message: t('roles.messages.failedToLoadRole'),
+      position: 'top'
+    })
+    router.push({ name: 'roles.index' })
+  } finally {
+    loading.value = false
+  }
+}
+
+// Load permissions
+const fetchPermissions = async () => {
+  try {
+    const response = await roleService.getPermissions()
+    console.log('Permissions response:', response)
+    permissionGroups.value = response.data || {}
+    console.log('Permission groups:', permissionGroups.value)
   } catch (err) {
     console.error('Failed to fetch permissions:', err)
     $q.notify({
       type: 'negative',
-      message: t('roles.loadingPermissions'),
+      message: t('roles.messages.failedToLoadPermissions') || 'Failed to load permissions',
       position: 'top'
     })
-  } finally {
-    loading.value = false
   }
 }
 
@@ -200,18 +241,30 @@ const saveRole = async () => {
       permissions: roleForm.permissions
     }
 
-    await api.post('/roles', roleData)
+    let response
+    if (isEdit.value) {
+      response = await roleService.updateRole(route.params.id, roleData)
+    } else {
+      response = await roleService.createRole(roleData)
+    }
 
-    $q.notify({
-      type: 'positive',
-      message: t('roles.messages.roleCreated'),
-      position: 'top'
-    })
+    if (response.success) {
+      $q.notify({
+        type: 'positive',
+        message: isEdit.value
+          ? t('roles.messages.roleUpdated')
+          : t('roles.messages.roleCreated'),
+        position: 'top'
+      })
 
-    router.push({ name: 'roles.index' })
+      router.push({ name: 'roles.index' })
+    }
   } catch (err) {
-    console.error('Failed to create role:', err)
-    const message = err.response?.data?.message || t('roles.messages.failedToCreateRole')
+    console.error('Failed to save role:', err)
+    const message = err.message || (isEdit.value
+      ? t('roles.messages.failedToUpdateRole')
+      : t('roles.messages.failedToCreateRole'))
+
     $q.notify({
       type: 'negative',
       message,
@@ -220,6 +273,10 @@ const saveRole = async () => {
   } finally {
     saving.value = false
   }
+}
+
+const goBack = () => {
+  router.push({ name: 'roles.index' })
 }
 
 // Permission helpers
@@ -261,8 +318,14 @@ const formatPermissionName = (permissionName) => {
     .replace(/\b\w/g, l => l.toUpperCase())
 }
 
-onMounted(() => {
-  fetchPermissions()
+// Utility functions
+const isSystemRole = (roleName) => {
+  if (!roleName) return false
+  return ['Super Admin', 'Owner', 'User'].includes(roleName)
+}
+
+onMounted(async () => {
+  await Promise.all([fetchPermissions(), fetchRole()])
 })
 </script>
 

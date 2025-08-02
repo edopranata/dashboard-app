@@ -82,57 +82,6 @@
       </q-card>
     </div>
 
-    <!-- Create/Edit Role Dialog -->
-    <q-dialog v-model="showRoleDialog" persistent>
-      <q-card style="min-width: 600px; max-width: 800px">
-        <q-card-section class="row items-center">
-          <div class="text-h6">{{ selectedRole?.id ? 'Edit' : 'Create' }} Role</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-
-        <q-card-section>
-          <q-form @submit="saveRole" class="q-gutter-md">
-            <q-input v-model="roleForm.name" label="Role Name" outlined
-              :rules="[val => !!val || 'Role name is required']"
-              :disable="selectedRole?.id && isSystemRole(selectedRole?.name)" />
-
-            <div class="permissions-section">
-              <div class="section-title">Permissions</div>
-              <div v-if="Object.keys(groupedPermissions).length === 0" class="text-center q-pa-md">
-                <q-spinner color="primary" size="2em" />
-                <p class="q-mt-sm text-grey-6">Loading permissions...</p>
-              </div>
-              <div v-else class="permissions-grid">
-                <div v-for="(categoryData, categoryKey) in groupedPermissions" :key="categoryKey"
-                  class="permission-category">
-                  <div class="category-header">
-                    <q-checkbox :model-value="isCategorySelected(categoryData.permissions)"
-                      @update:model-value="toggleCategory(categoryData.permissions, $event)"
-                      :indeterminate="isCategoryIndeterminate(categoryData.permissions)" />
-                    <div class="category-info">
-                      <span class="category-name">{{ categoryData.label }}</span>
-                      <span class="category-description">{{ categoryData.description }}</span>
-                    </div>
-                  </div>
-                  <div class="category-permissions">
-                    <q-checkbox v-for="permission in categoryData.permissions" :key="permission.name"
-                      v-model="roleForm.permissions" :val="permission.name"
-                      :label="formatPermissionName(permission.name)" class="permission-item" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </q-form>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" v-close-popup />
-          <q-btn color="primary" label="Save" @click="saveRole" :loading="saving" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
     <!-- Role Details Dialog -->
     <q-dialog v-model="showDetailsDialog">
       <q-card style="min-width: 500px">
@@ -191,35 +140,28 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { api } from 'src/boot/axios'
 import { useAuthStore } from 'src/stores/auth'
 
 const $q = useQuasar()
 const { t } = useI18n()
+const router = useRouter()
 const authStore = useAuthStore()
 
 // State
 const roles = ref([])
 const loading = ref(false)
-const saving = ref(false)
-const showRoleDialog = ref(false)
 const showDetailsDialog = ref(false)
 const selectedRole = ref(null)
-
-const roleForm = reactive({
-  name: '',
-  permissions: []
-})
 
 // Computed
 const canCreateRoles = computed(() => authStore.hasPermission('create_roles'))
 const canEditRoles = computed(() => authStore.hasPermission('edit_roles'))
 const canDeleteRoles = computed(() => authStore.hasPermission('delete_roles'))
-
-const groupedPermissions = ref({})
 
 // Methods
 const fetchRoles = async () => {
@@ -242,77 +184,17 @@ const fetchRoles = async () => {
   }
 }
 
-const fetchPermissions = async () => {
-  try {
-    const response = await api.get('/permissions/grouped')
-    if (response.data.success) {
-      // Use the grouped permissions from API
-      groupedPermissions.value = response.data.data
-    }
-  } catch (err) {
-    console.error('Failed to fetch permissions:', err)
-  }
-}
-
 const createRole = () => {
-  selectedRole.value = null
-  roleForm.name = ''
-  roleForm.permissions = []
-  showRoleDialog.value = true
+  router.push({ name: 'roles.create' })
 }
 
 const editRole = (role) => {
-  selectedRole.value = role
-  roleForm.name = role.name
-  // Convert permission objects to permission name strings
-  roleForm.permissions = role.permissions ? role.permissions.map(p => p.name || p) : []
-  showRoleDialog.value = true
+  router.push({ name: 'roles.edit', params: { id: role.id } })
 }
 
 const viewRole = (role) => {
   selectedRole.value = role
   showDetailsDialog.value = true
-}
-
-const saveRole = async () => {
-  saving.value = true
-  try {
-    const roleData = {
-      name: roleForm.name,
-      permissions: roleForm.permissions
-    }
-
-    if (selectedRole.value?.id) {
-      // Update role
-      await api.put(`/roles/${selectedRole.value.id}`, roleData)
-      $q.notify({
-        type: 'positive',
-        message: t('roles.roleUpdated'),
-        position: 'top'
-      })
-    } else {
-      // Create role
-      await api.post('/roles', roleData)
-      $q.notify({
-        type: 'positive',
-        message: t('roles.roleCreated'),
-        position: 'top'
-      })
-    }
-
-    showRoleDialog.value = false
-    fetchRoles()
-  } catch (err) {
-    console.error('Failed to save role:', err)
-    const message = err.response?.data?.message || t('roles.messages.failedToCreateRole')
-    $q.notify({
-      type: 'negative',
-      message,
-      position: 'top'
-    })
-  } finally {
-    saving.value = false
-  }
 }
 
 const confirmDelete = (role) => {
@@ -340,35 +222,6 @@ const confirmDelete = (role) => {
       })
     }
   })
-}
-
-// Permission helpers
-const isCategorySelected = (permissions) => {
-  return permissions.every(p => roleForm.permissions.includes(p.name))
-}
-
-const isCategoryIndeterminate = (permissions) => {
-  const selected = permissions.filter(p => roleForm.permissions.includes(p.name))
-  return selected.length > 0 && selected.length < permissions.length
-}
-
-const toggleCategory = (permissions, value) => {
-  if (value) {
-    // Select all permissions in category
-    permissions.forEach(p => {
-      if (!roleForm.permissions.includes(p.name)) {
-        roleForm.permissions.push(p.name)
-      }
-    })
-  } else {
-    // Deselect all permissions in category
-    permissions.forEach(p => {
-      const index = roleForm.permissions.indexOf(p.name)
-      if (index > -1) {
-        roleForm.permissions.splice(index, 1)
-      }
-    })
-  }
 }
 
 // Utility functions
@@ -434,31 +287,30 @@ const formatPermissionName = (permission) => {
 }
 
 const getFilteredGroupedPermissions = (rolePermissions) => {
-  if (!rolePermissions || !groupedPermissions.value) return {}
+  // For simplicity, we'll just return grouped permissions by category
+  if (!rolePermissions) return {}
 
-  const result = {}
+  // Group permissions by their prefix (category)
+  const grouped = {}
   const rolePermissionNames = rolePermissions.map(p => p.name || p)
 
-  Object.keys(groupedPermissions.value).forEach(categoryKey => {
-    const categoryData = groupedPermissions.value[categoryKey]
-    const filteredPermissions = categoryData.permissions.filter(p =>
-      rolePermissionNames.includes(p.name)
-    )
-
-    if (filteredPermissions.length > 0) {
-      result[categoryKey] = {
-        label: categoryData.label,
-        permissions: filteredPermissions
+  rolePermissionNames.forEach(permission => {
+    const category = permission.split('_')[0]
+    if (!grouped[category]) {
+      grouped[category] = {
+        label: category.charAt(0).toUpperCase() + category.slice(1),
+        permissions: []
       }
     }
+    grouped[category].permissions.push({ name: permission })
   })
 
-  return result
+  return grouped
 }
 
 // Lifecycle
 onMounted(async () => {
-  await Promise.all([fetchRoles(), fetchPermissions()])
+  await fetchRoles()
 })
 </script>
 

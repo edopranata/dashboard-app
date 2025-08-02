@@ -81,7 +81,7 @@ class RoleController extends Controller
     /**
      * Display the specified role
      */
-    public function show(Request $request, Role $role)
+    public function show(Request $request, $id)
     {
         // Check permission
         if (!$request->user()->can('view_roles')) {
@@ -91,9 +91,19 @@ class RoleController extends Controller
             ], 403);
         }
 
+        // Find role manually
+        $role = Role::with('permissions')->find($id);
+
+        if (!$role) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Role not found'
+            ], 404);
+        }
+
         return response()->json([
             'success' => true,
-            'data' => $role->load('permissions')
+            'data' => $role
         ]);
     }
 
