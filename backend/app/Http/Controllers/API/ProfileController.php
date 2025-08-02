@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Laravolt\Avatar\Facade as Avatar;
 
 class ProfileController extends Controller
 {
@@ -192,13 +191,51 @@ class ProfileController extends Controller
             return 'data:' . $mimeType . ';base64,' . $base64;
         }
 
-        // Generate dynamic avatar from initials
-        $avatar = Avatar::create($user->name)
-            ->setDimension(200, 200)
-            ->setFontSize(80)
-            ->setBackground('#' . substr(hash('sha256', $user->email), 0, 6))
-            ->toBase64();
+        // Generate simple initials-based avatar using SVG
+        $initials = $this->getInitials($user->name);
+        $backgroundColor = $this->generateColorFromString($user->email);
+        
+        $svg = '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="' . $backgroundColor . '"/>
+            <text x="100" y="125" font-family="Arial, sans-serif" font-size="80" font-weight="bold" 
+                  text-anchor="middle" fill="white">' . $initials . '</text>
+        </svg>';
+        
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+    }
 
-        return 'data:image/svg+xml;base64,' . $avatar;
+    /**
+     * Get initials from name
+     */
+    private function getInitials($name)
+    {
+        $words = explode(' ', trim($name));
+        $initials = '';
+        
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= strtoupper(substr($word, 0, 1));
+                if (strlen($initials) >= 2) break;
+            }
+        }
+        
+        return $initials ?: 'U';
+    }
+
+    /**
+     * Generate color from string
+     */
+    private function generateColorFromString($string)
+    {
+        $hash = md5($string);
+        $colors = [
+            '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+            '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+            '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe',
+            '#43e97b', '#fa709a', '#fee140', '#a8edea', '#d299c2'
+        ];
+        
+        $index = hexdec(substr($hash, 0, 2)) % count($colors);
+        return $colors[$index];
     }
 }

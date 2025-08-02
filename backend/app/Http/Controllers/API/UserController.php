@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
-use Laravolt\Avatar\Facade as Avatar;
 
 class UserController extends Controller
 {
@@ -26,16 +25,52 @@ class UserController extends Controller
             return 'data:' . $mimeType . ';base64,' . $imageData;
         }
 
-        // Generate avatar from initials using Laravolt Avatar
-        $avatarUrl = Avatar::create($user->name)
-            ->setDimension(200, 200)
-            ->setFontSize(80)
-            ->setBorder(0, '#ffffff')
-            ->setBackground('#667eea')
-            ->setForeground('#ffffff')
-            ->toBase64();
+        // Generate simple initials-based avatar using SVG
+        $initials = $this->getInitials($user->name);
+        $backgroundColor = $this->generateColorFromString($user->email);
+        
+        $svg = '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="' . $backgroundColor . '"/>
+            <text x="100" y="125" font-family="Arial, sans-serif" font-size="80" font-weight="bold" 
+                  text-anchor="middle" fill="white">' . $initials . '</text>
+        </svg>';
+        
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+    }
 
-        return $avatarUrl;
+    /**
+     * Get initials from name
+     */
+    private function getInitials($name)
+    {
+        $words = explode(' ', trim($name));
+        $initials = '';
+        
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= strtoupper(substr($word, 0, 1));
+                if (strlen($initials) >= 2) break;
+            }
+        }
+        
+        return $initials ?: 'U';
+    }
+
+    /**
+     * Generate color from string
+     */
+    private function generateColorFromString($string)
+    {
+        $hash = md5($string);
+        $colors = [
+            '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+            '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+            '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe',
+            '#43e97b', '#fa709a', '#fee140', '#a8edea', '#d299c2'
+        ];
+        
+        $index = hexdec(substr($hash, 0, 2)) % count($colors);
+        return $colors[$index];
     }    /**
      * Display a listing of users with pagination and search
      */
@@ -98,6 +133,9 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
+            'phone' => 'nullable|string|max:20',
+            'timezone' => 'nullable|string|max:50',
+            'bio' => 'nullable|string|max:500',
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,name'
         ]);
@@ -113,6 +151,9 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'timezone' => $request->timezone,
+            'bio' => $request->bio,
             'password' => Hash::make($request->password)
         ]);
 
@@ -177,6 +218,9 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'timezone' => 'nullable|string|max:50',
+            'bio' => 'nullable|string|max:500',
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,name'
         ]);
@@ -189,7 +233,8 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user->update($request->only('name', 'email'));
+        // Update user data (excluding avatar - avatar is managed through Profile page only)
+        $user->update($request->only('name', 'email', 'phone', 'timezone', 'bio'));
         $user->syncRoles($request->roles);
 
         // Load relationships and add avatar URL
