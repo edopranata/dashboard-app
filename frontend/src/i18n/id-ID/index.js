@@ -48,7 +48,18 @@ export default {
     loginSuccess: 'Berhasil masuk!',
     logoutSuccess: 'Berhasil keluar!',
     invalidCredentials: 'Email atau kata sandi salah',
-    loginRequired: 'Silakan masuk terlebih dahulu'
+    loginRequired: 'Silakan masuk terlebih dahulu',
+    pleaseEnterEmailPassword: 'Silakan masukkan email dan kata sandi Anda',
+    signInToContinue: 'Masuk untuk melanjutkan',
+    dontHaveAccount: 'Belum punya akun?',
+    alreadyHaveAccount: 'Sudah punya akun?',
+    createAccount: 'Buat Akun',
+    enterEmail: 'Masukkan email Anda',
+    enterPassword: 'Masukkan kata sandi Anda',
+    passwordMustBeAtLeast: 'Kata sandi minimal 6 karakter',
+    emailIsRequired: 'Email wajib diisi',
+    passwordIsRequired: 'Kata sandi wajib diisi',
+    validEmailRequired: 'Silakan masukkan alamat email yang valid'
   },
 
   // Dashboard
@@ -203,7 +214,9 @@ export default {
     validationError: 'Kesalahan validasi',
     accessDenied: 'Akses ditolak',
     notFound: 'Tidak ditemukan',
-    comingSoon: 'Segera Hadir'
+    comingSoon: 'Segera Hadir',
+    pageNotFound: 'Ups. Tidak ada apa-apa di sini...',
+    goHome: 'Kembali ke Beranda'
   },
 
   // Validation
@@ -236,6 +249,29 @@ export default {
     responseTime: 'Waktu Respons',
     usage: 'Penggunaan',
     storage: 'Penyimpanan'
+  },
+
+  // Common
+  common: {
+    yes: 'Ya',
+    no: 'Tidak',
+    ok: 'OK',
+    confirm: 'Konfirmasi',
+    warning: 'Peringatan',
+    error: 'Error',
+    success: 'Berhasil',
+    info: 'Informasi',
+    loading: 'Memuat...',
+    noData: 'Tidak ada data tersedia',
+    selectAll: 'Pilih Semua',
+    deselectAll: 'Batalkan Pilihan',
+    required: 'Wajib',
+    optional: 'Opsional',
+    underDevelopment: 'Dalam Pengembangan',
+    underDevelopmentDescription: 'Fitur ini sedang dalam pengembangan dan akan tersedia segera. Terima kasih atas kesabaran Anda!',
+    backToDashboard: 'Kembali ke Dashboard',
+    developmentProgress: 'Progress Pengembangan',
+    progressComplete: '{percent}% Selesai'
   },
 
   // Time/Date

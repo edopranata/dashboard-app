@@ -1,15 +1,22 @@
 <template>
     <div class="login-page">
+        <!-- Language Switcher Header -->
+        <div class="login-header">
+            <div class="language-switcher-container">
+                <LanguageSwitcher />
+            </div>
+        </div>
+
         <q-form @submit="handleLogin" class="login-form">
             <!-- Welcome text -->
             <div class="welcome-text">
-                <h5>Welcome back!</h5>
-                <p>Please sign in to your account</p>
+                <h5>{{ $t('auth.welcomeBack') }}</h5>
+                <p>{{ $t('auth.loginSubtitle') }}</p>
             </div>
 
             <!-- Email field -->
             <div class="form-group">
-                <q-input v-model="form.email" type="email" label="Email Address" outlined dense
+                <q-input v-model="form.email" type="email" :label="$t('auth.email')" outlined dense
                     :loading="authStore.loading" :error="!!errors.email" :error-message="errors.email"
                     @update:model-value="clearError('email')" class="form-input">
                     <template v-slot:prepend>
@@ -20,7 +27,7 @@
 
             <!-- Password field -->
             <div class="form-group">
-                <q-input v-model="form.password" :type="showPassword ? 'text' : 'password'" label="Password" outlined
+                <q-input v-model="form.password" :type="showPassword ? 'text' : 'password'" :label="$t('auth.password')" outlined
                     dense :loading="authStore.loading" :error="!!errors.password" :error-message="errors.password"
                     @update:model-value="clearError('password')" class="form-input">
                     <template v-slot:prepend>
@@ -35,26 +42,26 @@
 
             <!-- Remember me & Forgot password -->
             <div class="form-options">
-                <q-checkbox v-model="form.remember" label="Remember me" color="primary" :disable="authStore.loading"
+                <q-checkbox v-model="form.remember" :label="$t('auth.rememberMe')" color="primary" :disable="authStore.loading"
                     class="remember-checkbox" />
 
                 <router-link to="/auth/forgot-password" class="forgot-password-link">
-                    Forgot password?
+                    {{ $t('auth.forgotPassword') }}
                 </router-link>
             </div>
 
             <!-- Login button -->
-            <q-btn type="submit" color="primary" label="Sign In" :loading="authStore.loading" :disable="!isFormValid"
+            <q-btn type="submit" color="primary" :label="$t('auth.login')" :loading="authStore.loading" :disable="!isFormValid"
                 class="login-btn" no-caps rounded>
                 <template v-slot:loading>
                     <q-spinner-hourglass class="on-left" />
-                    Signing in...
+                    {{ $t('auth.signingIn') }}
                 </template>
             </q-btn>
 
             <!-- Demo credentials -->
             <div class="demo-credentials">
-                <p class="demo-title">Demo Credentials:</p>
+                <p class="demo-title">{{ $t('auth.demoCredentials') }}:</p>
                 <div class="demo-accounts">
                     <q-btn flat dense no-caps color="grey-7" @click="fillDemoCredentials('admin')"
                         :disable="authStore.loading" class="demo-btn">
@@ -78,6 +85,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from 'src/stores/auth'
+import LanguageSwitcher from 'src/components/LanguageSwitcher.vue'
 
 // Composables
 const router = useRouter()
@@ -189,6 +197,22 @@ const fillDemoCredentials = (type) => {
 <style lang="scss" scoped>
 .login-page {
     width: 100%;
+    position: relative;
+}
+
+.login-header {
+    position: absolute;
+    top: -60px;
+    right: -20px;
+    z-index: 10;
+
+    .language-switcher-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
 }
 
 .login-form {

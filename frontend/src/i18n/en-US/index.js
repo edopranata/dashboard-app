@@ -48,7 +48,18 @@ export default {
     loginSuccess: 'Login successful!',
     logoutSuccess: 'Logout successful!',
     invalidCredentials: 'Invalid email or password',
-    loginRequired: 'Please login first'
+    loginRequired: 'Please login first',
+    pleaseEnterEmailPassword: 'Please enter your email and password',
+    signInToContinue: 'Sign in to continue',
+    dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: 'Already have an account?',
+    createAccount: 'Create Account',
+    enterEmail: 'Enter your email',
+    enterPassword: 'Enter your password',
+    passwordMustBeAtLeast: 'Password must be at least 6 characters',
+    emailIsRequired: 'Email is required',
+    passwordIsRequired: 'Password is required',
+    validEmailRequired: 'Please enter a valid email address'
   },
 
   // Dashboard
@@ -203,7 +214,9 @@ export default {
     validationError: 'Validation error',
     accessDenied: 'Access denied',
     notFound: 'Not found',
-    comingSoon: 'Coming Soon'
+    comingSoon: 'Coming Soon',
+    pageNotFound: 'Oops. Nothing here...',
+    goHome: 'Go Home'
   },
 
   // Validation
@@ -236,6 +249,29 @@ export default {
     responseTime: 'Response Time',
     usage: 'Usage',
     storage: 'Storage'
+  },
+
+  // Common
+  common: {
+    yes: 'Yes',
+    no: 'No',
+    ok: 'OK',
+    confirm: 'Confirm',
+    warning: 'Warning',
+    error: 'Error',
+    success: 'Success',
+    info: 'Information',
+    loading: 'Loading...',
+    noData: 'No data available',
+    selectAll: 'Select All',
+    deselectAll: 'Deselect All',
+    required: 'Required',
+    optional: 'Optional',
+    underDevelopment: 'Under Development',
+    underDevelopmentDescription: 'This feature is currently being developed and will be available soon. Thank you for your patience!',
+    backToDashboard: 'Back to Dashboard',
+    developmentProgress: 'Development Progress',
+    progressComplete: '{percent}% Complete'
   },
 
   // Time/Date
