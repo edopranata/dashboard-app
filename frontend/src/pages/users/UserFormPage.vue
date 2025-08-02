@@ -1,131 +1,126 @@
 <template>
-  <q-page class="user-form-page">
+  <q-page class="container padded">
     <!-- Page Header -->
     <div class="page-header">
       <div class="header-content">
-        <div>
-          <h4>{{ isEdit ? $t('users.editUser') : $t('users.createUser') }}</h4>
-          <p>{{ isEdit ? $t('users.updateUserDescription') : $t('users.addUserDescription') }}</p>
+        <div class="header-info">
+          <h4 class="page-title">{{ isEdit ? $t('users.editUser') : $t('users.createUser') }}</h4>
+          <p class="page-subtitle">{{ isEdit ? $t('users.updateUserDescription') : $t('users.addUserDescription') }}</p>
         </div>
-        <q-btn flat icon="arrow_back" :label="$t('users.backToUsers')" :to="{ name: 'users.index' }" />
+        <div class="header-actions">
+          <q-btn flat icon="arrow_back" :label="$t('users.backToUsers')" :to="{ name: 'users.index' }"
+            class="action-btn" />
+        </div>
       </div>
     </div>
 
     <!-- User Form -->
-    <div class="form-container">
-      <q-card flat bordered>
-        <q-card-section>
-          <q-form @submit="handleSubmit" class="user-form">
-            <div class="form-grid">
-              <!-- Personal Information Section -->
-              <div class="form-section">
-                <div class="section-title">
-                  <q-icon name="person" />
-                  {{ $t('users.personalInformation') }}
-                </div>
+    <q-card flat bordered class="content-card">
+      <q-card-section class="card-header">
+        <div class="section-title">
+          <q-icon name="person" />
+          {{ $t('users.userDetails') }}
+        </div>
+      </q-card-section>
 
-                <div class="form-fields">
-                  <q-input v-model="form.name" :label="$t('users.fullNameRequired')" outlined :rules="[
-                    val => !!val || $t('users.validation.nameRequired'),
-                    val => val.length >= 2 || $t('users.validation.nameMinLength')
-                  ]" :error="hasError('name')" :error-message="getError('name')">
-                    <template v-slot:prepend>
-                      <q-icon name="account_circle" />
-                    </template>
-                  </q-input>
+      <q-card-section>
+        <q-form @submit="handleSubmit" class="standard-form">
+          <!-- Personal Information -->
+          <div class="form-row">
+            <div class="form-group">
+              <q-input v-model="form.name" :label="$t('users.fullNameRequired')" outlined :rules="[
+                val => !!val || $t('users.validation.nameRequired'),
+                val => val.length >= 2 || $t('users.validation.nameMinLength')
+              ]" :error="hasError('name')" :error-message="getError('name')" class="form-input">
+                <template v-slot:prepend>
+                  <q-icon name="account_circle" />
+                </template>
+              </q-input>
+            </div>
 
-                  <q-input v-model="form.email" :label="$t('users.emailAddressRequired')" type="email" outlined :rules="[
-                    val => !!val || $t('users.validation.emailRequired'),
-                    val => /.+@.+\..+/.test(val) || $t('users.validation.validEmailRequired')
-                  ]" :error="hasError('email')" :error-message="getError('email')">
-                    <template v-slot:prepend>
-                      <q-icon name="email" />
-                    </template>
-                  </q-input>
-                </div>
-              </div>
+            <div class="form-group">
+              <q-input v-model="form.email" :label="$t('users.emailAddressRequired')" type="email" outlined :rules="[
+                val => !!val || $t('users.validation.emailRequired'),
+                val => /.+@.+\..+/.test(val) || $t('users.validation.validEmailRequired')
+              ]" :error="hasError('email')" :error-message="getError('email')" class="form-input">
+                <template v-slot:prepend>
+                  <q-icon name="email" />
+                </template>
+              </q-input>
+            </div>
+          </div>
 
-              <!-- Security Section -->
-              <div class="form-section">
-                <div class="section-title">
-                  <q-icon name="security" />
-                  {{ $t('users.securitySettings') }}
-                </div>
+          <!-- Security -->
+          <div class="form-row">
+            <div class="form-group">
+              <q-input v-model="form.password"
+                :label="isEdit ? $t('users.newPasswordOptional') : $t('users.passwordRequired')"
+                :type="showPassword ? 'text' : 'password'" outlined :rules="isEdit ? [] : [
+                  val => !!val || $t('users.validation.passwordRequired'),
+                  val => val.length >= 8 || $t('users.validation.passwordMinLength')
+                ]" :error="hasError('password')" :error-message="getError('password')" class="form-input">
+                <template v-slot:prepend>
+                  <q-icon name="lock" />
+                </template>
+                <template v-slot:append>
+                  <q-btn flat round dense :icon="showPassword ? 'visibility_off' : 'visibility'"
+                    @click="showPassword = !showPassword" />
+                </template>
+              </q-input>
+            </div>
 
-                <div class="form-fields">
-                  <q-input v-model="form.password"
-                    :label="isEdit ? $t('users.newPasswordOptional') : $t('users.passwordRequired')"
-                    :type="showPassword ? 'text' : 'password'" outlined :rules="isEdit ? [] : [
-                      val => !!val || $t('users.validation.passwordRequired'),
-                      val => val.length >= 8 || $t('users.validation.passwordMinLength')
-                    ]" :error="hasError('password')" :error-message="getError('password')">
-                    <template v-slot:prepend>
-                      <q-icon name="lock" />
-                    </template>
-                    <template v-slot:append>
-                      <q-btn flat round dense :icon="showPassword ? 'visibility_off' : 'visibility'"
-                        @click="showPassword = !showPassword" />
-                    </template>
-                  </q-input>
+            <div class="form-group">
+              <q-input v-model="form.password_confirmation" :label="$t('users.confirmPassword')"
+                :type="showPasswordConfirm ? 'text' : 'password'" outlined :rules="form.password ? [
+                  val => !!val || $t('users.validation.confirmPasswordRequired'),
+                  val => val === form.password || $t('users.validation.passwordsMismatch')
+                ] : []" :disable="!form.password" :error="hasError('password_confirmation')"
+                :error-message="getError('password_confirmation')" class="form-input">
+                <template v-slot:prepend>
+                  <q-icon name="lock" />
+                </template>
+                <template v-slot:append>
+                  <q-btn flat round dense :icon="showPasswordConfirm ? 'visibility_off' : 'visibility'"
+                    @click="showPasswordConfirm = !showPasswordConfirm" :disable="!form.password" />
+                </template>
+              </q-input>
+            </div>
+          </div>
 
-                  <q-input v-model="form.password_confirmation" :label="$t('users.confirmPassword')"
-                    :type="showPasswordConfirm ? 'text' : 'password'" outlined :rules="form.password ? [
-                      val => !!val || $t('users.validation.confirmPasswordRequired'),
-                      val => val === form.password || $t('users.validation.passwordsMismatch')
-                    ] : []" :disable="!form.password" :error="hasError('password_confirmation')"
-                    :error-message="getError('password_confirmation')">
-                    <template v-slot:prepend>
-                      <q-icon name="lock" />
-                    </template>
-                    <template v-slot:append>
-                      <q-btn flat round dense :icon="showPasswordConfirm ? 'visibility_off' : 'visibility'"
-                        @click="showPasswordConfirm = !showPasswordConfirm" :disable="!form.password" />
-                    </template>
-                  </q-input>
-                </div>
-              </div>
+          <!-- Roles Section -->
+          <div class="form-row">
+            <div class="form-group full-width">
+              <q-select v-model="form.roles" :options="roleOptions" :label="$t('users.assignRolesRequired')" outlined
+                multiple emit-value map-options use-chips
+                :rules="[val => val && val.length > 0 || $t('users.validation.roleRequired')]"
+                :error="hasError('roles')" :error-message="getError('roles')" class="form-input">
+                <template v-slot:prepend>
+                  <q-icon name="group" />
+                </template>
+              </q-select>
 
-              <!-- Roles Section -->
-              <div class="form-section full-width">
-                <div class="section-title">
-                  <q-icon name="admin_panel_settings" />
-                  {{ $t('users.rolesAndPermissions') }}
-                </div>
-
-                <div class="roles-section">
-                  <q-select v-model="form.roles" :options="roleOptions" :label="$t('users.assignRolesRequired')"
-                    outlined multiple emit-value map-options use-chips
-                    :rules="[val => val && val.length > 0 || $t('users.validation.roleRequired')]"
-                    :error="hasError('roles')" :error-message="getError('roles')">
-                    <template v-slot:prepend>
-                      <q-icon name="group" />
-                    </template>
-                  </q-select>
-
-                  <!-- Selected Roles Preview -->
-                  <div v-if="form.roles.length > 0" class="selected-roles">
-                    <div class="preview-title">{{ $t('users.selectedRoles') }}:</div>
-                    <div class="roles-chips">
-                      <q-chip v-for="role in form.roles" :key="role" :color="getRoleColor(role)" text-color="white"
-                        :icon="getRoleIcon(role)" removable @remove="removeRole(role)">
-                        {{ role }}
-                      </q-chip>
-                    </div>
-                  </div>
+              <!-- Selected Roles Preview -->
+              <div v-if="form.roles.length > 0" class="selected-roles q-mt-md">
+                <div class="preview-title">{{ $t('users.selectedRoles') }}:</div>
+                <div class="roles-chips">
+                  <q-chip v-for="role in form.roles" :key="role" :color="getRoleColor(role)" text-color="white"
+                    :icon="getRoleIcon(role)" removable @remove="removeRole(role)">
+                    {{ role }}
+                  </q-chip>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Form Actions -->
-            <div class="form-actions">
-              <q-btn flat :label="$t('common.cancel')" :to="{ name: 'users.index' }" class="q-mr-sm" />
-              <q-btn type="submit" color="primary" :label="isEdit ? $t('users.updateUser') : $t('users.createUser')"
-                :loading="loading" :disable="!isFormValid" />
-            </div>
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </div>
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <q-btn flat :label="$t('common.cancel')" :to="{ name: 'users.index' }" class="action-btn" />
+            <q-btn type="submit" color="primary" :label="isEdit ? $t('users.updateUser') : $t('users.createUser')"
+              :loading="loading" :disable="!isFormValid" class="action-btn" />
+          </div>
+        </q-form>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 

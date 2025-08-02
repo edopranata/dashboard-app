@@ -12,8 +12,8 @@ class AvatarService {
 
     return api.post('/avatar/upload', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     })
   }
 

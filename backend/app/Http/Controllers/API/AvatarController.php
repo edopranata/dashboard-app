@@ -39,7 +39,7 @@ class AvatarController extends Controller
         try {
             $user = auth()->user();
             $file = $request->file('avatar');
-            
+
             // Delete old avatar if exists
             if ($user->avatar) {
                 $this->deleteAvatarFiles($user->avatar);
@@ -47,44 +47,44 @@ class AvatarController extends Controller
 
             // Generate unique filename
             $filename = $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
-            
+
             // Create image manager instance
             $manager = new ImageManager(new Driver());
-            
+
             // Process and save different sizes
             $originalImage = $manager->read($file);
-            
+
             // Original size (max 500x500)
             $originalImage->resize(500, 500, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
-            
+
             // Save original
             Storage::disk('public')->put(
                 'avatars/' . $filename,
                 $originalImage->encode()
             );
-            
+
             // Create thumbnail (150x150)
             $thumbnail = clone $originalImage;
             $thumbnail->resize(150, 150, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
-            
+
             Storage::disk('public')->put(
                 'avatars/thumbnails/' . $filename,
                 $thumbnail->encode()
             );
-            
+
             // Create small avatar (50x50)
             $small = clone $originalImage;
             $small->resize(50, 50, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
-            
+
             Storage::disk('public')->put(
                 'avatars/small/' . $filename,
                 $small->encode()
@@ -120,7 +120,7 @@ class AvatarController extends Controller
     {
         try {
             $user = auth()->user();
-            
+
             if (!$user->avatar) {
                 return response()->json([
                     'status' => 'error',
@@ -130,7 +130,7 @@ class AvatarController extends Controller
 
             // Delete avatar files
             $this->deleteAvatarFiles($user->avatar);
-            
+
             // Update user
             $user->update(['avatar' => null]);
 
@@ -154,11 +154,11 @@ class AvatarController extends Controller
     public function show(Request $request, $size = 'original'): JsonResponse
     {
         $user = auth()->user();
-        
+
         if (!$user->avatar) {
             // Generate default avatar using Laravolt Avatar
             $defaultAvatar = $this->generateDefaultAvatar($user->name, $size);
-            
+
             return response()->json([
                 'status' => 'success',
                 'data' => [
@@ -216,16 +216,16 @@ class AvatarController extends Controller
 
         // Generate avatar and save to storage
         $avatar = Avatar::create($name)->setDimension($avatarSize, $avatarSize);
-        
+
         // Generate filename based on name and size
         $filename = 'default_' . md5($name) . '_' . $avatarSize . '.png';
         $path = 'avatars/defaults/' . $filename;
-        
+
         // Save to storage if not exists
         if (!Storage::disk('public')->exists($path)) {
             Storage::disk('public')->put($path, $avatar->encode());
         }
-        
+
         return Storage::disk('public')->url($path);
     }
 
@@ -236,7 +236,7 @@ class AvatarController extends Controller
     {
         $words = explode(' ', $name);
         $initials = '';
-        
+
         foreach ($words as $word) {
             if (strlen($initials) < 2 && !empty($word)) {
                 $initials .= strtoupper($word[0]);

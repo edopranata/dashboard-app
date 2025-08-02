@@ -1,35 +1,35 @@
 <template>
-  <q-page class="dashboard-page">
+  <q-page class="container padded">
     <!-- Welcome Section -->
     <div class="page-header">
       <div class="header-content">
-        <div class="welcome-section">
+        <div class="header-info">
           <h4 class="page-title">{{ $t('dashboard.welcome', { name: authStore.userName }) }}</h4>
           <p class="page-subtitle">{{ $t('dashboard.subtitle') }}</p>
         </div>
         <div class="header-actions">
           <q-btn color="positive" icon="notifications" :label="$t('dashboard.testNotification')"
-            @click="testNotification" class="q-mr-sm" outline />
-          <q-btn color="primary" icon="add" :label="$t('dashboard.quickAction')"
-            @click="showQuickActionDialog = true" />
+            @click="testNotification" class="action-btn" outline />
+          <q-btn color="primary" icon="add" :label="$t('dashboard.quickAction')" @click="showQuickActionDialog = true"
+            class="action-btn" />
         </div>
       </div>
     </div>
 
     <!-- Stats Cards -->
     <div class="stats-section">
-      <div class="row q-gutter-md">
-        <div class="col-12 col-sm-6 col-md-3">
+      <div class="row q-col-gutter-lg">
+        <div class="col-12 col-sm-6 col-lg-3">
           <q-card class="stat-card stat-card--primary">
             <q-card-section class="stat-content">
               <div class="stat-icon">
-                <q-icon name="people" size="40px" />
+                <q-icon name="people" size="32px" />
               </div>
               <div class="stat-details">
                 <div class="stat-value">{{ stats.totalUsers }}</div>
                 <div class="stat-label">{{ $t('dashboard.stats.totalUsers') }}</div>
                 <div class="stat-change stat-change--positive">
-                  <q-icon name="trending_up" size="16px" />
+                  <q-icon name="trending_up" size="14px" />
                   +{{ growthMetrics.userGrowth.percentage }}%
                 </div>
               </div>
@@ -37,18 +37,18 @@
           </q-card>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-lg-3">
           <q-card class="stat-card stat-card--success">
             <q-card-section class="stat-content">
               <div class="stat-icon">
-                <q-icon name="admin_panel_settings" size="40px" />
+                <q-icon name="admin_panel_settings" size="32px" />
               </div>
               <div class="stat-details">
                 <div class="stat-value">{{ stats.totalRoles }}</div>
                 <div class="stat-label">{{ $t('dashboard.stats.totalRoles') }}</div>
                 <div class="stat-change"
                   :class="growthMetrics.roleUsage.percentage > 0 ? 'stat-change--positive' : 'stat-change--neutral'">
-                  <q-icon :name="growthMetrics.roleUsage.percentage > 0 ? 'trending_up' : 'remove'" size="16px" />
+                  <q-icon :name="growthMetrics.roleUsage.percentage > 0 ? 'trending_up' : 'remove'" size="14px" />
                   {{ growthMetrics.roleUsage.percentage > 0 ? '+' : '' }}{{ growthMetrics.roleUsage.percentage }}%
                 </div>
               </div>
@@ -56,17 +56,17 @@
           </q-card>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-lg-3">
           <q-card class="stat-card stat-card--warning">
             <q-card-section class="stat-content">
               <div class="stat-icon">
-                <q-icon name="login" size="40px" />
+                <q-icon name="login" size="32px" />
               </div>
               <div class="stat-details">
                 <div class="stat-value">{{ stats.activeUsers }}</div>
                 <div class="stat-label">{{ $t('dashboard.stats.activeToday') }}</div>
                 <div class="stat-change stat-change--positive">
-                  <q-icon name="trending_up" size="16px" />
+                  <q-icon name="trending_up" size="14px" />
                   +{{ growthMetrics.activeUsers.percentage }}%
                 </div>
               </div>
@@ -74,17 +74,17 @@
           </q-card>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-lg-3">
           <q-card class="stat-card stat-card--info">
             <q-card-section class="stat-content">
               <div class="stat-icon">
-                <q-icon name="security" size="40px" />
+                <q-icon name="security" size="32px" />
               </div>
               <div class="stat-details">
                 <div class="stat-value">{{ stats.permissions }}</div>
                 <div class="stat-label">{{ $t('dashboard.stats.permissions') }}</div>
                 <div class="stat-change stat-change--neutral">
-                  <q-icon name="remove" size="16px" />
+                  <q-icon name="remove" size="14px" />
                   0%
                 </div>
               </div>
@@ -96,13 +96,13 @@
 
     <!-- Main Content Grid -->
     <div class="content-grid">
-      <div class="row q-gutter-md">
+      <div class="row q-col-gutter-lg">
         <!-- Recent Activity -->
         <div class="col-12 col-lg-8">
-          <q-card class="content-card">
+          <q-card flat bordered class="content-card">
             <q-card-section class="card-header">
-              <div class="card-title">
-                <q-icon name="history" class="q-mr-sm" />
+              <div class="section-title">
+                <q-icon name="history" />
                 {{ $t('dashboard.recentActivity') }}
               </div>
               <q-btn flat icon="more_vert" round size="sm">
@@ -119,7 +119,7 @@
               </q-btn>
             </q-card-section>
 
-            <q-card-section class="q-pt-none">
+            <q-card-section>
               <div class="activity-list">
                 <div v-for="activity in recentActivities" :key="activity.id" class="activity-item">
                   <div class="activity-avatar">
@@ -137,67 +137,70 @@
           </q-card>
         </div>
 
-        <!-- Quick Actions -->
+        <!-- Right Sidebar -->
         <div class="col-12 col-lg-4">
-          <q-card class="content-card">
-            <q-card-section class="card-header">
-              <div class="card-title">
-                <q-icon name="bolt" class="q-mr-sm" />
-                {{ $t('dashboard.quickActions') }}
-              </div>
-            </q-card-section>
+          <div class="sidebar-content">
+            <!-- Quick Actions -->
+            <q-card flat bordered class="content-card">
+              <q-card-section class="card-header">
+                <div class="section-title">
+                  <q-icon name="bolt" />
+                  {{ $t('dashboard.quickActions') }}
+                </div>
+              </q-card-section>
 
-            <q-card-section class="q-pt-none">
-              <div class="quick-actions">
-                <q-btn v-if="authStore.hasPermission('create_users')" class="quick-action-btn" color="primary"
-                  icon="person_add" :label="$t('dashboard.addUser')" :to="{ name: 'users.create' }" no-caps outline />
-                <q-btn v-if="authStore.hasPermission('create_roles')" class="quick-action-btn" color="secondary"
-                  icon="add_moderator" :label="$t('dashboard.addRole')" :to="{ name: 'roles.create' }" no-caps
-                  outline />
-                <q-btn v-if="authStore.hasPermission('view_users')" class="quick-action-btn" color="positive"
-                  icon="manage_accounts" :label="$t('dashboard.manageUsers')" :to="{ name: 'users.index' }" no-caps
-                  outline />
-                <q-btn class="quick-action-btn" color="info" icon="settings" :label="$t('dashboard.settings')"
-                  :to="{ name: 'profile' }" no-caps outline />
-              </div>
-            </q-card-section>
-          </q-card>
+              <q-card-section>
+                <div class="quick-actions">
+                  <q-btn v-if="authStore.hasPermission('create_users')" class="quick-action-btn" color="primary"
+                    icon="person_add" :label="$t('dashboard.addUser')" :to="{ name: 'users.create' }" no-caps outline />
+                  <q-btn v-if="authStore.hasPermission('create_roles')" class="quick-action-btn" color="secondary"
+                    icon="add_moderator" :label="$t('dashboard.addRole')" :to="{ name: 'roles.create' }" no-caps
+                    outline />
+                  <q-btn v-if="authStore.hasPermission('view_users')" class="quick-action-btn" color="positive"
+                    icon="manage_accounts" :label="$t('dashboard.manageUsers')" :to="{ name: 'users.index' }" no-caps
+                    outline />
+                  <q-btn class="quick-action-btn" color="info" icon="settings" :label="$t('dashboard.settings')"
+                    :to="{ name: 'profile' }" no-caps outline />
+                </div>
+              </q-card-section>
+            </q-card>
 
-          <!-- System Status -->
-          <q-card class="content-card q-mt-md">
-            <q-card-section class="card-header">
-              <div class="card-title">
-                <q-icon name="monitor_heart" class="q-mr-sm" />
-                {{ $t('dashboard.systemStatus') }}
-              </div>
-            </q-card-section>
+            <!-- System Status -->
+            <q-card flat bordered class="content-card q-mt-lg">
+              <q-card-section class="card-header">
+                <div class="section-title">
+                  <q-icon name="monitor_heart" />
+                  {{ $t('dashboard.systemStatus') }}
+                </div>
+              </q-card-section>
 
-            <q-card-section class="q-pt-none">
-              <div class="system-status">
-                <div class="status-item">
-                  <div class="status-indicator status-indicator--online"></div>
-                  <div class="status-details">
-                    <div class="status-label">{{ $t('dashboard.database') }}</div>
-                    <div class="status-value">{{ $t('dashboard.online') }}</div>
+              <q-card-section>
+                <div class="system-status">
+                  <div class="status-item">
+                    <div class="status-indicator status-indicator--online"></div>
+                    <div class="status-details">
+                      <div class="status-label">{{ $t('dashboard.database') }}</div>
+                      <div class="status-value">{{ $t('dashboard.online') }}</div>
+                    </div>
+                  </div>
+                  <div class="status-item">
+                    <div class="status-indicator status-indicator--online"></div>
+                    <div class="status-details">
+                      <div class="status-label">{{ $t('dashboard.apiServer') }}</div>
+                      <div class="status-value">{{ $t('dashboard.online') }}</div>
+                    </div>
+                  </div>
+                  <div class="status-item">
+                    <div class="status-indicator status-indicator--warning"></div>
+                    <div class="status-details">
+                      <div class="status-label">{{ $t('dashboard.cache') }}</div>
+                      <div class="status-value">{{ $t('dashboard.warning') }}</div>
+                    </div>
                   </div>
                 </div>
-                <div class="status-item">
-                  <div class="status-indicator status-indicator--online"></div>
-                  <div class="status-details">
-                    <div class="status-label">{{ $t('dashboard.apiServer') }}</div>
-                    <div class="status-value">{{ $t('dashboard.online') }}</div>
-                  </div>
-                </div>
-                <div class="status-item">
-                  <div class="status-indicator status-indicator--warning"></div>
-                  <div class="status-details">
-                    <div class="status-label">{{ $t('dashboard.cache') }}</div>
-                    <div class="status-value">{{ $t('dashboard.warning') }}</div>
-                  </div>
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
+              </q-card-section>
+            </q-card>
+          </div>
         </div>
       </div>
     </div>
@@ -431,55 +434,28 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.dashboard-page {
-  padding: 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
+// Dashboard specific styles - using global classes where possible
 
-// Page Header
-.page-header {
-  margin-bottom: 2rem;
-
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-
-    .welcome-section {
-      .page-title {
-        margin: 0 0 0.5rem 0;
-        font-weight: 600;
-        color: #2d3748;
-      }
-
-      .page-subtitle {
-        margin: 0;
-        color: #718096;
-        font-size: 1rem;
-      }
-    }
-
-    .header-actions {
-      flex-shrink: 0;
-    }
-  }
-}
-
-// Stats Section
+// Stats Cards - enhanced styling beyond global classes
 .stats-section {
   margin-bottom: 2rem;
 
   .stat-card {
     height: 120px;
     border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: white;
+    transition: all 0.3s ease;
+
+    .body--dark & {
+      background: #2d3748;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     }
 
     .stat-content {
@@ -487,38 +463,52 @@ onMounted(() => {
       align-items: center;
       gap: 1rem;
       height: 100%;
-      padding: 1rem;
+      padding: 1.25rem;
     }
 
     .stat-icon {
-      flex-shrink: 0;
-      padding: 0.75rem;
+      width: 50px;
+      height: 50px;
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     .stat-details {
       flex: 1;
+      min-width: 0; // Prevent text overflow
 
       .stat-value {
-        font-size: 2rem;
+        font-size: 1.75rem;
         font-weight: 700;
         line-height: 1;
         margin-bottom: 0.25rem;
+        color: #2d3748;
+
+        .body--dark & {
+          color: #f7fafc;
+        }
       }
 
       .stat-label {
         font-size: 0.875rem;
         color: #718096;
         margin-bottom: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .body--dark & {
+          color: #a0aec0;
+        }
       }
 
       .stat-change {
         display: flex;
         align-items: center;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 500;
 
         &--positive {
@@ -527,6 +517,10 @@ onMounted(() => {
 
         &--neutral {
           color: #718096;
+
+          .body--dark & {
+            color: #a0aec0;
+          }
         }
       }
     }
@@ -561,28 +555,16 @@ onMounted(() => {
   }
 }
 
-// Content Cards
-.content-card {
-  border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-
-  .card-header {
+// Content Grid Layout
+.content-grid {
+  .sidebar-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 0;
-
-    .card-title {
-      display: flex;
-      align-items: center;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #2d3748;
-    }
+    flex-direction: column;
+    gap: 1.5rem;
   }
 }
 
-// Activity List
+// Activity List - specific styling
 .activity-list {
   .activity-item {
     display: flex;
@@ -590,6 +572,10 @@ onMounted(() => {
     gap: 1rem;
     padding: 0.75rem 0;
     border-bottom: 1px solid #e2e8f0;
+
+    .body--dark & {
+      border-bottom-color: #4a5568;
+    }
 
     &:last-child {
       border-bottom: none;
@@ -606,17 +592,25 @@ onMounted(() => {
         font-weight: 500;
         margin-bottom: 0.25rem;
         color: #2d3748;
+
+        .body--dark & {
+          color: #f7fafc;
+        }
       }
 
       .activity-time {
         font-size: 0.8rem;
         color: #718096;
+
+        .body--dark & {
+          color: #a0aec0;
+        }
       }
     }
   }
 }
 
-// Quick Actions
+// Quick Actions - specific styling
 .quick-actions {
   display: flex;
   flex-direction: column;
@@ -626,6 +620,7 @@ onMounted(() => {
     width: 100%;
     justify-content: flex-start;
     padding: 0.75rem 1rem;
+    border-radius: 12px;
   }
 }
 
@@ -639,10 +634,11 @@ onMounted(() => {
     padding: 1rem;
     flex-direction: column;
     gap: 0.5rem;
+    border-radius: 12px;
   }
 }
 
-// System Status
+// System Status - specific styling
 .system-status {
   .status-item {
     display: flex;
@@ -650,6 +646,10 @@ onMounted(() => {
     gap: 0.75rem;
     padding: 0.75rem 0;
     border-bottom: 1px solid #e2e8f0;
+
+    .body--dark & {
+      border-bottom-color: #4a5568;
+    }
 
     &:last-child {
       border-bottom: none;
@@ -682,133 +682,72 @@ onMounted(() => {
       .status-label {
         font-weight: 500;
         color: #2d3748;
+
+        .body--dark & {
+          color: #f7fafc;
+        }
       }
 
       .status-value {
         font-size: 0.875rem;
         color: #718096;
-      }
-    }
-  }
-}
 
-// Dark mode styles
-.body--dark {
-  .dashboard-page {
-    background: #121212;
-  }
-
-  .page-header {
-    .header-content {
-      .welcome-section {
-        .page-title {
-          color: #ffffff !important;
-          font-weight: 600;
-        }
-
-        .page-subtitle {
-          color: #e0e0e0 !important;
+        .body--dark & {
+          color: #a0aec0;
         }
       }
-    }
-  }
-
-  .q-card {
-    background: #1e1e1e !important;
-    border-color: #333333 !important;
-  }
-
-  .content-card {
-    .card-header {
-      .card-title {
-        color: #ffffff !important;
-        font-weight: 600;
-      }
-    }
-  }
-
-  .activity-list {
-    .activity-item {
-      border-bottom-color: #333333 !important;
-
-      .activity-content {
-        .activity-text {
-          color: #ffffff !important;
-        }
-
-        .activity-time {
-          color: #bbbbbb !important;
-        }
-      }
-    }
-  }
-
-  .system-status {
-    .status-item {
-      border-bottom-color: #333333 !important;
-
-      .status-details {
-        .status-label {
-          color: #ffffff !important;
-          font-weight: 500;
-        }
-
-        .status-value {
-          color: #e0e0e0 !important;
-        }
-      }
-    }
-  }
-
-  // Fix stat cards text
-  .stat-card {
-    .q-card-section {
-      color: #ffffff !important;
-    }
-
-    .text-h6 {
-      color: #ffffff !important;
-    }
-
-    .text-subtitle2 {
-      color: #bbbbbb !important;
     }
   }
 }
 
 // Responsive styles
 @media (max-width: 1023px) {
-  .dashboard-page {
-    padding: 1rem;
-  }
-
-  .page-header {
-    .header-content {
-      flex-direction: column;
-      align-items: stretch;
-
-      .header-actions {
-        align-self: flex-start;
-      }
+  .content-grid {
+    .sidebar-content {
+      margin-top: 1rem;
     }
   }
 }
 
 @media (max-width: 599px) {
-  .dashboard-page {
-    padding: 0.75rem;
-  }
-
   .stats-section {
     .stat-card {
+      height: auto;
+      min-height: 100px;
+
       .stat-content {
-        padding: 0.75rem;
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+      }
+
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .stat-details {
+        .stat-value {
+          font-size: 1.5rem;
+        }
+
+        .stat-label {
+          white-space: normal;
+          text-align: center;
+        }
       }
     }
   }
 
   .quick-actions-grid {
     grid-template-columns: 1fr;
+  }
+
+  .content-grid {
+    .sidebar-content {
+      gap: 1rem;
+    }
   }
 }
 </style>

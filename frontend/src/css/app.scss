@@ -1,1 +1,9 @@
-// app global css in SCSS form
+// =============================================================================
+// MAIN APP STYLES
+// =============================================================================
+
+// Import global styles dan utilities
+@import './global.scss';
+
+// App global css in SCSS form
+// Custom app-specific styles dapat ditambahkan di sini

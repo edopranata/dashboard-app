@@ -1,20 +1,31 @@
 <template>
-  <q-page class="role-form-page">
+  <q-page class="container padded">
     <div class="page-header">
-      <h4>{{ $t('roles.createRole') }}</h4>
-      <p>{{ $t('roles.createRoleDescription') }}</p>
+      <div class="header-content">
+        <div class="header-info">
+          <h4 class="page-title">{{ $t('roles.createRole') }}</h4>
+          <p class="page-subtitle">{{ $t('roles.createRoleDescription') }}</p>
+        </div>
+      </div>
     </div>
 
-    <q-card flat bordered>
-      <q-form @submit="saveRole" class="q-gutter-md">
-        <q-card-section>
-          <!-- Role Name Input -->
-          <div class="row q-gutter-md">
-            <div class="col-12 col-md-6">
-              <q-input v-model="roleForm.name" :label="$t('roles.roleNameRequired')" filled :rules="[
+    <q-card flat bordered class="content-card">
+      <q-card-section class="card-header">
+        <div class="section-title">
+          <q-icon name="security" />
+          {{ $t('roles.roleDetails') }}
+        </div>
+      </q-card-section>
+
+      <q-card-section>
+        <q-form @submit="saveRole" class="standard-form">
+          <div class="form-row">
+            <!-- Role Name Input -->
+            <div class="form-group">
+              <q-input v-model="roleForm.name" :label="$t('roles.roleNameRequired')" outlined :rules="[
                 val => !!val || $t('roles.validation.roleNameRequired'),
                 val => val.length >= 3 || $t('roles.validation.roleNameMinLength')
-              ]" lazy-rules :hint="$t('roles.roleNameHint')">
+              ]" lazy-rules :hint="$t('roles.roleNameHint')" class="form-input">
                 <template v-slot:prepend>
                   <q-icon name="security" />
                 </template>
@@ -124,19 +135,19 @@
               </q-card>
             </div>
           </div>
-        </q-card-section>
 
-        <!-- Form Actions -->
-        <q-card-actions align="right" class="q-pa-md">
-          <q-btn flat :label="$t('common.cancel')" color="grey-7" :to="{ name: 'roles.index' }" :disable="saving" />
-          <q-btn type="submit" :label="$t('roles.createRole')" color="primary" :loading="saving"
-            :disable="!roleForm.name || roleForm.permissions.length === 0">
-            <template v-slot:loading>
-              <q-spinner-facebook />
-            </template>
-          </q-btn>
-        </q-card-actions>
-      </q-form>
+          <div class="form-actions">
+            <q-btn flat :label="$t('common.cancel')" color="grey-7" :to="{ name: 'roles.index' }" :disable="saving"
+              class="action-btn" />
+            <q-btn type="submit" :label="$t('roles.createRole')" color="primary" :loading="saving"
+              :disable="!roleForm.name || roleForm.permissions.length === 0" class="action-btn">
+              <template v-slot:loading>
+                <q-spinner-facebook />
+              </template>
+            </q-btn>
+          </div>
+        </q-form>
+      </q-card-section>
     </q-card>
   </q-page>
 </template>

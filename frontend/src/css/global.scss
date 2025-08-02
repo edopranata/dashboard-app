@@ -1,0 +1,648 @@
+// =============================================================================
+// GLOBAL STYLES - Dashboard Application
+// =============================================================================
+// Global CSS classes untuk konsistensi design di seluruh aplikasi
+// Author: Dashboard Team
+// Version: 1.0.0
+// =============================================================================
+
+// =============================================================================
+// CONTAINER CLASSES
+// =============================================================================
+
+// Main page container - gunakan untuk semua q-page
+.container {
+  min-height: 100vh;
+  position: relative;
+
+  // Alternative flat container without gradient
+  &.flat {
+    background: #f8fafc;
+
+    .body--dark & {
+      background: #1a202c;
+    }
+  }
+
+  // Container with padding
+  &.padded {
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    @media (max-width: 1023px) {
+      padding: 1rem;
+    }
+
+    @media (max-width: 599px) {
+      padding: 0.75rem;
+    }
+  }
+}
+
+// Content wrapper untuk layout yang konsisten
+.content-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+
+  @media (max-width: 1023px) {
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 599px) {
+    padding: 0 0.75rem;
+  }
+}
+
+// =============================================================================
+// HEADER CLASSES
+// =============================================================================
+
+// Standard page header
+.page-header {
+  margin-bottom: 2rem;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    @media (max-width: 599px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .header-info {
+      flex: 1;
+
+      .page-title {
+        margin: 0 0 0.5rem 0;
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 1.75rem;
+
+        .body--dark & {
+          color: #f7fafc;
+        }
+      }
+
+      .page-subtitle {
+        margin: 0;
+        color: #718096;
+        font-size: 1rem;
+
+        .body--dark & {
+          color: #a0aec0;
+        }
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+
+      @media (max-width: 599px) {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+  }
+}
+
+// Modern gradient header (seperti profile page)
+.gradient-header {
+  position: relative;
+  margin-bottom: 2rem;
+
+  .header-background {
+    height: 200px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 24px 24px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .header-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.1), transparent);
+    }
+  }
+
+  .header-content {
+    position: absolute;
+    bottom: -60px;
+    left: 0;
+    right: 0;
+    padding: 0 2rem;
+
+    @media (max-width: 1023px) {
+      padding: 0 1rem;
+    }
+
+    @media (max-width: 599px) {
+      padding: 0 0.75rem;
+    }
+
+    .header-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      .body--dark & {
+        background: #2d3748;
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      @media (max-width: 599px) {
+        padding: 1.5rem;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// CARD CLASSES
+// =============================================================================
+
+// Standard content card
+.content-card {
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  background: white;
+
+  .body--dark & {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .body--dark & {
+      background: linear-gradient(135deg, #374151 0%, #4a5568 100%);
+      border-bottom-color: #4a5568;
+    }
+
+    @media (max-width: 599px) {
+      padding: 1.5rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 0;
+
+      .body--dark & {
+        color: #f7fafc;
+      }
+
+      .q-icon {
+        color: #667eea;
+        margin-right: 0.5rem;
+      }
+    }
+
+    .section-subtitle {
+      margin: 0;
+      color: #718096;
+      font-size: 1rem;
+
+      .body--dark & {
+        color: #a0aec0;
+      }
+    }
+  }
+}
+
+// Simple card dengan border saja
+.simple-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  .body--dark & {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+}
+
+// =============================================================================
+// BUTTON CLASSES
+// =============================================================================
+
+// Primary action button
+.action-btn {
+  border-radius: 12px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  text-transform: none;
+  min-height: 44px;
+
+  @media (max-width: 599px) {
+    width: 100%;
+  }
+}
+
+// Button group untuk actions
+.button-group {
+  display: flex;
+  gap: 1rem;
+
+  @media (max-width: 599px) {
+    flex-direction: column;
+
+    .q-btn {
+      width: 100%;
+    }
+  }
+}
+
+// =============================================================================
+// FORM CLASSES
+// =============================================================================
+
+// Standard form styling
+.standard-form {
+  .form-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 599px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-group {
+      flex: 1;
+
+      &.full-width {
+        flex-basis: 100%;
+      }
+
+      .form-input {
+        .q-field__control {
+          border-radius: 12px;
+        }
+
+        .q-field__prepend {
+          .q-icon {
+            color: #667eea;
+          }
+        }
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+
+    .body--dark & {
+      border-top-color: #4a5568;
+    }
+
+    @media (max-width: 599px) {
+      flex-direction: column;
+
+      .q-btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// TAB CLASSES
+// =============================================================================
+
+// Modern tab system
+.modern-tabs {
+  .tabs-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .q-tabs {
+    background: white;
+
+    .body--dark & {
+      background: #2d3748;
+    }
+
+    .q-tab {
+      padding: 1rem 2rem;
+      font-weight: 600;
+      text-transform: none;
+      font-size: 1rem;
+      color: #718096;
+
+      .body--dark & {
+        color: #a0aec0;
+      }
+
+      &.q-tab--active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+
+        .q-icon {
+          color: white;
+        }
+      }
+    }
+  }
+
+  .q-tab-panels {
+    background: transparent;
+    margin-top: 2rem;
+  }
+}
+
+// =============================================================================
+// TABLE CLASSES
+// =============================================================================
+
+// Enhanced table styling
+.enhanced-table {
+  .q-table {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    .q-table__top {
+      padding: 1.5rem;
+    }
+
+    .q-table thead tr th {
+      background: #f8fafc;
+      color: #374151;
+      font-weight: 600;
+      border-bottom: 2px solid #e5e7eb;
+
+      .body--dark & {
+        background: #374151;
+        color: #f9fafb;
+        border-bottom-color: #4b5563;
+      }
+    }
+
+    .q-table tbody tr {
+      &:hover {
+        background: #f9fafb;
+
+        .body--dark & {
+          background: #374151;
+        }
+      }
+    }
+
+    .q-table tbody tr td {
+      padding: 1rem;
+      border-bottom: 1px solid #f3f4f6;
+
+      .body--dark & {
+        border-bottom-color: #4b5563;
+        color: #e5e7eb;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// FILTER CLASSES
+// =============================================================================
+
+// Filter section styling
+.filter-section {
+  margin-bottom: 1.5rem;
+
+  .filter-card {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: white;
+
+    .body--dark & {
+      background: #2d3748;
+      border-color: #4a5568;
+    }
+
+    .q-card-section {
+      padding: 1.5rem;
+    }
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+
+      @media (max-width: 768px) {
+        min-width: auto;
+      }
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+}
+
+// =============================================================================
+// UTILITY CLASSES
+// =============================================================================
+
+// Spacing utilities
+.spacing {
+  &-xs {
+    margin: 0.25rem;
+  }
+  &-sm {
+    margin: 0.5rem;
+  }
+  &-md {
+    margin: 1rem;
+  }
+  &-lg {
+    margin: 1.5rem;
+  }
+  &-xl {
+    margin: 2rem;
+  }
+}
+
+.gap {
+  &-xs {
+    gap: 0.25rem;
+  }
+  &-sm {
+    gap: 0.5rem;
+  }
+  &-md {
+    gap: 1rem;
+  }
+  &-lg {
+    gap: 1.5rem;
+  }
+  &-xl {
+    gap: 2rem;
+  }
+}
+
+// Text utilities
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Shadow utilities
+.shadow {
+  &-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  &-md {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  &-lg {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  &-xl {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Border radius utilities
+.rounded {
+  &-sm {
+    border-radius: 8px;
+  }
+  &-md {
+    border-radius: 12px;
+  }
+  &-lg {
+    border-radius: 16px;
+  }
+  &-xl {
+    border-radius: 24px;
+  }
+}
+
+// =============================================================================
+// RESPONSIVE UTILITIES
+// =============================================================================
+
+// Hide/show berdasarkan breakpoint
+@media (max-width: 599px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 600px) {
+  .show-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .show-tablet {
+    display: none !important;
+  }
+}
+
+// =============================================================================
+// ANIMATION CLASSES
+// =============================================================================
+
+// Smooth transitions
+.transition {
+  &-all {
+    transition: all 0.3s ease;
+  }
+  &-colors {
+    transition:
+      color 0.3s ease,
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+  &-transform {
+    transition: transform 0.3s ease;
+  }
+  &-opacity {
+    transition: opacity 0.3s ease;
+  }
+}
+
+// Hover effects
+.hover-lift {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.hover-scale {
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}

@@ -1,19 +1,22 @@
 <template>
-  <q-page class="role-list-page">
+  <q-page class="container padded">
     <!-- Page Header -->
     <div class="page-header">
       <div class="header-content">
-        <div>
-          <h4>{{ $t('roles.roleManagement') }}</h4>
-          <p>{{ $t('roles.roleManagementDescription') }}</p>
+        <div class="header-info">
+          <h4 class="page-title">{{ $t('roles.roleManagement') }}</h4>
+          <p class="page-subtitle">{{ $t('roles.roleManagementDescription') }}</p>
         </div>
-        <q-btn color="primary" icon="add" :label="$t('roles.addRole')" @click="createRole" :disable="!canCreateRoles" />
+        <div class="header-actions">
+          <q-btn color="primary" icon="add" :label="$t('roles.addRole')" @click="createRole" :disable="!canCreateRoles"
+            class="action-btn" />
+        </div>
       </div>
     </div>
 
     <!-- Roles Grid -->
     <div class="roles-grid">
-      <q-card v-for="role in roles" :key="role.id" flat bordered class="role-card"
+      <q-card v-for="role in roles" :key="role.id" flat bordered class="simple-card role-card"
         :class="{ 'system-role': isSystemRole(role.name) }">
         <q-card-section>
           <div class="role-header">

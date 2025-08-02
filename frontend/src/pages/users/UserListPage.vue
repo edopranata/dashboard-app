@@ -1,51 +1,55 @@
 <template>
-  <q-page class="user-list-page">
+  <q-page class="container padded">
     <!-- Page Header -->
     <div class="page-header">
       <div class="header-content">
-        <div>
-          <h4>{{ $t('users.userManagement') }}</h4>
-          <p>{{ $t('users.userManagementDescription') }}</p>
+        <div class="header-info">
+          <h4 class="page-title">{{ $t('users.userManagement') }}</h4>
+          <p class="page-subtitle">{{ $t('users.userManagementDescription') }}</p>
         </div>
-        <q-btn color="primary" icon="add" :label="$t('users.addUser')" @click="showCreateDialog = true"
-          :disable="!canCreateUsers" />
+        <div class="header-actions">
+          <q-btn color="primary" icon="add" :label="$t('users.addUser')" @click="showCreateDialog = true"
+            :disable="!canCreateUsers" class="action-btn" />
+        </div>
       </div>
     </div>
 
     <!-- Filters Section -->
-    <q-card flat bordered class="q-mb-md">
-      <q-card-section>
-        <div class="row q-gutter-md">
-          <div class="col-md-4 col-sm-6 col-xs-12">
-            <q-input v-model="filters.search" :placeholder="$t('users.searchUsers')" outlined dense clearable
-              @input="debouncedSearch">
-              <template v-slot:prepend>
-                <q-icon name="search" />
-              </template>
-            </q-input>
+    <div class="filter-section">
+      <q-card flat class="filter-card">
+        <q-card-section>
+          <div class="filter-row">
+            <div class="filter-group">
+              <q-input v-model="filters.search" :placeholder="$t('users.searchUsers')" outlined dense clearable
+                @input="debouncedSearch">
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="filter-group">
+              <q-select v-model="filters.role" :options="roleOptions" :label="$t('users.filterByRole')" outlined dense
+                emit-value map-options clearable @update:model-value="fetchUsers" />
+            </div>
+
+            <div class="filter-actions">
+              <q-btn flat icon="refresh" @click="fetchUsers" :loading="loading" />
+            </div>
           </div>
-          <div class="col-md-3 col-sm-6 col-xs-12">
-            <q-select v-model="filters.role" :options="roleOptions" :label="$t('users.filterByRole')" outlined dense
-              emit-value map-options clearable @update:model-value="fetchUsers" />
-          </div>
-          <div class="col-auto">
-            <q-btn flat icon="refresh" @click="fetchUsers" :loading="loading" />
-          </div>
-        </div>
-      </q-card-section>
-    </q-card>
+        </q-card-section>
+      </q-card>
+    </div>
 
     <!-- Users Table -->
-    <q-card flat bordered>
+    <q-card flat bordered class="enhanced-table">
       <q-table :rows="users" :columns="columns" :loading="loading" :pagination="pagination" @request="onRequest"
         row-key="id" binary-state-sort :rows-per-page-options="[10, 25, 50]">
         <!-- Name column with avatar -->
         <template v-slot:body-cell-name="props">
           <q-td :props="props">
             <div class="user-info">
-              <q-avatar size="32px">
-                <img :src="`https://ui-avatars.com/api/?name=${props.row.name}&background=1976d2&color=fff`" />
-              </q-avatar>
+              <AvatarDisplay :user="props.row" avatar-size="small" :size="32" fallback-type="initials" />
               <div class="user-details">
                 <div class="user-name">{{ props.row.name }}</div>
                 <div class="user-email">{{ props.row.email }}</div>
@@ -135,10 +139,9 @@
 
         <q-card-section v-if="selectedUser">
           <div class="user-details-content">
-            <q-avatar size="64px" class="q-mb-md">
-              <img
-                :src="`https://ui-avatars.com/api/?name=${selectedUser.name}&background=1976d2&color=fff&size=128`" />
-            </q-avatar>
+            <div class="text-center q-mb-md">
+              <AvatarDisplay :user="selectedUser" avatar-size="original" :size="64" fallback-type="initials" />
+            </div>
             <div class="detail-item">
               <strong>Name:</strong> {{ selectedUser.name }}
             </div>
@@ -180,6 +183,7 @@ import { useI18n } from 'vue-i18n'
 import { api } from 'src/boot/axios'
 import { useAuthStore } from 'src/stores/auth'
 import { debounce } from 'quasar'
+import AvatarDisplay from 'src/components/AvatarDisplay.vue'
 
 const $q = useQuasar()
 const { t } = useI18n()
@@ -420,32 +424,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.user-list-page {
-  padding: 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    h4 {
-      margin: 0 0 0.5rem;
-      font-weight: 600;
-      color: #2d3748;
-    }
-
-    p {
-      margin: 0;
-      color: #718096;
-    }
-  }
-}
+// Custom styles khusus untuk UserListPage
+// Global styles sudah dihandle oleh global.scss
 
 .user-info {
   display: flex;
@@ -456,11 +436,19 @@ onMounted(() => {
     .user-name {
       font-weight: 500;
       color: #2d3748;
+
+      .body--dark & {
+        color: #ffffff;
+      }
     }
 
     .user-email {
       font-size: 0.875rem;
       color: #718096;
+
+      .body--dark & {
+        color: #bbbbbb;
+      }
     }
   }
 }
@@ -472,117 +460,17 @@ onMounted(() => {
 }
 
 .user-details-content {
-  text-align: center;
-
   .detail-item {
     margin-bottom: 1rem;
     text-align: left;
 
     strong {
       color: #2d3748;
-    }
-  }
-}
 
-// Dark mode styles
-.body--dark {
-  .user-list-page {
-    background: #121212;
-  }
-
-  .page-header {
-    h4 {
-      color: #ffffff !important;
-      font-weight: 600;
-    }
-
-    p {
-      color: #e0e0e0 !important;
-    }
-  }
-
-  .q-card {
-    background: #1e1e1e !important;
-    border-color: #333333 !important;
-  }
-
-  .user-info {
-    .user-details {
-      .user-name {
-        color: #ffffff !important;
-        font-weight: 500;
-      }
-
-      .user-email {
-        color: #bbbbbb !important;
+      .body--dark & {
+        color: #ffffff;
       }
     }
-  }
-
-  .user-details-content {
-    .detail-item {
-      strong {
-        color: #ffffff !important;
-      }
-
-      span {
-        color: #e0e0e0 !important;
-      }
-    }
-  }
-
-  // Fix table headers and text
-  .q-table {
-    background: #1e1e1e !important;
-
-    th {
-      color: #ffffff !important;
-      background: #2a2a2a !important;
-      font-weight: 600;
-    }
-
-    td {
-      color: #e0e0e0 !important;
-      border-color: #333333 !important;
-    }
-  }
-
-  // Fix input labels and text
-  .q-field--outlined .q-field__control:before {
-    border-color: #555555 !important;
-  }
-
-  .q-field--outlined.q-field--focused .q-field__control:before {
-    border-color: #90caf9 !important;
-  }
-
-  .q-field__label {
-    color: #e0e0e0 !important;
-  }
-
-  .q-field--focused .q-field__label {
-    color: #90caf9 !important;
-  }
-
-  // Fix select dropdown text
-  .q-select .q-field__native {
-    color: #ffffff !important;
-  }
-
-  // Fix input text
-  .q-input .q-field__native {
-    color: #ffffff !important;
-  }
-
-  // Fix icons
-  .q-field__prepend .q-icon,
-  .q-field__append .q-icon {
-    color: #90caf9 !important;
-  }
-
-  // Fix placeholder text
-  .q-field__input::placeholder {
-    color: #888888 !important;
   }
 }
 </style>
