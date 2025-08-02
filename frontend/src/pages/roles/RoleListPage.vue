@@ -112,7 +112,7 @@
                 color="grey"
                 text-color="white"
               >
-                +{{ role.permissions.length - 3 }} more
+                +{{ (role.permissions?.length || 0) - 3 }} more
               </q-chip>
             </div>
           </div>
