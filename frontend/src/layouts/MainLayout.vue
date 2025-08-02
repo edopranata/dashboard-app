@@ -37,16 +37,18 @@
 
           <!-- Profile Menu -->
           <q-btn flat round dense class="profile-btn">
-            <q-avatar size="32px" color="primary" text-color="white">
-              {{ userInitials }}
+            <q-avatar size="32px" :color="userAvatar ? 'transparent' : 'primary'" text-color="white">
+              <img v-if="userAvatar" :src="userAvatar" :alt="authStore.userName + ' avatar'" />
+              <span v-else>{{ userInitials }}</span>
             </q-avatar>
             <q-tooltip>Profile</q-tooltip>
             <q-menu>
               <q-list style="min-width: 200px">
                 <q-item>
                   <q-item-section avatar>
-                    <q-avatar size="40px" color="primary" text-color="white">
-                      {{ userInitials }}
+                    <q-avatar size="40px" :color="userAvatar ? 'transparent' : 'primary'" text-color="white">
+                      <img v-if="userAvatar" :src="userAvatar" :alt="authStore.userName + ' avatar'" />
+                      <span v-else>{{ userInitials }}</span>
                     </q-avatar>
                   </q-item-section>
                   <q-item-section>
@@ -91,8 +93,9 @@
       <!-- Sidebar Header -->
       <div class="sidebar-header">
         <div class="user-info">
-          <q-avatar size="48px" color="primary" text-color="white" class="q-mb-sm">
-            {{ userInitials }}
+          <q-avatar size="48px" :color="userAvatar ? 'transparent' : 'primary'" text-color="white" class="q-mb-sm">
+            <img v-if="userAvatar" :src="userAvatar" :alt="authStore.userName + ' avatar'" />
+            <span v-else>{{ userInitials }}</span>
           </q-avatar>
           <div class="user-details">
             <div class="user-name">{{ authStore.userName }}</div>
@@ -235,6 +238,17 @@ const userInitials = computed(() => {
     .join('')
     .toUpperCase()
     .slice(0, 2)
+})
+
+const userAvatar = computed(() => {
+  // Check localStorage first for demo avatar
+  const savedAvatar = localStorage.getItem('userAvatar')
+  if (savedAvatar) {
+    return savedAvatar
+  }
+
+  // Then check auth store
+  return authStore.user?.avatar || null
 })
 
 // Methods
@@ -476,6 +490,16 @@ onMounted(() => {
         display: none;
       }
     }
+  }
+}
+
+// Avatar image styles
+.q-avatar {
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
   }
 }
 </style>

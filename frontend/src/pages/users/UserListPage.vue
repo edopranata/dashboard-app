@@ -49,7 +49,9 @@
         <template v-slot:body-cell-name="props">
           <q-td :props="props">
             <div class="user-info">
-              <AvatarDisplay :user="props.row" avatar-size="small" :size="32" fallback-type="initials" />
+              <q-avatar size="32px" color="transparent">
+                <img :src="props.row.avatar" :alt="props.row.name" />
+              </q-avatar>
               <div class="user-details">
                 <div class="user-name">{{ props.row.name }}</div>
                 <div class="user-email">{{ props.row.email }}</div>
@@ -140,7 +142,9 @@
         <q-card-section v-if="selectedUser">
           <div class="user-details-content">
             <div class="text-center q-mb-md">
-              <AvatarDisplay :user="selectedUser" avatar-size="original" :size="64" fallback-type="initials" />
+              <q-avatar size="64px" color="transparent">
+                <img :src="selectedUser.avatar" :alt="selectedUser.name" />
+              </q-avatar>
             </div>
             <div class="detail-item">
               <strong>Name:</strong> {{ selectedUser.name }}
@@ -183,7 +187,6 @@ import { useI18n } from 'vue-i18n'
 import { api } from 'src/boot/axios'
 import { useAuthStore } from 'src/stores/auth'
 import { debounce } from 'quasar'
-import AvatarDisplay from 'src/components/AvatarDisplay.vue'
 
 const $q = useQuasar()
 const { t } = useI18n()
@@ -432,6 +435,20 @@ onMounted(() => {
   align-items: center;
   gap: 0.75rem;
 
+  .q-avatar {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+
+    .body--dark & {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   .user-details {
     .user-name {
       font-weight: 500;
@@ -460,6 +477,22 @@ onMounted(() => {
 }
 
 .user-details-content {
+  .q-avatar {
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    .body--dark & {
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   .detail-item {
     margin-bottom: 1rem;
     text-align: left;

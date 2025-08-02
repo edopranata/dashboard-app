@@ -7,11 +7,36 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
+use Laravolt\Avatar\Facade as Avatar;
 
 class UserController extends Controller
 {
     /**
+     * Generate avatar URL for user
+     */
+    private function generateAvatarUrl($user)
+    {
+        // If user has avatar file and it exists in storage
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            $avatarPath = Storage::disk('public')->path($user->avatar);
+            $imageData = base64_encode(file_get_contents($avatarPath));
+            $mimeType = mime_content_type($avatarPath);
+            return 'data:' . $mimeType . ';base64,' . $imageData;
+        }
+
+        // Generate avatar from initials using Laravolt Avatar
+        $avatarUrl = Avatar::create($user->name)
+            ->setDimension(200, 200)
+            ->setFontSize(80)
+            ->setBorder(0, '#ffffff')
+            ->setBackground('#667eea')
+            ->setForeground('#ffffff')
+            ->toBase64();
+
+        return $avatarUrl;
+    }    /**
      * Display a listing of users with pagination and search
      */
     public function index(Request $request)
@@ -43,6 +68,12 @@ class UserController extends Controller
         }
 
         $users = $query->paginate($request->per_page ?? 15);
+
+        // Transform users data to include avatar URL
+        $users->getCollection()->transform(function ($user) {
+            $user->avatar = $this->generateAvatarUrl($user);
+            return $user;
+        });
 
         return response()->json([
             'success' => true,
@@ -87,10 +118,14 @@ class UserController extends Controller
 
         $user->assignRole($request->roles);
 
+        // Load relationships and add avatar URL
+        $user->load('roles');
+        $user->avatar = $this->generateAvatarUrl($user);
+
         return response()->json([
             'success' => true,
             'message' => 'User created successfully',
-            'data' => $user->load('roles')
+            'data' => $user
         ], 201);
     }
 
@@ -107,9 +142,14 @@ class UserController extends Controller
             ], 403);
         }
 
+        $user->load('roles', 'permissions');
+
+        // Add avatar URL
+        $user->avatar = $this->generateAvatarUrl($user);
+
         return response()->json([
             'success' => true,
-            'data' => $user->load('roles', 'permissions')
+            'data' => $user
         ]);
     }
 
@@ -152,10 +192,14 @@ class UserController extends Controller
         $user->update($request->only('name', 'email'));
         $user->syncRoles($request->roles);
 
+        // Load relationships and add avatar URL
+        $user->load('roles');
+        $user->avatar = $this->generateAvatarUrl($user);
+
         return response()->json([
             'success' => true,
             'message' => 'User updated successfully',
-            'data' => $user->load('roles')
+            'data' => $user
         ]);
     }
 

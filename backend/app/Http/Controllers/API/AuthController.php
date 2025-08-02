@@ -9,9 +9,36 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use Laravolt\Avatar\Facade as Avatar;
 
 class AuthController extends Controller
 {
+    /**
+     * Generate avatar URL for user
+     */
+    private function generateAvatarUrl($user)
+    {
+        // If user has avatar file and it exists in storage
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            $avatarPath = Storage::disk('public')->path($user->avatar);
+            $imageData = base64_encode(file_get_contents($avatarPath));
+            $mimeType = mime_content_type($avatarPath);
+            return 'data:' . $mimeType . ';base64,' . $imageData;
+        }
+
+        // Generate avatar from initials using Laravolt Avatar
+        $avatarUrl = Avatar::create($user->name)
+            ->setDimension(200, 200)
+            ->setFontSize(80)
+            ->setBorder(0, '#ffffff')
+            ->setBackground('#667eea')
+            ->setForeground('#ffffff')
+            ->toBase64();
+
+        return 'data:image/svg+xml;base64,' . $avatarUrl;
+    }
+
     /**
      * Login user and return token
      */
@@ -50,6 +77,7 @@ class AuthController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
+                    'avatar' => $this->generateAvatarUrl($user),
                     'roles' => $user->getRoleNames(),
                     'permissions' => $user->getAllPermissions()->pluck('name')
                 ],
@@ -84,6 +112,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'avatar' => $this->generateAvatarUrl($user),
                 'email_verified_at' => $user->email_verified_at,
                 'roles' => $user->getRoleNames(),
                 'permissions' => $user->getAllPermissions()->pluck('name'),

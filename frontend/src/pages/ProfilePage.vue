@@ -1,79 +1,103 @@
 <template>
-  <q-page class="profile-page">
-    <!-- Modern Profile Header -->
-    <div class="profile-header">
-      <div class="header-background">
-        <div class="header-overlay"></div>
-      </div>
-
+  <q-page class="container padded">
+    <!-- Profile Header -->
+    <div class="page-header">
       <div class="header-content">
-        <div class="profile-info">
-          <div class="avatar-container">
-            <AvatarUpload :display-size="'140px'" @avatar-updated="handleAvatarUpdate"
-              @avatar-deleted="handleAvatarDelete" @upload-progress="handleUploadProgress" />
-          </div>
-
-          <div class="user-details">
-            <h3 class="user-name">{{ authStore.userName }}</h3>
-            <p class="user-email">{{ authStore.userEmail }}</p>
-
-            <div class="user-roles q-mt-sm">
-              <q-chip v-for="role in authStore.userRoles" :key="role" :color="getRoleColor(role)" text-color="white"
-                size="md" icon="admin_panel_settings">
-                {{ role }}
-              </q-chip>
-            </div>
-
-            <div class="user-meta q-mt-md">
-              <div class="meta-item">
-                <q-icon name="schedule" size="sm" />
-                <span>{{ $t('profile.memberSince') }}: {{ formatDate(authStore.user?.created_at) }}</span>
-              </div>
-              <div class="meta-item">
-                <q-icon name="login" size="sm" />
-                <span>{{ $t('profile.lastLogin') }}: {{ formatDate(authStore.user?.last_login_at) }}</span>
-              </div>
-              <div class="meta-item">
-                <q-icon name="verified" size="sm" />
-                <q-badge :color="authStore.user?.email_verified_at ? 'positive' : 'warning'"
-                  :label="authStore.user?.email_verified_at ? $t('profile.verified') : $t('profile.pending')" />
-              </div>
-            </div>
-          </div>
+        <div class="header-info">
+          <h1 class="page-title">{{ $t('profile.myProfile') }}</h1>
+          <p class="page-subtitle">{{ $t('profile.managePersonalInfo') }}</p>
         </div>
       </div>
     </div>
 
-    <!-- Tab Navigation -->
-    <div class="profile-tabs-container">
+    <!-- Profile Overview Card -->
+    <q-card flat bordered class="content-card q-mb-lg">
+      <q-card-section class="card-header">
+        <div>
+          <div class="section-title">
+            <q-icon name="account_circle" />
+            {{ $t('profile.profileOverview') }}
+          </div>
+          <p class="section-subtitle">{{ $t('profile.basicInformation') }}</p>
+        </div>
+      </q-card-section>
+
+      <q-card-section>
+        <div class="profile-overview">
+          <div class="avatar-section">
+            <div class="avatar-container">
+              <SimpleAvatarUpload :display-size="'120px'" @avatar-updated="handleAvatarUpdate"
+                @avatar-deleted="handleAvatarDelete" @upload-progress="handleUploadProgress" />
+            </div>
+          </div>
+
+          <div class="user-info">
+            <div class="user-basic">
+              <h3 class="user-name">{{ authStore.userName }}</h3>
+              <p class="user-email">{{ authStore.userEmail }}</p>
+
+              <div class="user-roles q-mt-sm">
+                <q-chip v-for="role in authStore.userRoles" :key="role" :color="getRoleColor(role)" text-color="white"
+                  size="md" icon="admin_panel_settings">
+                  {{ role }}
+                </q-chip>
+              </div>
+            </div>
+
+            <div class="user-meta q-mt-lg">
+              <div class="meta-row">
+                <div class="meta-item">
+                  <q-icon name="schedule" size="sm" />
+                  <span>{{ $t('profile.memberSince') }}: {{ formatDate(authStore.user?.created_at) }}</span>
+                </div>
+                <div class="meta-item">
+                  <q-icon name="login" size="sm" />
+                  <span>{{ $t('profile.lastLogin') }}: {{ formatDate(authStore.user?.last_login_at) }}</span>
+                </div>
+              </div>
+              <div class="meta-row q-mt-sm">
+                <div class="meta-item">
+                  <q-icon name="verified" size="sm" />
+                  <span>{{ $t('profile.emailStatus') }}:</span>
+                  <q-badge :color="authStore.user?.email_verified_at ? 'positive' : 'warning'"
+                    :label="authStore.user?.email_verified_at ? $t('profile.verified') : $t('profile.pending')" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+
+    <!-- Tab Navigation using modern-tabs -->
+    <div class="modern-tabs">
       <q-card flat class="tabs-card">
-        <q-tabs v-model="activeTab" class="profile-tabs" active-color="primary" indicator-color="primary" align="left"
-          narrow-indicator>
+        <q-tabs v-model="activeTab" :active-color="$q.screen.darkMode ? 'white' : 'white'" indicator-color="primary" align="left" narrow-indicator>
           <q-tab name="general" icon="person" :label="$t('profile.general')" />
           <q-tab name="security" icon="security" :label="$t('profile.security')" />
           <q-tab name="preferences" icon="tune" :label="$t('profile.preferences')" />
           <q-tab name="activity" icon="timeline" :label="$t('profile.activity')" />
         </q-tabs>
       </q-card>
-    </div>
 
-    <!-- Tab Panels -->
-    <div class="tab-panels">
+      <!-- Tab Panels -->
       <q-tab-panels v-model="activeTab" animated class="bg-transparent">
 
         <!-- General Information Tab -->
         <q-tab-panel name="general" class="q-pa-none">
           <q-card flat bordered class="content-card">
             <q-card-section class="card-header">
-              <div class="section-title">
-                <q-icon name="person" class="q-mr-sm" />
-                {{ $t('profile.profileInformation') }}
+              <div>
+                <div class="section-title">
+                  <q-icon name="person" />
+                  {{ $t('profile.profileInformation') }}
+                </div>
+                <p class="section-subtitle">{{ $t('profile.updatePersonalInfo') }}</p>
               </div>
-              <p class="section-subtitle">{{ $t('profile.updatePersonalInfo') }}</p>
             </q-card-section>
 
             <q-card-section>
-              <q-form @submit="updateProfile" class="profile-form">
+              <q-form @submit="updateProfile" class="standard-form">
                 <div class="form-row">
                   <div class="form-group">
                     <q-input v-model="profileForm.name" :label="$t('profile.fullName')" outlined
@@ -143,15 +167,17 @@
         <q-tab-panel name="security" class="q-pa-none">
           <q-card flat bordered class="content-card">
             <q-card-section class="card-header">
-              <div class="section-title">
-                <q-icon name="security" class="q-mr-sm" />
-                {{ $t('profile.securitySettings') }}
+              <div>
+                <div class="section-title">
+                  <q-icon name="security" />
+                  {{ $t('profile.securitySettings') }}
+                </div>
+                <p class="section-subtitle">{{ $t('profile.updatePasswordDesc') }}</p>
               </div>
-              <p class="section-subtitle">{{ $t('profile.updatePasswordDesc') }}</p>
             </q-card-section>
 
             <q-card-section>
-              <q-form @submit="updatePassword" class="security-form">
+              <q-form @submit="updatePassword" class="standard-form">
                 <div class="form-row">
                   <div class="form-group">
                     <q-input v-model="passwordForm.current_password" :label="$t('profile.currentPassword')"
@@ -217,11 +243,13 @@
         <q-tab-panel name="preferences" class="q-pa-none">
           <q-card flat bordered class="content-card">
             <q-card-section class="card-header">
-              <div class="section-title">
-                <q-icon name="tune" class="q-mr-sm" />
-                {{ $t('profile.preferences') }}
+              <div>
+                <div class="section-title">
+                  <q-icon name="tune" />
+                  {{ $t('profile.preferences') }}
+                </div>
+                <p class="section-subtitle">{{ $t('profile.customizeExperience') }}</p>
               </div>
-              <p class="section-subtitle">{{ $t('profile.customizeExperience') }}</p>
             </q-card-section>
 
             <q-card-section>
@@ -297,11 +325,13 @@
         <q-tab-panel name="activity" class="q-pa-none">
           <q-card flat bordered class="content-card">
             <q-card-section class="card-header">
-              <div class="section-title">
-                <q-icon name="timeline" class="q-mr-sm" />
-                {{ $t('profile.recentActivity') }}
+              <div>
+                <div class="section-title">
+                  <q-icon name="timeline" />
+                  {{ $t('profile.recentActivity') }}
+                </div>
+                <p class="section-subtitle">{{ $t('profile.activityDesc') }}</p>
               </div>
-              <p class="section-subtitle">{{ $t('profile.activityDesc') }}</p>
             </q-card-section>
 
             <q-card-section>
@@ -347,7 +377,6 @@
             </q-card-section>
           </q-card>
         </q-tab-panel>
-
       </q-tab-panels>
     </div>
   </q-page>
@@ -358,7 +387,7 @@ import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from 'src/stores/auth'
-import AvatarUpload from 'src/components/AvatarUpload.vue'
+import SimpleAvatarUpload from 'src/components/SimpleAvatarUpload.vue'
 
 // Composables
 const $q = useQuasar()
@@ -537,8 +566,8 @@ const handleAvatarUpdate = () => {
     position: 'top'
   })
 
-  // Optionally refresh user data in auth store
-  authStore.refreshUser()
+  // No need to call fetchUser since we're updating the store directly in the component
+  // In a real app with API integration, you would call: authStore.fetchUser()
 }
 
 const handleAvatarDelete = () => {
@@ -548,8 +577,8 @@ const handleAvatarDelete = () => {
     position: 'top'
   })
 
-  // Optionally refresh user data in auth store
-  authStore.refreshUser()
+  // No need to call fetchUser since we're updating the store directly in the component
+  // In a real app with API integration, you would call: authStore.fetchUser()
 }
 
 const handleUploadProgress = (progressData) => {
@@ -565,108 +594,181 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.profile-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  position: relative;
-}
+// =============================================================================
+// PROFILE PAGE SPECIFIC STYLES
+// =============================================================================
+// Minimal custom styles untuk elements yang tidak ada di global styles
 
-// Modern Profile Header
-.profile-header {
-  position: relative;
-  margin-bottom: 2rem;
-
-  .header-background {
-    height: 200px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    position: relative;
+// Enhanced tabs styling for better visibility
+.modern-tabs {
+  .tabs-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
     overflow: hidden;
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-      opacity: 0.3;
-    }
-
-    .header-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 50px;
-      background: linear-gradient(to top, rgba(255, 255, 255, 0.1), transparent);
+    .body--dark & {
+      background: #2d3748;
+      border-color: #4a5568;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
     }
   }
 
-  .header-content {
-    position: absolute;
-    bottom: -60px;
-    left: 0;
-    right: 0;
-    padding: 0 2rem;
+  .q-tabs {
+    background: #f1f5f9;
+    border-bottom: 1px solid #d1d5db;
 
-    .profile-info {
-      display: flex;
-      align-items: flex-end;
-      gap: 2rem;
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    .body--dark & {
+      background: #1f2937;
+      border-bottom-color: #374151;
+    }
 
-      .avatar-container {
-        flex-shrink: 0;
-        margin-bottom: -1rem;
+    .q-tab {
+      padding: 1.25rem 2rem;
+      font-weight: 600;
+      text-transform: none;
+      font-size: 1rem;
+      color: #1a202c;
+      border-radius: 0;
+      transition: all 0.3s ease;
+      position: relative;
+
+      .body--dark & {
+        color: #f7fafc;
       }
 
-      .user-details {
-        flex: 1;
+      &:hover {
+        background: rgba(102, 126, 234, 0.08);
+        color: #4c51bf;
 
-        .user-name {
-          margin: 0 0 0.5rem 0;
-          font-size: 2rem;
-          font-weight: 700;
-          color: #2d3748;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+        .body--dark & {
+          background: rgba(102, 126, 234, 0.15);
+          color: #c3dafe;
         }
 
-        .user-email {
-          margin: 0 0 1rem 0;
-          color: #718096;
+        .q-icon {
+          transform: scale(1.1);
+          color: #4c51bf;
+
+          .body--dark & {
+            color: #c3dafe;
+          }
+        }
+      }
+
+      &.q-tab--active {
+        background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
+        color: #ffffff;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(76, 81, 191, 0.4);
+
+        .body--dark & {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: #ffffff;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        }
+
+        .q-icon {
+          color: #ffffff;
+          transform: scale(1.1);
+        }
+
+        // Active tab indicator
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40px;
+          height: 3px;
+          background: #ffffff;
+          border-radius: 2px 2px 0 0;
+        }
+      }
+
+      .q-icon {
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+        transition: all 0.3s ease;
+      }
+
+      // Focus styles for accessibility
+      &:focus-visible {
+        outline: 2px solid #4c51bf;
+        outline-offset: 2px;
+
+        .body--dark & {
+          outline-color: #667eea;
+        }
+      }
+    }
+
+    // Tab indicator styling
+    .q-tabs__arrow {
+      color: #4c51bf;
+
+      .body--dark & {
+        color: #c3dafe;
+      }
+    }
+
+    .q-tabs__content {
+      .q-tab__indicator {
+        background: transparent; // We use custom indicator
+      }
+    }
+  }
+
+  .q-tab-panels {
+    background: transparent;
+    margin-top: 1.5rem;
+
+    .q-tab-panel {
+      padding: 0;
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: 1023px) {
+    .q-tabs {
+      .q-tab {
+        padding: 1rem 1.5rem;
+        font-size: 0.95rem;
+
+        .q-icon {
           font-size: 1.1rem;
         }
+      }
+    }
+  }
 
-        .user-roles {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
+  @media (max-width: 599px) {
+    .tabs-card {
+      border-radius: 12px;
+    }
+
+    .q-tabs {
+      .q-tab {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+        min-height: auto;
+
+        .q-icon {
+          margin-right: 0.5rem;
+          font-size: 1rem;
         }
 
-        .user-meta {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1.5rem;
+        // Stack icon and text on very small screens
+        @media (max-width: 480px) {
+          flex-direction: column;
+          padding: 0.75rem 0.5rem;
+          gap: 0.25rem;
 
-          .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #4a5568;
-            font-size: 0.9rem;
-
-            .q-icon {
-              color: #667eea;
-            }
+          .q-icon {
+            margin-right: 0;
+            font-size: 1.1rem;
           }
         }
       }
@@ -674,95 +776,114 @@ onMounted(() => {
   }
 }
 
-// Tab System
-.profile-tabs-container {
-  margin: 4rem 2rem 2rem 2rem;
+// Profile overview layout
+.profile-overview {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
 
-  .tabs-card {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  @media (max-width: 1023px) {
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .profile-tabs {
-    background: white;
+  .avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 200px;
 
-    .q-tab {
-      padding: 1rem 2rem;
-      font-weight: 600;
-      text-transform: none;
-      font-size: 1rem;
+    @media (max-width: 1023px) {
+      align-self: center;
+    }
 
-      &.q-tab--active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+    .avatar-container {
+      margin-bottom: 1rem;
+    }
 
-        .q-icon {
-          color: white;
+    .avatar-info {
+      .avatar-help {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.9rem;
+        color: #4a5568;
+        font-weight: 500;
+
+        .body--dark & {
+          color: #a0aec0;
+        }
+      }
+
+      .avatar-formats {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #718096;
+
+        .body--dark & {
+          color: #718096;
         }
       }
     }
   }
-}
 
-// Tab Panels
-.tab-panels {
-  padding: 0 2rem 2rem 2rem;
+  .user-info {
+    flex: 1;
 
-  .content-card {
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    overflow: hidden;
-
-    .card-header {
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      border-bottom: 1px solid #e2e8f0;
-      padding: 2rem;
-
-      .section-title {
-        display: flex;
-        align-items: center;
-        font-size: 1.5rem;
+    .user-basic {
+      .user-name {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.75rem;
         font-weight: 700;
         color: #2d3748;
-        margin-bottom: 0.5rem;
 
-        .q-icon {
-          color: #667eea;
+        .body--dark & {
+          color: #f7fafc;
+        }
+
+        @media (max-width: 599px) {
+          font-size: 1.5rem;
         }
       }
 
-      .section-subtitle {
-        margin: 0;
+      .user-email {
+        margin: 0 0 1rem 0;
         color: #718096;
-        font-size: 1rem;
+        font-size: 1.1rem;
+
+        .body--dark & {
+          color: #a0aec0;
+        }
+      }
+
+      .user-roles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
       }
     }
-  }
-}
 
-// Forms
-.profile-form,
-.security-form {
-  .form-row {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    .user-meta {
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
 
-    .form-group {
-      flex: 1;
-
-      &.full-width {
-        flex-basis: 100%;
-      }
-
-      .form-input {
-        .q-field__control {
-          border-radius: 12px;
+        @media (max-width: 599px) {
+          flex-direction: column;
+          gap: 0.75rem;
         }
 
-        .q-field__prepend {
+        .meta-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #4a5568;
+          font-size: 0.9rem;
+
+          .body--dark & {
+            color: #e2e8f0;
+          }
+
           .q-icon {
             color: #667eea;
           }
@@ -770,23 +891,9 @@ onMounted(() => {
       }
     }
   }
-
-  .form-actions {
-    display: flex;
-    gap: 1rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e2e8f0;
-
-    .action-btn {
-      border-radius: 12px;
-      padding: 0.75rem 2rem;
-      font-weight: 600;
-      text-transform: none;
-    }
-  }
 }
 
-// Security Tips
+// Security tips styling
 .security-tips {
   margin: 2rem 0;
 
@@ -806,7 +913,7 @@ onMounted(() => {
   }
 }
 
-// Preferences Section
+// Preferences section styling
 .preferences-section {
   margin-bottom: 2rem;
 
@@ -818,6 +925,10 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+
+    .body--dark & {
+      color: #f7fafc;
+    }
 
     &::before {
       content: '';
@@ -839,11 +950,21 @@ onMounted(() => {
     border: 1px solid #e2e8f0;
     transition: all 0.3s ease;
 
+    .body--dark & {
+      background: #374151;
+      border-color: #4a5568;
+    }
+
     &:hover {
       background: #f1f5f9;
       border-color: #cbd5e0;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      .body--dark & {
+        background: #4a5568;
+        border-color: #718096;
+      }
     }
 
     .preference-content {
@@ -851,6 +972,10 @@ onMounted(() => {
       align-items: center;
       gap: 1rem;
       flex: 1;
+
+      @media (max-width: 599px) {
+        gap: 0.75rem;
+      }
 
       .preference-icon {
         width: 40px;
@@ -860,6 +985,11 @@ onMounted(() => {
         display: flex;
         align-items: center;
         justify-content: center;
+
+        @media (max-width: 599px) {
+          width: 36px;
+          height: 36px;
+        }
 
         .q-icon {
           color: white;
@@ -871,19 +1001,27 @@ onMounted(() => {
           font-weight: 600;
           color: #2d3748;
           margin-bottom: 0.25rem;
+
+          .body--dark & {
+            color: #f7fafc;
+          }
         }
 
         .preference-desc {
           font-size: 0.9rem;
           color: #718096;
           line-height: 1.4;
+
+          .body--dark & {
+            color: #a0aec0;
+          }
         }
       }
     }
   }
 }
 
-// Activity Timeline
+// Activity timeline styling
 .activity-timeline {
   .activity-item {
     display: flex;
@@ -896,9 +1034,18 @@ onMounted(() => {
     border-left: 4px solid #667eea;
     transition: all 0.3s ease;
 
+    .body--dark & {
+      background: #374151;
+      border-left-color: #667eea;
+    }
+
     &:hover {
       background: #f1f5f9;
       transform: translateX(4px);
+
+      .body--dark & {
+        background: #4a5568;
+      }
     }
 
     .activity-icon {
@@ -919,212 +1066,18 @@ onMounted(() => {
         font-weight: 600;
         color: #2d3748;
         margin-bottom: 0.25rem;
+
+        .body--dark & {
+          color: #f7fafc;
+        }
       }
 
       .activity-desc {
         font-size: 0.9rem;
         color: #718096;
-      }
-    }
-  }
-}
 
-// Dark mode styles
-.body--dark {
-  .profile-page {
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  }
-
-  .profile-header {
-    .header-content {
-      .profile-info {
-        background: #2d3748;
-        border-color: rgba(255, 255, 255, 0.1);
-
-        .user-details {
-          .user-name {
-            color: #f7fafc;
-            -webkit-text-fill-color: transparent;
-          }
-
-          .user-email {
-            color: #a0aec0;
-          }
-
-          .user-meta {
-            .meta-item {
-              color: #e2e8f0;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .profile-tabs-container {
-    .profile-tabs {
-      background: #2d3748;
-
-      .q-tab {
-        color: #a0aec0;
-
-        &.q-tab--active {
-          color: white;
-        }
-      }
-    }
-  }
-
-  .content-card {
-    background: #2d3748;
-    border-color: rgba(255, 255, 255, 0.1);
-
-    .card-header {
-      background: linear-gradient(135deg, #374151 0%, #4a5568 100%);
-      border-bottom-color: #4a5568;
-
-      .section-title {
-        color: #f7fafc;
-      }
-
-      .section-subtitle {
-        color: #a0aec0;
-      }
-    }
-  }
-
-  .preferences-section {
-    .preference-category {
-      color: #f7fafc;
-    }
-
-    .preference-item {
-      background: #374151;
-      border-color: #4a5568;
-
-      &:hover {
-        background: #4a5568;
-        border-color: #718096;
-      }
-
-      .preference-content {
-        .preference-info {
-          .preference-label {
-            color: #f7fafc;
-          }
-
-          .preference-desc {
-            color: #a0aec0;
-          }
-        }
-      }
-    }
-  }
-
-  .activity-timeline {
-    .activity-item {
-      background: #374151;
-      border-left-color: #667eea;
-
-      &:hover {
-        background: #4a5568;
-      }
-
-      .activity-content {
-        .activity-title {
-          color: #f7fafc;
-        }
-
-        .activity-desc {
+        .body--dark & {
           color: #a0aec0;
-        }
-      }
-    }
-  }
-
-  .form-actions {
-    border-top-color: #4a5568;
-  }
-}
-
-// Responsive Design
-@media (max-width: 1023px) {
-  .profile-header {
-    .header-content {
-      padding: 0 1rem;
-
-      .profile-info {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-
-        .user-details {
-          .user-meta {
-            justify-content: center;
-          }
-        }
-      }
-    }
-  }
-
-  .profile-tabs-container,
-  .tab-panels {
-    margin-left: 1rem;
-    margin-right: 1rem;
-  }
-}
-
-@media (max-width: 599px) {
-  .profile-header {
-    .header-content {
-      padding: 0 0.75rem;
-
-      .profile-info {
-        padding: 1.5rem;
-
-        .user-details {
-          .user-name {
-            font-size: 1.5rem;
-          }
-
-          .user-meta {
-            flex-direction: column;
-            gap: 0.75rem;
-          }
-        }
-      }
-    }
-  }
-
-  .profile-tabs-container,
-  .tab-panels {
-    margin: 3rem 0.75rem 1rem 0.75rem;
-  }
-
-  .profile-form,
-  .security-form {
-    .form-row {
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .form-actions {
-      flex-direction: column;
-
-      .action-btn {
-        width: 100%;
-      }
-    }
-  }
-
-  .preferences-section {
-    .preference-item {
-      .preference-content {
-        gap: 0.75rem;
-
-        .preference-icon {
-          width: 36px;
-          height: 36px;
         }
       }
     }

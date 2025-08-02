@@ -19,8 +19,6 @@
               <div class="auth-logo">
                 <q-icon name="dashboard_customize" size="60px" color="primary" />
               </div>
-              <h4 class="auth-title">Dashboard Management</h4>
-              <p class="auth-subtitle">Modern admin dashboard solution</p>
             </div>
 
             <!-- Auth form content -->

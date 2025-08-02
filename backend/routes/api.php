@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\PermissionController;
@@ -37,8 +38,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Profile routes
     Route::prefix('profile')->group(function () {
-        Route::put('/', [AuthController::class, 'updateProfile']);
-        Route::put('password', [AuthController::class, 'changePassword']);
+        Route::put('/', [ProfileController::class, 'update']);
+        Route::put('password', [ProfileController::class, 'changePassword']);
+
+        // Avatar management
+        Route::post('avatar', [ProfileController::class, 'uploadAvatar']);
+        Route::delete('avatar', [ProfileController::class, 'deleteAvatar']);
     });
 
     // Avatar routes
