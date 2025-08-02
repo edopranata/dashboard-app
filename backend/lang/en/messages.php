@@ -52,6 +52,18 @@ return [
         'invalid_permission' => 'Invalid permission provided',
     ],
 
+    // Avatar
+    'avatar' => [
+        'uploaded_successfully' => 'Avatar uploaded successfully',
+        'upload_failed' => 'Avatar upload failed',
+        'deleted_successfully' => 'Avatar deleted successfully',
+        'delete_failed' => 'Avatar delete failed',
+        'no_avatar_found' => 'No avatar found for this user',
+        'invalid_file_type' => 'Invalid file type. Please upload JPG, PNG, or WebP image',
+        'file_too_large' => 'File size too large. Maximum size is 2MB',
+        'processing_failed' => 'Avatar processing failed',
+    ],
+
     // Dashboard
     'dashboard' => [
         'stats_retrieved' => 'Dashboard statistics retrieved successfully',

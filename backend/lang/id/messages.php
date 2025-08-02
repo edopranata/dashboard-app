@@ -52,6 +52,18 @@ return [
         'invalid_permission' => 'Izin yang diberikan tidak valid',
     ],
 
+    // Avatar
+    'avatar' => [
+        'uploaded_successfully' => 'Avatar berhasil diunggah',
+        'upload_failed' => 'Gagal mengunggah avatar',
+        'deleted_successfully' => 'Avatar berhasil dihapus',
+        'delete_failed' => 'Gagal menghapus avatar',
+        'no_avatar_found' => 'Avatar tidak ditemukan untuk pengguna ini',
+        'invalid_file_type' => 'Tipe file tidak valid. Silakan unggah gambar JPG, PNG, atau WebP',
+        'file_too_large' => 'Ukuran file terlalu besar. Maksimal 2MB',
+        'processing_failed' => 'Pemrosesan avatar gagal',
+    ],
+
     // Dashboard
     'dashboard' => [
         'stats_retrieved' => 'Statistik dashboard berhasil diambil',

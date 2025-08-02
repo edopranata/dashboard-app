@@ -5,6 +5,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\AvatarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +39,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('profile')->group(function () {
         Route::put('/', [AuthController::class, 'updateProfile']);
         Route::put('password', [AuthController::class, 'changePassword']);
+    });
+
+    // Avatar routes
+    Route::prefix('avatar')->group(function () {
+        Route::post('upload', [AvatarController::class, 'upload']);
+        Route::delete('delete', [AvatarController::class, 'delete']);
+        Route::get('show/{size?}', [AvatarController::class, 'show']);
     });
 
     // User management routes
