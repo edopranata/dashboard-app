@@ -107,59 +107,141 @@
     </q-card>
 
     <!-- User Details Dialog -->
-    <q-dialog v-model="showDetailsDialog">
-      <q-card style="min-width: 400px">
-        <q-card-section class="row items-center">
-          <div class="text-h6">{{ $t('users.userDetails') }}</div>
+    <q-dialog v-model="showDetailsDialog" persistent>
+      <q-card style="min-width: 600px; max-width: 700px">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h5 text-weight-bold">{{ $t('users.userDetails') }}</div>
           <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
+          <q-btn icon="close" flat round dense v-close-popup color="grey-7" />
         </q-card-section>
 
-        <q-card-section v-if="selectedUser">
-          <div class="user-details-content">
-            <div class="text-center q-mb-md">
-              <q-avatar size="64px" color="transparent">
-                <img :src="selectedUser.avatar" :alt="selectedUser.name" />
-              </q-avatar>
-            </div>
-            <div class="detail-item">
-              <strong>{{ $t('users.name') }}:</strong> {{ selectedUser.name }}
-            </div>
-            <div class="detail-item">
-              <strong>{{ $t('users.email') }}:</strong> {{ selectedUser.email }}
-            </div>
-            <div class="detail-item" v-if="selectedUser.phone">
-              <strong>{{ $t('users.phone') }}:</strong> {{ selectedUser.phone }}
-            </div>
-            <div class="detail-item" v-if="selectedUser.timezone">
-              <strong>{{ $t('users.timezone') }}:</strong> {{ selectedUser.timezone }}
-            </div>
-            <div class="detail-item" v-if="selectedUser.bio">
-              <strong>{{ $t('users.bio') }}:</strong> {{ selectedUser.bio }}
-            </div>
-            <div class="detail-item">
-              <strong>{{ $t('users.status') }}:</strong>
-              <q-chip :color="selectedUser.email_verified_at ? 'green' : 'orange'" text-color="white" size="sm">
-                {{ selectedUser.email_verified_at ? $t('users.active') : $t('users.pending') }}
-              </q-chip>
-            </div>
-            <div class="detail-item">
-              <strong>{{ $t('users.roles') }}:</strong>
-              <div class="roles-list q-mt-xs">
-                <q-chip v-for="role in selectedUser.roles" :key="role.id" :color="getRoleColor(role.name)"
-                  text-color="white" size="sm">
-                  {{ role.name }}
-                </q-chip>
+        <q-card-section v-if="selectedUser" class="q-pt-sm">
+          <div class="user-details-modern">
+            <!-- User Header Section -->
+            <div class="user-header-section">
+              <div class="user-avatar-container">
+                <q-avatar size="80px" color="transparent" class="user-avatar-large">
+                  <img :src="selectedUser.avatar" :alt="selectedUser.name" />
+                </q-avatar>
+                <div class="user-status-indicator" :class="{
+                  'active': selectedUser.email_verified_at,
+                  'pending': !selectedUser.email_verified_at
+                }"></div>
+              </div>
+
+              <div class="user-header-info">
+                <h6 class="user-name-large">{{ selectedUser.name }}</h6>
+                <p class="user-email-large">{{ selectedUser.email }}</p>
+                <div class="user-status-chip">
+                  <q-chip :color="selectedUser.email_verified_at ? 'green' : 'orange'" text-color="white" size="sm"
+                    :icon="selectedUser.email_verified_at ? 'verified' : 'pending'">
+                    {{ selectedUser.email_verified_at ? $t('users.active') : $t('users.pending') }}
+                  </q-chip>
+                </div>
               </div>
             </div>
-            <div class="detail-item">
-              <strong>{{ $t('users.created') }}:</strong> {{ formatDate(selectedUser.created_at) }}
-            </div>
-            <div class="detail-item">
-              <strong>{{ $t('users.lastUpdated') }}:</strong> {{ formatDate(selectedUser.updated_at) }}
+
+            <!-- User Information Grid -->
+            <div class="user-info-grid">
+              <!-- Contact Information -->
+              <div class="info-section">
+                <div class="section-header">
+                  <q-icon name="contact_phone" color="blue" size="sm" />
+                  <span class="section-title">Contact Information</span>
+                </div>
+                <div class="info-items">
+                  <div class="info-item" v-if="selectedUser.phone">
+                    <div class="info-label">
+                      <q-icon name="phone" size="xs" />
+                      Phone
+                    </div>
+                    <div class="info-value">{{ selectedUser.phone }}</div>
+                  </div>
+                  <div class="info-item" v-if="selectedUser.timezone">
+                    <div class="info-label">
+                      <q-icon name="schedule" size="xs" />
+                      Timezone
+                    </div>
+                    <div class="info-value">{{ selectedUser.timezone }}</div>
+                  </div>
+                  <div class="info-item" v-if="!selectedUser.phone && !selectedUser.timezone">
+                    <div class="no-data">No contact information available</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Roles & Permissions -->
+              <div class="info-section">
+                <div class="section-header">
+                  <q-icon name="admin_panel_settings" color="purple" size="sm" />
+                  <span class="section-title">Roles & Access</span>
+                </div>
+                <div class="info-items">
+                  <div class="roles-container">
+                    <div class="roles-grid">
+                      <q-chip v-for="role in selectedUser.roles" :key="role.id" :color="getRoleColor(role.name)"
+                        text-color="white" size="md" :icon="getRoleIcon(role.name)" class="role-chip-detailed">
+                        {{ role.name }}
+                      </q-chip>
+                    </div>
+                    <div class="permissions-count" v-if="getTotalPermissions(selectedUser.roles) > 0">
+                      <q-icon name="security" size="xs" />
+                      {{ getTotalPermissions(selectedUser.roles) }} total permissions
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Account Information -->
+              <div class="info-section">
+                <div class="section-header">
+                  <q-icon name="account_circle" color="green" size="sm" />
+                  <span class="section-title">Account Information</span>
+                </div>
+                <div class="info-items">
+                  <div class="info-item">
+                    <div class="info-label">
+                      <q-icon name="event" size="xs" />
+                      Created
+                    </div>
+                    <div class="info-value">{{ formatDetailedDate(selectedUser.created_at) }}</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">
+                      <q-icon name="update" size="xs" />
+                      Last Updated
+                    </div>
+                    <div class="info-value">{{ formatDetailedDate(selectedUser.updated_at) }}</div>
+                  </div>
+                  <div class="info-item" v-if="selectedUser.email_verified_at">
+                    <div class="info-label">
+                      <q-icon name="verified" size="xs" />
+                      Verified
+                    </div>
+                    <div class="info-value">{{ formatDetailedDate(selectedUser.email_verified_at) }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bio Section -->
+              <div class="info-section full-width" v-if="selectedUser.bio">
+                <div class="section-header">
+                  <q-icon name="description" color="orange" size="sm" />
+                  <span class="section-title">About</span>
+                </div>
+                <div class="bio-content">
+                  <p class="bio-text">{{ selectedUser.bio }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </q-card-section>
+
+        <q-card-actions align="right" class="q-pt-none">
+          <q-btn flat :label="$t('common.close')" v-close-popup color="grey-7" />
+          <q-btn color="primary" :label="$t('users.editUser')"
+            :to="{ name: 'users.edit', params: { id: selectedUser.id } }" v-if="canEditUsers" v-close-popup />
+        </q-card-actions>
       </q-card>
     </q-dialog>
 
@@ -466,12 +548,39 @@ const getRoleColor = (role) => {
   return colors[role] || 'grey'
 }
 
+const getRoleIcon = (role) => {
+  const icons = {
+    'Super Admin': 'admin_panel_settings',
+    'Owner': 'business_center',
+    'User': 'person'
+  }
+  return icons[role] || 'security'
+}
+
+const getTotalPermissions = (roles) => {
+  if (!roles || !Array.isArray(roles)) return 0
+  return roles.reduce((total, role) => {
+    return total + (role.permissions ? role.permissions.length : 0)
+  }, 0)
+}
+
 const formatDate = (date) => {
   if (!date) return 'N/A'
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
+  })
+}
+
+const formatDetailedDate = (date) => {
+  if (!date) return 'N/A'
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   })
 }
 
@@ -557,6 +666,221 @@ onMounted(() => {
 
       .body--dark & {
         color: #ffffff;
+      }
+    }
+  }
+}
+
+// Modern User Details Dialog Styles
+.user-details-modern {
+  .user-header-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    color: white;
+
+    .body--dark & {
+      background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    }
+
+    .user-avatar-container {
+      position: relative;
+
+      .user-avatar-large {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+        img {
+          object-fit: cover;
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .user-status-indicator {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 3px solid white;
+
+        &.active {
+          background-color: #10b981;
+        }
+
+        &.pending {
+          background-color: #f59e0b;
+        }
+      }
+    }
+
+    .user-header-info {
+      .user-name-large {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: white;
+      }
+
+      .user-email-large {
+        margin: 0 0 1rem 0;
+        font-size: 1rem;
+        opacity: 0.9;
+        color: white;
+      }
+
+      .user-status-chip {
+        .q-chip {
+          background: rgba(255, 255, 255, 0.2) !important;
+          backdrop-filter: blur(10px);
+        }
+      }
+    }
+  }
+
+  .user-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+
+    .info-section {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid #e2e8f0;
+
+      .body--dark & {
+        background: #2a2a2a;
+        border-color: #444444;
+      }
+
+      &.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e2e8f0;
+
+        .body--dark & {
+          border-color: #444444;
+        }
+
+        .section-title {
+          font-weight: 600;
+          font-size: 1rem;
+          color: #374151;
+
+          .body--dark & {
+            color: #ffffff;
+          }
+        }
+      }
+
+      .info-items {
+        .info-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          padding: 0.75rem 0;
+          border-bottom: 1px solid #f1f5f9;
+
+          .body--dark & {
+            border-color: #374151;
+          }
+
+          &:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+          }
+
+          .info-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 0.875rem;
+
+            .body--dark & {
+              color: #d1d5db;
+            }
+          }
+
+          .info-value {
+            font-weight: 400;
+            color: #111827;
+            text-align: right;
+            max-width: 60%;
+
+            .body--dark & {
+              color: #ffffff;
+            }
+          }
+        }
+
+        .no-data {
+          color: #9ca3af;
+          font-style: italic;
+          text-align: center;
+          padding: 1rem 0;
+
+          .body--dark & {
+            color: #6b7280;
+          }
+        }
+
+        .roles-container {
+          .roles-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+
+            .role-chip-detailed {
+              font-weight: 500;
+            }
+          }
+
+          .permissions-count {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: #6b7280;
+
+            .body--dark & {
+              color: #9ca3af;
+            }
+          }
+        }
+      }
+
+      .bio-content {
+        .bio-text {
+          margin: 0;
+          line-height: 1.6;
+          color: #374151;
+          font-size: 0.95rem;
+
+          .body--dark & {
+            color: #d1d5db;
+          }
+        }
       }
     }
   }

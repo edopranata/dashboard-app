@@ -114,10 +114,16 @@
 
             <div class="permissions-detail">
               <div class="section-title">All Permissions</div>
-              <div class="permissions-list">
+              <div class="permissions-list" v-if="!loadingPermissions">
                 <div v-for="(categoryData, categoryKey) in getFilteredGroupedPermissions(selectedRole.permissions)"
-                  :key="categoryKey" class="permission-group" v-show="categoryData.permissions.length > 0">
-                  <div class="group-title">{{ categoryData.label }}</div>
+                  :key="categoryKey" class="permission-group">
+                  <div class="group-header">
+                    <q-icon :name="categoryData.icon" :color="getCategoryColor(categoryKey)" size="md" />
+                    <div class="group-info">
+                      <div class="group-title">{{ categoryData.label }}</div>
+                      <div class="group-description">{{ categoryData.description }}</div>
+                    </div>
+                  </div>
                   <div class="group-permissions">
                     <q-chip v-for="permission in categoryData.permissions" :key="permission.name"
                       :color="getPermissionColor(permission.name)" text-color="white" size="sm">
@@ -125,6 +131,15 @@
                     </q-chip>
                   </div>
                 </div>
+                <div v-if="Object.keys(getFilteredGroupedPermissions(selectedRole.permissions)).length === 0"
+                  class="no-permissions">
+                  <q-icon name="info" size="md" color="grey" />
+                  <span>No permissions assigned to this role</span>
+                </div>
+              </div>
+              <div v-else class="loading-permissions">
+                <q-spinner color="primary" size="sm" />
+                <span>Loading permissions...</span>
               </div>
             </div>
           </div>
@@ -157,6 +172,8 @@ const roles = ref([])
 const loading = ref(false)
 const showDetailsDialog = ref(false)
 const selectedRole = ref(null)
+const groupedPermissions = ref({})
+const loadingPermissions = ref(false)
 
 // Computed
 const canCreateRoles = computed(() => authStore.hasPermission('create_roles'))
@@ -184,6 +201,22 @@ const fetchRoles = async () => {
   }
 }
 
+const fetchGroupedPermissions = async () => {
+  if (Object.keys(groupedPermissions.value).length > 0) return // Already loaded
+
+  loadingPermissions.value = true
+  try {
+    const response = await api.get('/permissions/grouped')
+    if (response.data.success) {
+      groupedPermissions.value = response.data.data
+    }
+  } catch (err) {
+    console.error('Failed to fetch grouped permissions:', err)
+  } finally {
+    loadingPermissions.value = false
+  }
+}
+
 const createRole = () => {
   router.push({ name: 'roles.create' })
 }
@@ -192,9 +225,10 @@ const editRole = (role) => {
   router.push({ name: 'roles.edit', params: { id: role.id } })
 }
 
-const viewRole = (role) => {
+const viewRole = async (role) => {
   selectedRole.value = role
   showDetailsDialog.value = true
+  await fetchGroupedPermissions()
 }
 
 const confirmDelete = (role) => {
@@ -287,25 +321,48 @@ const formatPermissionName = (permission) => {
 }
 
 const getFilteredGroupedPermissions = (rolePermissions) => {
-  // For simplicity, we'll just return grouped permissions by category
-  if (!rolePermissions) return {}
+  if (!rolePermissions || !groupedPermissions.value) return {}
 
-  // Group permissions by their prefix (category)
-  const grouped = {}
   const rolePermissionNames = rolePermissions.map(p => p.name || p)
+  const result = {}
 
-  rolePermissionNames.forEach(permission => {
-    const category = permission.split('_')[0]
-    if (!grouped[category]) {
-      grouped[category] = {
-        label: category.charAt(0).toUpperCase() + category.slice(1),
-        permissions: []
+  // Process each category from backend grouped permissions
+  Object.entries(groupedPermissions.value).forEach(([categoryKey, categoryData]) => {
+    const categoryPermissions = categoryData.permissions.filter(permission =>
+      rolePermissionNames.includes(permission.name)
+    )
+
+    if (categoryPermissions.length > 0) {
+      result[categoryKey] = {
+        label: categoryData.label,
+        description: categoryData.description,
+        permissions: categoryPermissions,
+        icon: getCategoryIcon(categoryKey)
       }
     }
-    grouped[category].permissions.push({ name: permission })
   })
 
-  return grouped
+  return result
+}
+
+const getCategoryIcon = (categoryKey) => {
+  const icons = {
+    'user_management': 'people',
+    'role_management': 'admin_panel_settings',
+    'system_access': 'dashboard',
+    'administration': 'settings'
+  }
+  return icons[categoryKey] || 'security'
+}
+
+const getCategoryColor = (categoryKey) => {
+  const colors = {
+    'user_management': 'blue',
+    'role_management': 'purple',
+    'system_access': 'green',
+    'administration': 'orange'
+  }
+  return colors[categoryKey] || 'grey'
 }
 
 // Lifecycle
@@ -513,19 +570,63 @@ onMounted(async () => {
 
     .permissions-list {
       .permission-group {
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.2s ease;
 
-        .group-title {
-          font-weight: 500;
-          color: #4a5568;
-          margin-bottom: 0.5rem;
+        &:hover {
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .group-header {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 1rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid #e2e8f0;
+
+          .group-info {
+            .group-title {
+              font-weight: 600;
+              color: #2d3748;
+              font-size: 1rem;
+              margin-bottom: 0.25rem;
+            }
+
+            .group-description {
+              font-size: 0.875rem;
+              color: #718096;
+            }
+          }
         }
 
         .group-permissions {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.25rem;
+          gap: 0.5rem;
         }
+      }
+
+      .no-permissions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 2rem;
+        color: #718096;
+        font-style: italic;
+      }
+
+      .loading-permissions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 2rem;
+        color: #718096;
       }
     }
   }
@@ -628,10 +729,31 @@ onMounted(async () => {
 
       .permissions-list {
         .permission-group {
-          .group-title {
-            color: #ffffff !important;
-            font-weight: 500;
+          background-color: #2a2a2a !important;
+          border-color: #444444 !important;
+
+          .group-header {
+            border-color: #444444 !important;
+
+            .group-info {
+              .group-title {
+                color: #ffffff !important;
+                font-weight: 600;
+              }
+
+              .group-description {
+                color: #bbbbbb !important;
+              }
+            }
           }
+        }
+
+        .no-permissions {
+          color: #bbbbbb !important;
+        }
+
+        .loading-permissions {
+          color: #bbbbbb !important;
         }
       }
     }
