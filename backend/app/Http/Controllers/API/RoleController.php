@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -110,7 +111,7 @@ class RoleController extends Controller
     /**
      * Update the specified role
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, $id)
     {
         // Check permission
         if (!$request->user()->can('edit_roles')) {
@@ -118,6 +119,16 @@ class RoleController extends Controller
                 'success' => false,
                 'message' => 'Unauthorized access'
             ], 403);
+        }
+
+        // Find role manually like in show method
+        $role = Role::find($id);
+
+        if (!$role) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Role not found'
+            ], 404);
         }
 
         // Prevent editing Super Admin role
@@ -129,7 +140,12 @@ class RoleController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|unique:roles,name,' . $role->id . '|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('roles', 'name')->ignore($role->id)
+            ],
             'permissions' => 'array',
             'permissions.*' => 'exists:permissions,name'
         ]);
@@ -161,7 +177,7 @@ class RoleController extends Controller
     /**
      * Remove the specified role
      */
-    public function destroy(Request $request, Role $role)
+    public function destroy(Request $request, $id)
     {
         // Check permission
         if (!$request->user()->can('delete_roles')) {
@@ -169,6 +185,16 @@ class RoleController extends Controller
                 'success' => false,
                 'message' => 'Unauthorized access'
             ], 403);
+        }
+
+        // Find role manually
+        $role = Role::find($id);
+
+        if (!$role) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Role not found'
+            ], 404);
         }
 
         // Prevent deleting system roles

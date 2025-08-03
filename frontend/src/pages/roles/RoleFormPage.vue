@@ -261,15 +261,31 @@ const saveRole = async () => {
     }
   } catch (err) {
     console.error('Failed to save role:', err)
-    const message = err.message || (isEdit.value
-      ? t('roles.messages.failedToUpdateRole')
-      : t('roles.messages.failedToCreateRole'))
 
-    $q.notify({
-      type: 'negative',
-      message,
-      position: 'top'
-    })
+    // Handle validation errors specifically
+    if (err.errors && Object.keys(err.errors).length > 0) {
+      const errorMessages = []
+      for (const [field, messages] of Object.entries(err.errors)) {
+        errorMessages.push(`${field}: ${messages.join(', ')}`)
+      }
+
+      $q.notify({
+        type: 'negative',
+        message: `Validation Error: ${errorMessages.join('; ')}`,
+        position: 'top',
+        timeout: 5000
+      })
+    } else {
+      const message = err.message || (isEdit.value
+        ? t('roles.messages.failedToUpdateRole')
+        : t('roles.messages.failedToCreateRole'))
+
+      $q.notify({
+        type: 'negative',
+        message,
+        position: 'top'
+      })
+    }
   } finally {
     saving.value = false
   }

@@ -68,6 +68,7 @@ export const roleService = {
       return response.data
     } catch (error) {
       console.error('Error updating role:', error)
+
       throw {
         success: false,
         message: error.response?.data?.message || 'Failed to update role',
