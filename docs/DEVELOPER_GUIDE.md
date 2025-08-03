@@ -102,11 +102,11 @@ quasar build
 
 ### Default Accounts
 
-| Role | Email | Password | Capabilities |
-|------|-------|----------|--------------|
+| Role            | Email                 | Password         | Capabilities       |
+| --------------- | --------------------- | ---------------- | ------------------ |
 | **Super Admin** | `admin@dashboard.com` | `SuperAdmin123!` | Full system access |
-| **Owner** | `owner@dashboard.com` | `Owner123!` | User management |
-| **User** | `user@dashboard.com` | `User123!` | Basic access |
+| **Owner**       | `owner@dashboard.com` | `Owner123!`      | User management    |
+| **User**        | `user@dashboard.com`  | `User123!`       | Basic access       |
 
 ### API Authentication
 
@@ -168,18 +168,24 @@ src/pages/
 
 ```javascript
 // stores/auth.js - Authentication store
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
     token: null,
-    isAuthenticated: false
+    isAuthenticated: false,
   }),
   actions: {
-    async login(credentials) { /* ... */ },
-    async logout() { /* ... */ },
-    async fetchUser() { /* ... */ }
-  }
-})
+    async login(credentials) {
+      /* ... */
+    },
+    async logout() {
+      /* ... */
+    },
+    async fetchUser() {
+      /* ... */
+    },
+  },
+});
 ```
 
 ### API Services
@@ -188,18 +194,18 @@ export const useAuthStore = defineStore('auth', {
 // services/userService.js
 export const userService = {
   async getUsers(params = {}) {
-    return await apiClient.get('/users', { params })
+    return await apiClient.get("/users", { params });
   },
   async createUser(userData) {
-    return await apiClient.post('/users', userData)
+    return await apiClient.post("/users", userData);
   },
   async updateUser(id, userData) {
-    return await apiClient.put(`/users/${id}`, userData)
+    return await apiClient.put(`/users/${id}`, userData);
   },
   async deleteUser(id) {
-    return await apiClient.delete(`/users/${id}`)
-  }
-}
+    return await apiClient.delete(`/users/${id}`);
+  },
+};
 ```
 
 ---
@@ -218,13 +224,13 @@ class UserController extends Controller
         if (!$request->user()->can('view_users')) {
             return response()->json(['success' => false], 403);
         }
-        
+
         $users = User::with('roles')
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%");
             })
             ->paginate($request->per_page ?? 15);
-            
+
         return response()->json(['success' => true, 'data' => $users]);
     }
 }
@@ -237,14 +243,14 @@ class UserController extends Controller
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, HasUuids;
-    
+
     protected $keyType = 'string';
     public $incrementing = false;
-    
+
     protected $fillable = [
         'name', 'email', 'password', 'avatar'
     ];
-    
+
     protected $hidden = [
         'password', 'remember_token'
     ];
@@ -258,16 +264,16 @@ class User extends Authenticatable
 $permissions = [
     // User Management
     'view_users', 'create_users', 'edit_users', 'delete_users',
-    
-    // Role Management  
+
+    // Role Management
     'view_roles', 'create_roles', 'edit_roles', 'delete_roles',
-    
+
     // Dashboard
     'view_dashboard', 'view_analytics',
-    
+
     // Profile
     'view_profile', 'edit_profile',
-    
+
     // System
     'view_settings', 'edit_settings', 'view_logs',
     'export_data', 'import_data', 'backup_system', 'manage_system'
@@ -289,20 +295,20 @@ $permissions = [
 // src/i18n/en-US/index.js
 export default {
   auth: {
-    login: 'Login',
-    logout: 'Logout',
-    forgotPassword: 'Forgot Password'
+    login: "Login",
+    logout: "Logout",
+    forgotPassword: "Forgot Password",
   },
   users: {
-    title: 'User Management',
-    createUser: 'Create User',
-    editUser: 'Edit User'
+    title: "User Management",
+    createUser: "Create User",
+    editUser: "Edit User",
   },
   roles: {
-    title: 'Role Management',
-    permissions: 'Permissions'
-  }
-}
+    title: "Role Management",
+    permissions: "Permissions",
+  },
+};
 ```
 
 ### Usage in Components
@@ -314,11 +320,11 @@ export default {
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
 // In JavaScript
-const message = t('users.created')
+const message = t("users.created");
 </script>
 ```
 
@@ -335,14 +341,14 @@ const message = t('users.created')
   --primary-color: #1976d2;
   --secondary-color: #26a69a;
   --accent-color: #9c27b0;
-  
+
   // Spacing
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
-  
+
   // Border Radius
   --border-radius-sm: 4px;
   --border-radius-md: 8px;
@@ -355,7 +361,11 @@ const message = t('users.created')
 ```scss
 // Utility Classes
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -363,7 +373,7 @@ const message = t('users.created')
 .card-elevated {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
@@ -461,6 +471,7 @@ SESSION_DOMAIN=.yourdomain.com
 ## 📚 API Reference
 
 ### Base URL
+
 ```
 Production: https://api.yourdomain.com
 Development: http://localhost:8000/api
@@ -468,34 +479,34 @@ Development: http://localhost:8000/api
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/auth/login` | User login |
-| POST | `/auth/logout` | User logout |
-| POST | `/auth/refresh` | Refresh token |
-| POST | `/auth/forgot-password` | Request password reset |
-| POST | `/auth/reset-password` | Reset password |
+| Method | Endpoint                | Description            |
+| ------ | ----------------------- | ---------------------- |
+| POST   | `/auth/login`           | User login             |
+| POST   | `/auth/logout`          | User logout            |
+| POST   | `/auth/refresh`         | Refresh token          |
+| POST   | `/auth/forgot-password` | Request password reset |
+| POST   | `/auth/reset-password`  | Reset password         |
 
 ### User Management Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/users` | List users with pagination |
-| POST | `/users` | Create new user |
-| GET | `/users/{id}` | Get user details |
-| PUT | `/users/{id}` | Update user |
-| DELETE | `/users/{id}` | Delete user |
+| Method | Endpoint      | Description                |
+| ------ | ------------- | -------------------------- |
+| GET    | `/users`      | List users with pagination |
+| POST   | `/users`      | Create new user            |
+| GET    | `/users/{id}` | Get user details           |
+| PUT    | `/users/{id}` | Update user                |
+| DELETE | `/users/{id}` | Delete user                |
 
 ### Role Management Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/roles` | List roles with permissions |
-| POST | `/roles` | Create new role |
-| GET | `/roles/{id}` | Get role details |
-| PUT | `/roles/{id}` | Update role |
-| DELETE | `/roles/{id}` | Delete role |
-| GET | `/roles/permissions` | List all permissions |
+| Method | Endpoint             | Description                 |
+| ------ | -------------------- | --------------------------- |
+| GET    | `/roles`             | List roles with permissions |
+| POST   | `/roles`             | Create new role             |
+| GET    | `/roles/{id}`        | Get role details            |
+| PUT    | `/roles/{id}`        | Update role                 |
+| DELETE | `/roles/{id}`        | Delete role                 |
+| GET    | `/roles/permissions` | List all permissions        |
 
 ---
 
@@ -538,16 +549,18 @@ php artisan optimize:clear
 ### Common Issues
 
 1. **CORS Errors**
+
    ```php
    // config/cors.php
    'allowed_origins' => ['http://localhost:9000'],
    ```
 
 2. **Token Refresh Issues**
+
    ```javascript
    // Check token expiration
    if (error.response?.status === 401) {
-     await authStore.logout()
+     await authStore.logout();
    }
    ```
 
