@@ -1,15 +1,11 @@
 # Dashboard Management Application
 
-> Enterprise-grade fullstack web application dengan Vue.js 3 Quasar Framework dan Laravel 10 REST API untuk comprehensive user management dengan advanced role-based permissions dan modern UI/UX.
+> Enterprise-grade fullstack web application dengan Vue.js 3 Quasar Framework dan Laravel 12 REST API untuk comprehensive user management dengan advanced role-based permissions dan modern UI/UX.
 
-[!- [📖 Installation Guide](./docs/installation.md) - Complete setup instructions dengan troubleshooting
-
-- [📊 Progress Tracker](./docs/progress.md) - Development milestones dan current status
-- [📖 Application Guide](./docs/APPLICATION_GUIDE.md) - **NEW** Comprehensive user manual dan feature guide
-- [📋 Task Management](./docs/TASK_MANAGEMENT.md) - **NEW** Development roadmap dan sprint planningsion](https://img.shields.io/badge/version-v1.2.0--beta.1-blue.svg)](https://github.com/edopranata/dashboard-app)
-  [![Laravel](https://img.shields.io/badge/Laravel-10.x-red.svg)](https://laravel.com)
-  [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-green.svg)](https://vuejs.org)
-  [![Quasar](https://img.shields.io/badge/Quasar-2.x-blue.svg)](https://quasar.dev)
+[![Version](https://img.shields.io/badge/version-v1.3.0--beta.1-blue.svg)](https://github.com/edopranata/dashboard-app)
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-red.svg)](https://laravel.com)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.x-green.svg)](https://vuejs.org)
+[![Quasar](https://img.shields.io/badge/Quasar-2.x-blue.svg)](https://quasar.dev)
 
 ## 🎯 Current Status: **Production Ready Core Features** (90% Complete)
 
@@ -46,7 +42,7 @@ Dashboard Management Application adalah solusi fullstack modern untuk enterprise
 
 ### Backend
 
-- **Laravel 10.x** - Modern PHP framework dengan API-first approach
+- **Laravel 12.x** - Modern PHP framework dengan API-first approach
 - **MySQL 8.0+** - Primary database dengan optimization
 - **Laravel Sanctum** - SPA authentication dengan JWT tokens
 - **Spatie Laravel Permission** - Advanced role & permission management
@@ -54,11 +50,11 @@ Dashboard Management Application adalah solusi fullstack modern untuk enterprise
 
 ### Frontend
 
-- **Vue.js 3** - Progressive framework dengan Composition API
-- **Quasar Framework 2.x** - Material Design component library
-- **Pinia** - Modern state management untuk Vue 3
+- **Vue.js 3.5+** - Progressive framework dengan Composition API
+- **Quasar Framework 2.18+** - Material Design component library
+- **Pinia 3.x** - Modern state management untuk Vue 3
 - **Vue Router 4** - Advanced client-side routing
-- **Vue I18n** - Complete internationalization system
+- **Vue I18n 11+** - Complete internationalization system
 - **Axios** - HTTP client dengan interceptors
 
 ### Development & Tools
@@ -85,7 +81,7 @@ Dashboard Management Application adalah solusi fullstack modern untuk enterprise
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend       │    │   Database      │
-│   (Vue.js 3)    │◄──►│   (Laravel 10)  │◄──►│   (MySQL 8.0)   │
+│   (Vue.js 3.5)  │◄──►│   (Laravel 12)  │◄──►│   (MySQL 8.0)   │
 ├─────────────────┤    ├─────────────────┤    ├─────────────────┤
 │ • Quasar UI     │    │ • REST API      │    │ • UUID Keys     │
 │ • Pinia Store   │    │ • Sanctum Auth  │    │ • Relationships │
@@ -98,7 +94,7 @@ Dashboard Management Application adalah solusi fullstack modern untuk enterprise
 
 ```
 based/
-├── 📁 backend/                     # Laravel 10 API Application
+├── 📁 backend/                     # Laravel 12 API Application
 │   ├── app/
 │   │   ├── Http/
 │   │   │   ├── Controllers/        # API Controllers (Auth, User, Role)
@@ -116,7 +112,7 @@ based/
 │   │   └── web.php                 # Web routes (minimal)
 │   └── config/                     # Laravel configuration files
 │
-├── 📁 frontend/                    # Quasar Vue.js 3 Application
+├── 📁 frontend/                    # Quasar Vue.js 3.5 Application
 │   ├── src/
 │   │   ├── components/             # Reusable Vue components
 │   │   │   ├── base/               # Base components (Table, Dialog, etc.)
@@ -168,7 +164,7 @@ based/
 ### 📋 Prerequisites
 
 - **Node.js 18+** dengan npm/yarn package manager
-- **PHP 8.1+** dengan required extensions
+- **PHP 8.3+** dengan required extensions
 - **Composer 2.x** untuk PHP dependency management
 - **MySQL 8.0+** atau compatible database
 
@@ -244,30 +240,15 @@ Permissions: Basic dashboard access
 
 ### 🗂️ **Core Documentation**
 
-- [📖 Installation Guide](./docs/installation.md) - Complete setup instructions dengan troubleshooting
-- [� Progress Tracker](./docs/progress.md) - Development milestones dan current status
-- [�🔌 API Documentation](./docs/api.md) - REST API endpoints dengan examples
-- [🎨 Frontend Guide](./docs/frontend.md) - Vue.js components dan development workflow
+- [� Developer Guide](./docs/DEVELOPER_GUIDE.md) - **NEW** Complete development guide dengan setup instructions
+- [📊 Progress Tracker](./docs/progress.md) - Development milestones dan current status
+- [� Application Guide](./docs/APPLICATION_GUIDE.md) - Comprehensive user manual dan feature guide
+- [📋 Task Management](./docs/TASK_MANAGEMENT.md) - Development roadmap dan sprint planning
 
 ### 🎯 **Feature Documentation**
 
-- [🎯 Feature Catalog](./docs/FEATURE_CATALOG.md) - **NEW** Complete feature inventory dan capabilities
-- [👥 User Management](./docs/user-management.md) - RBAC system dan user operations
-- [🎭 Theme & i18n](./docs/theme-i18n.md) - Theming system dan internationalization
-- [📸 Avatar Upload](./docs/SIMPLE_AVATAR_UPLOAD.md) - Profile image management system
-
-### 🔧 **Technical Documentation**
-
-- [🔌 API Documentation](./docs/api.md) - REST API endpoints dengan examples
-- [🎨 Frontend Guide](./docs/frontend.md) - Vue.js components dan development workflow
-- [🎨 Styling System](./docs/STYLING_SYSTEM.md) - Global styles dan design components
-- [📝 Style Reference](./docs/QUICK_STYLE_REFERENCE.md) - CSS classes dan styling guidelines
-
-### � **Development Documentation**
-
-- [🚀 Refactoring Summary](./docs/REFACTORING_SUMMARY.md) - Recent architecture improvements
-- [� Profile Refactoring](./docs/PROFILE_PAGE_REFACTORING.md) - Profile system improvements
-- [🌐 Translation Management](./docs/COMMON_DELETE_TRANSLATION.md) - Translation system updates
+- [🎯 Feature Catalog](./docs/FEATURE_CATALOG.md) - Complete feature inventory dan capabilities
+- [🎨 Styling System](./docs/STYLING_SYSTEM.md) - Global styles dan design system
 
 ### 🤖 **AI Development**
 
@@ -545,7 +526,7 @@ composer audit
 
 - ✅ **Production Ready Core** - All essential features implemented
 - 🎯 **90% Project Completion** - Nearing production release
-- 🏗️ **Modern Architecture** - Vue 3 + Laravel 10 best practices
+- 🏗️ **Modern Architecture** - Vue 3.5 + Laravel 12 best practices
 - 🌐 **Internationalization** - Full bilingual support
 - 🔒 **Security First** - Comprehensive security implementation
 - 📱 **Mobile Ready** - Responsive design across all devices
@@ -565,6 +546,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ---
 
-**🎉 Made with ❤️ using Vue.js 3, Quasar Framework, and Laravel 10**
+**🎉 Made with ❤️ using Vue.js 3.5, Quasar Framework, and Laravel 12**
 
 _Dashboard Management Application - Enterprise-grade user management solution_
