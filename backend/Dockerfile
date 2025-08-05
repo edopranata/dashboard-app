@@ -35,6 +35,9 @@ EXPOSE 8001
 
 # Migrate and seed the database
 RUN php artisan migrate --force && php artisan db:seed --force
-CMD [ "php", "artisan", "storage:link" ]
+
+# Create storage link
+RUN php artisan storage:link
+
 # Start Laravel server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8001"]
